@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD022 MD024 MD032 -->
 # React Nanodegree
 This site contains my study notes and project submissions for:
-- Udacity's [React Nanodegree Program](https://www.udacity.com/course/react-nanodegree--nd019)
+- [Udacity's React Nanodegree Program](https://www.udacity.com/course/react-nanodegree--nd019)
 
 The program is divided into three parts, each taking approximately 5 weeks to complete.
 
