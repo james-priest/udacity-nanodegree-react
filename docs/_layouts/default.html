@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="{{ site.lang | default: "en-US" }}">
+  <head>
+    {% if site.google_analytics %}
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '{{ site.google_analytics }}');
+    </script>
+    {% endif %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title | default: site.github.repository_name }}{% endif %} by {{ site.github.owner_name }}</title>
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="shortcut icon" href="{{ '/assets/images/icons/favicon.ico?v=1' | relative_url }}">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ '/assets/images/icons/apple-icon-57x57.png' | relative_url }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ '/assets/images/icons/apple-icon-60x60.png' | relative_url }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ '/assets/images/icons/apple-icon-72x72.png' | relative_url }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ '/assets/images/icons/apple-icon-76x76.png' | relative_url }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ '/assets/images/icons/apple-icon-120x120.png' | relative_url }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ '/assets/images/icons/apple-icon-144x144.png' | relative_url }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ '/assets/images/icons/apple-icon-114x114.png' | relative_url }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ '/assets/images/icons/apple-icon-152x152.png' | relative_url }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/images/icons/apple-icon-180x180.png' | relative_url }}">
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{ '/assets/images/icons/android-icon-192x192.png' | relative_url }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/images/icons/favicon-32x32.png' | relative_url }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ '/assets/images/icons/favicon-96x96.png' | relative_url }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ '/assets/images/icons/favicon-16x16.png' | relative_url }}">
+    <link rel="manifest" href="{{ '/assets/images/icons/manifest.json' | relative_url }}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{{ '/assets/images/icons/ms-icon-144x144.png' | relative_url }}">
+    <meta name="theme-color" content="#ffffff">
+  </head>
+  <body>
+
+    <header>
+      {% if page.title %}
+      <h1>{{ page.title }}</h1>
+      <p>{{ page.description }}</p>
+      {% else %}
+      <h1>{{ site.title | default: site.github.repository_name }}</h1>
+      <p>{{ site.description | default: site.github.project_tagline }}</p>
+      {% endif %}
+    </header>
+
+    <div id="banner">
+      <span id="logo"></span>
+
+      <a href="{{ site.github.repository_url }}" class="button fork"><strong>View On GitHub</strong></a>
+      {% if site.show_downloads %}
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="{{ site.github.zip_url }}" class="button">ZIP</a></li>
+            <li><a href="{{ site.github.tar_url }}" class="button">TAR</a></li>
+          </ul>
+        </div>
+      {% endif %}
+    </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        {{ content }}
+
+      </section>
+      <footer>
+        {% if site.github.is_project_page %}
+          <p>Project maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a></p>
+        {% endif %}
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <script type="text/javascript">
+      $(document).ready(function () {
+        // if a hash exists then assign to this var
+        var hash = window.location.hash.substr(0);
+        //alert(hash);
+        if (hash) {
+          $("nav ul li.active").removeClass("active");
+          $("nav ul li a[href='" + hash + "']").parent().addClass("active");
+          //console.log("hash: " + hash);
+          //var pos = $(hash).offset().top - 190;
+          //var pos = $(hash)[0].offsetTop - 88;
+          // TODO: Fix nav & section scroll on hash
+          var pos = $(hash).first().offset().top - 268;
+          console.log("pos: " + pos);
+          var p1 = $(hash).offset().top;
+          var p2 = $(hash)[0].offsetTop;
+          console.log("p1: " + p1);
+          console.log("p2: " + p2);
+          console.log("p1-p2=" + Number(p1 - p2));
+          $("html, body").animate({
+            scrollTop: pos
+          }, 400);
+
+          //window.location.hash = hash;
+          //event.preventDefault();
+          //var navpos = $("nav ul li a[href='" + hash + "']").parent().offset().top;
+          //var navPos = $("nav ul li a[href='" + hash + "']").offsetParent().scrollTop();
+          var navPos = $("nav ul li a[href='" + hash + "']")[0].offsetTop - 10;
+          console.log("navPos: " + navPos);
+          //alert(navPos);
+          $("nav").animate({
+            scrollTop: navPos
+          }, 400);
+          //$("div.wrapper.nav")
+          //$("nav ul li a[href='" + $(this).attr("href") + "']").parent().addClass("active");
+        }
+      });
+    </script>
+  </body>
+</html>

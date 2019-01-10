@@ -1,0 +1,222 @@
+---
+---
+
+@import "{{ site.theme }}";
+// body { background: #e4ead1;background: #eeeeee;}
+// header {
+//     background: #1D8C39;
+//     background: #1A7F33;
+// }
+// a { color:#1A7F33;}
+img { margin-top: 6px; margin-bottom: 6px; }
+a:hover { color:#999999; text-decoration: underline; }
+section a { border-bottom: 1px dotted; }
+section a > img { vertical-align: top; }
+section a:hover { border-bottom: none; }
+input[type="checkbox"], input[type="radio"] {
+    margin-right: 6px;
+}
+// Begin v3
+nav {
+    overflow-y: auto;
+    padding-right: 20px;
+    margin-left: -574px;
+    top: 190px;
+    max-height: calc(100% - 190px);
+    text-align: inherit;
+}
+// scrollbar
+::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;     
+}
+::-webkit-scrollbar-thumb {
+    background: #e0d7b9;
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 4px rgba(0,0,0,0.5);    
+}
+::-webkit-scrollbar-thumb:hover {
+    // background: #555; 
+    background: #ccc; 
+}
+// End v3
+nav ol, nav ul { margin-left: 10px; }
+nav ul { width: 175px; margin-bottom: 20px;}
+nav ul a { white-space: nowrap; }
+nav ul li { 
+    padding: 3px 0;
+    line-height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+// nav ul li.tag-h1 {}
+// nav ul li.tag-h1 a {}
+// nav ul li.tag-h2 {}
+nav ul li.tag-h2 a { font-size: 1.1em; font-weight: bold; }
+nav ul li.tag-h3 a { margin-left: 10px; }
+
+nav li.active {
+    background-color: #ffeca0;
+    border-top: 1px solid #dba500;
+    border-bottom: 1px solid #dba500;
+    box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.4), 0px 1px 1px rgba(0, 0, 0, 0.1)
+}
+nav li.active a {
+    font-weight: bold;
+    color: #333;
+    
+}
+a:focus { outline: none; }
+
+section { 
+    max-width: 615px;
+    padding: 30px 20px 50px;
+}
+section a { color: #0378b3; font-weight: bold; }
+section > p, h4, h5, h6 {
+    margin: 11px 40px;
+    line-height: 1.2em;
+}
+blockquote { 
+    font-style: normal;
+    margin: 20px 40px;
+    padding: 0 20px;
+    border: 1px solid #ffcc00;
+    background-color: #f0f0f0;
+}
+blockquote > p, blockquote > h4, blockquote > h5, blockquote pre, blockquote > ul {
+    margin: 11px 0;
+    line-height: 1.2em;
+}
+blockquote > p, blockquote pre {
+    margin: 11px 10px;
+}
+hr { margin: 20px 0; }
+
+section>ol, section>ul { 
+    margin: 0 40px 20px 30px;
+}
+section li {
+    line-height: 1.2;
+}
+section li > p {
+    margin-bottom: 11px;
+}
+section ul ul, ul ol, ol ul, ol ol {
+    margin-bottom: 4px;
+    padding: 0 0 0 20px
+}
+section table {
+    margin: 0 40px;
+    width: calc(100% - 80px);
+}
+
+h1, h2, h3, h2+p>strong {
+    line-height: 1.0;
+}
+h1 {
+    font-size: 1.8em;
+    margin: 20px 0;
+}
+h1:first-of-type {
+    margin-top: 0;
+}
+h2 {
+    font-size:1.5em;
+    margin: 20px 10px 10px;
+}
+h3, h2+p>strong {
+    font-size:1.2em;
+    color: #666;
+    margin: 20px 20px 6px
+}
+h4 { 
+    text-decoration: underline;
+    margin: 20px 40px 8px;
+}
+h5 {
+    font-size: 1em;
+}
+pre{ 
+    line-height: 1em;
+    margin: 16px 40px;
+    padding: 8px 0 8px 15px
+}
+li pre {
+    margin: 4px 0 12px;
+}
+code {
+    // font-family: Courier New, Courier, monospace; 
+    font-family: Consolas, monospace;
+    // font-family: Lucida Console,Monaco,Courier,monospace;
+    font-size: 0.8em;
+}
+p>code, li>code, blockquote>p>code, h1>code, h2>code, h3>code, h4>code, strong>code, a>code {
+    // color: #c7254e;
+    color: #ff4675;
+    // background-color: #f9f2f4;
+    background-color: #fff6f9;
+    border-radius: 3px;
+    margin: 0 2px;
+    padding: 2px;
+    font-weight: 400;
+    font-size: .785714em; /* 11px/14px */
+    text-shadow: none;
+    border: 1px solid #ccc;
+}
+footer {
+    position: static;
+}
+
+@media print, screen and (max-width: 1060px) {
+    section {
+        max-width: 615px;
+    }
+}
+@media print, screen and (max-width: 720px) {
+    section {
+        width: auto;
+    }
+}
+
+@media print, screen and (max-width: 480px) {
+    section {
+        padding: 30px 0 50px;
+    }
+    section hr {
+        margin: 20px;
+    }
+    section > p {
+        margin: 8px 20px;
+    }
+    section h1 {
+        margin: 0 10px 20px;
+    }
+    section h2 {
+        margin: 20px 10px 10px;
+    }
+    section h3, h2+p>strong {
+        font-size:1.2em;
+        margin: 20px 20px 6px
+    }
+    section h4 { 
+        margin: 20px 20px 8px;
+    }
+    section>ol, section>ul { 
+        margin: 0 20px 0 0;
+    }
+    section table {
+        margin: 0 20px;
+        width: calc(100% - 40px);
+    }
+    pre {
+        margin: 0 20px;
+    }
+    blockquote {
+        margin-left: 20px;
+    }
+}
