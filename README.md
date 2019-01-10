@@ -1,17 +1,17 @@
 <!-- markdownlint-disable MD022 MD032 -->
 # React Nanodegree
-This site contains my code notes and project submissions for the 4-month Udacity [React Nanodegree](https://www.udacity.com/course/react-nanodegree--nd019) program.
+This site contains my code notes and project submissions for the 4-month [Udacity React Nanodegree Program](https://www.udacity.com/course/react-nanodegree--nd019).
 
 ## Course Notes
 These notes contain lesson transcripts along with screenshots, sample code, & links.
 
-### Stage 1 - React Fundamentals
+### Part 1 - React Fundamentals
 - [React Fundamentals](docs/course-notes/react-fundamentals.md) (Lessons 1-5)
 
-### Stage 2 - React & Redux
-- [React & Redux](docs/course-notes/react-and-redux.md) (Lessons 1-7)
+### Part 2 - React & Redux
+- [React & Redux](docs/course-notes/react-redux.md) (Lessons 1-7)
 
-### Stage 3 - React Native
+### Part 3 - React Native
 - [React Native](docs/course-notes/react-native.md) (Lessons 1-5)
 
 <!-- 
