@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD022 MD024 MD032 -->
 # React Nanodegree
 
-[![udacity-react](../assets/images/udacity-react-small.jpg)](../assets/images/udacity-react.jpg)
+[![udacity-react](assets/images/udacity-react-small.jpg)](assets/images/udacity-react.jpg)
 
 This site contains my study notes and project submissions for:
 - [Udacity's React Nanodegree Program](https://www.udacity.com/course/react-nanodegree--nd019)
