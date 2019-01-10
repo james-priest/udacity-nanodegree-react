@@ -1,13 +1,10 @@
 <!-- markdownlint-disable MD022 MD024 MD032 -->
 # React Nanodegree
+
+[![udacity-react](../assets/images/udacity-react-small.jpg)](../assets/images/udacity-react.jpg)
+
 This site contains my study notes and project submissions for:
 - [Udacity's React Nanodegree Program](https://www.udacity.com/course/react-nanodegree--nd019)
-
-The program is divided into three parts, each taking approximately 5 weeks to complete.
-
-- **Part 1** - React Fundamentals
-- **Part 2** - React & Redux
-- **Part 3** - React Native
 
 ---
 
@@ -15,6 +12,7 @@ The program is divided into three parts, each taking approximately 5 weeks to co
 These notes contain lesson transcripts along with screenshots, sample code, & links.
 
 ### Core Curriculum
+The program is divided into three parts, each taking approximately 5 weeks to complete.
 
 #### Part 1
 - [React Fundamentals](course-notes/react-fundamentals.html) (Lessons 1-5)
