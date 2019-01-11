@@ -295,8 +295,8 @@ If *any* of the code above looks confusing, or if you simply need a refresher on
 
 Here's a couple links for a quick refresher.
 
-- [Udacity ES6 course - Syntax notes](https://james-priest.github.io/100-days-of-code-log-r2/ES6-Syntax.html)
-- [Currying and ES6 Arrow Functions](http://codekirei.com/posts/currying-with-arrow-functions/)
+- [Udacity ES6 course - Syntax notes](https://james-priest.github.io/100-days-of-code-log-r2/ES6-Syntax.html) - destructuring, spread, & rest operators
+- [Currying and ES6 Arrow Functions](http://codekirei.com/posts/currying-with-arrow-functions/) - with double arrow functions
 
 Over the past couple of years, functional programming has had a large impact on the JavaScript ecosystem and community. Functional programming is an advanced topic in JavaScript and fills hundreds of books. It's too complex to delve into the benefits of functional programming (we've got to get to React content, right?!?). 
 
