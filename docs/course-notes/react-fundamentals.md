@@ -548,3 +548,423 @@ Answer the following questions (in your own words) and share your answers with y
 1. What is the “Virtual DOM”?
 2. Explain what makes React performant.
 3. Explain the Diffing Algorithm to someone who does not have any programming experience.
+
+## 2. Rendering UI w/ React
+### 2.1 Rendering UI Intro
+[![rf4](../assets/images/rf4-small.jpg)](../assets/images/rf4.jpg)
+
+React uses JavaScript objects to create React elements. We'll use these React elements to describe what we want the page to look like, and React will be in charge of generating the DOM nodes to achieve the result.
+
+Recall from the previous lesson the difference between imperative and declarative code. The React code that we write is declarative because we aren't telling React *what* to do; instead, we're writing React elements that describe what the page should look like, and React does all of the implementation work to get it done.
+
+Enough theory, let's get to it and create some elements!
+
+### 2.2 Elements and JSX
+#### Watch First
+We'll be looking at using React's `.createElement()` method in the next couple of videos. For starters, here is its signature:
+
+```js
+React.createElement( /* type */, /* props */, /* content */ );
+```
+
+We'll take a deep dive into what all that entails in just a bit! We'll start things out with a project that's already set up. For now, don't worry about creating a project or coding along. There will be plenty of hands-on work for you to do soon enough!
+
+We'll start building our in-class project, Contacts App, in the next section. If you would like to code along for the next few videos, you can use this [React Sandbox](https://codesandbox.io/s/new).
+
+> #### 💡 Trying Out React Code 💡
+>React is an extension of JavaScript (i.e., a JavaScript library), but it isn't built into your browser. You wouldn't be able to test out React code samples in your browser console the way you would if you were learning JavaScript. In just a bit, we'll see how to install and use a React environment!
+
+#### React.createElement
+
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+
+const element = React.createElement("div",  null, "hello world");
+
+ReactDOM.render(element, document.getElementById("root"));
+```
+
+[![rf5](../assets/images/rf5-small.jpg)](../assets/images/rf5.jpg)
+
+#### ReactDOM
+One thing to keep in mind is that we could be rendering out to different destinations.  For that reason, ReactDOM was split out of the React library. Some other destinations include:
+
+- render on the server
+- native devices
+- VR environments
+
+[![rf6](../assets/images/rf6-small.jpg)](../assets/images/rf6.jpg)
+
+#### Rendering Elements onto the DOM
+In the previous video, we used ReactDOM's `render()` method to render our element onto a particular area of a page. In particular, we rendered the element onto a DOM node called `root`. But where did this root come from?
+
+Apps built with React typically have a single `root` DOM node. For example, an HTML file may contain a `<div>` with the following:
+
+```html
+<div id="root"></div>
+```
+
+By passing this DOM node into `getElementById()`, React will end up controlling the entirety of its contents. Another way to think about this is that this particular `<div>` will serve as a "hook" for our React app; this is the area where React will take over and render our UI!
+
+#### Question 1 of 3
+What will `myBio` hold when the following code is run?
+
+```js
+import React from 'react';
+
+const myBio = React.createElement('div', null, 'Hi, I love porcupines.');
+```
+
+- [ ] a reference to a DOM node
+- [ ] a DOM node itself
+- [x] a JavaScript object
+- [ ] a JavaScript class
+
+#### DOM nodes - className
+
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+
+const element = React.createElement(
+  "div",
+  {
+    className: "welcome-message"
+  },
+  "hello world"
+);
+
+console.log(element);
+
+ReactDOM.render(element, document.getElementById("root"));
+
+```
+
+[![rf7](../assets/images/rf7-small.jpg)](../assets/images/rf7.jpg)
+
+When we're creating these React elements we must remember that we are describing DOM nodes not HTML elements. For that reason we must use things like 'className' rather than 'class' since 'class' is a reserved word.
+
+> Virtual DOM  - objects that describe real DOM nodes
+>
+> When we call `React.createElement` we haven't actually created anything in the DOM yet. It's not until we cal `render()` that the browser actually creates a real DOM element.
+
+#### Question 2 of 3
+React allows a lot of HTML attributes to be passed along to the React element. Look through [all supported HTML attributes](https://facebook.github.io/react/docs/dom-elements.html#all-supported-html-attributes) in the React docs and select which of the following attributes are allowed:
+
+- [x] poster
+- [x] id
+- [x] marginWidth
+- [ ] for - ('for' is a reserved word so instead we can use 'htmlFor')
+
+I just used React's `.createElement()` method to construct a "React element". The `.createElement()` method has the following signature:
+
+```js
+React.createElement( /* type */, /* props */, /* content */ ); 
+```
+
+Let's break down what each item can be:
+
+- `type` – either a string or a React Component
+  
+  This can be a string of any existing HTML element (e.g. `'p'`, `'span'`, or `'header'`) or you could pass a React *component* (we'll be creating components with JSX, in just a moment).
+- `props` – either `null` or an object
+  
+  This is an object of HTML attributes and custom data about the element.
+- `content` – `null`, a string, a React Element, or a React Component
+  
+  Anything that you pass here will be the content of the rendered element. This can include plain text, JavaScript code, other React elements, etc.
+
+#### Nested Elements
+
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+
+const element = React.createElement(
+  "ol",
+  null,
+  React.createElement("li", null, "James"),
+  React.createElement("li", null, "Mark"),
+  React.createElement("li", null, "Steve")
+);
+
+console.log(element);
+
+ReactDOM.render(element, document.getElementById("root"));
+
+```
+
+[![rf8](../assets/images/rf8-small.jpg)](../assets/images/rf8.jpg)
+
+#### List Data
+Now, what we currently have is fine but most of the time when you need a list, you'll probably have the items in an array somewhere.
+
+Instead of writing out child elements one by one, React lets us provide an array of elements to use as children. This makes it easier to work with existing arrays of data.
+
+So, let's say we have an array here of people that we want to dynamically generate these list items from this array. We could just map over the people array and for each person, we will generate a list item.
+
+And instead of hard-coding the we will just use `person.name` to get the same result.
+
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+
+const people = [
+  { name: 'James' },
+  { name: 'Mark' },
+  { name: 'Steve' }
+];
+
+const element = React.createElement(
+  "ol",
+  null,
+  people.map((person) => (
+    React.createElement('li', null, person.name)
+  ))
+);
+
+ReactDOM.render(element, document.getElementById("root"));
+```
+
+[![rf9](../assets/images/rf9-small.jpg)](../assets/images/rf9.jpg)
+
+The thing I like about using JavaScript to generate these elements is that I didn't need any special syntax to map over the array. Instead, I just used array.map.
+
+I didn't need a templating language to give me some 'repeat' or 'mapping' or 'each' syntax to loop over the array. I can use JavaScript which I already know.
+
+Another thing that's interesting here is that this person object was already in scope. So, I didn't need a templating language to give me that concept of scope. I just use the person object in the JavaScript function scope. There's nothing new to learn here.
+
+Now one thing to note, when you're using an array as children is that React is going to complain if you don't give it a key.
+
+If we look at the console here in the browser, you'll see a warning. 
+
+> Each child in an array or iterator should have a unique "key" prop. Check the top-level render call using ol.
+
+[![rf10](../assets/images/rf10-small.jpg)](../assets/images/rf10.jpg)
+
+What does that mean? Well, remember, when we added the class name to the div, the second argument which we assigned a `null` to, is for props to our component.
+
+So, let's give this item a unique key prop. Something that is unique about each of these objects. In this case, the name would work because that's unique for each of the objects.
+
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+
+const people = [{ name: "James" }, { name: "Mark" }, { name: "Steve" }];
+
+const element = React.createElement(
+  "ol",
+  null,
+  people.map(person =>
+    React.createElement("li", { key: person.name }, person.name)
+  )
+);
+
+ReactDOM.render(element, document.getElementById("root"));
+```
+
+[![rf11](../assets/images/rf11-small.jpg)](../assets/images/rf11.jpg)
+
+So, you'll notice here that the warning goes away. Now, we're not going to go too deep  nto the key prop in this lesson. But know that if you are mapping over an array with React and you're creating elements for each item in that array, each element needs its own unique key prop.
+
+#### .createElement() Returns only One Root Element
+Recall that `React.createElement();` creates a single React element of a particular type. We'd normally pass in a tag such as a `<div>` or a `<span>` to represent that type, but the content argument can be *another* React element.
+
+Consider the following example:
+
+```js
+const element = React.createElement('div', null,
+ React.createElement('strong', null, 'Hello world!')
+);
+```
+
+Here, "Hello world!" will be wrapped in a `<div>` when this React element renders as HTML. **While we can indeed nest React elements, remember the overall call just returns a single element.**
+
+#### JSX
+Now that we've learned how to create elements and how to nest them, it can get pretty tedious if we're just using these nested create element calls to create large portions of our app.
+
+What we need is an HTML-like syntax that we can use in our JavaScript.
+
+This is exactly what JSX does.
+
+> JSX is a syntax extension to JavaScript, that lets us write JavaScript code that looks a little bit more like HTML, making it more concise and easier to follow. Let's check it out.
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './styles.css';
+
+const people = [{ name: 'James' }, { name: 'Mark' }, { name: 'Steve' }];
+
+const element = (
+  <ol>
+    <li>{people[0].name}</li>
+  </ol>
+);
+
+ReactDOM.render(element, document.getElementById('app'));
+```
+
+Whenever we want JSX to evaluate some JavaScript for us, we have to wrap that piece of JavaScript in curly braces. This could be any JavaScript expression you want including some math, a ternary, or any other valid JavaScript.
+
+Let's create our list again. Everything between curly braces is JavaScript and everything between angle brackets is JSX. The code alternates between the two but is much more concise than the nested `createElement` calls.
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './styles.css';
+
+const people = [{ name: 'James' }, { name: 'Mark' }, { name: 'Steve' }];
+
+const element = (
+  <ol>
+    {people.map(person => (
+      <li key={person.name}>{person.name}</li>
+    ))}
+  </ol>
+);
+
+ReactDOM.render(element, document.getElementById('app'));
+```
+
+As we said earlier whenever we give React an array, we need to give a unique key prop to each one of the repeating elements, list item in this case.
+
+You'll notice it looks like we're assigning values to HTML attributes. We do this by opening up a JavaScript expression and using `person.name` as the value of the key prop.
+
+Another thing to note is that event though we're using JSX which is nice and concise, this code gets compiled down to real JavaScript using  `createElement` inside our 'bundle.js'.
+
+#### Question 3 of 3
+Consider the following example in JSX:
+
+```jsx
+const greeting = (
+ <div className='greeting'>
+ <h2>Hello world!</h2>
+ </div>
+);
+```
+
+If we want to output the same HTML, what goes into 1, 2, and 3 when calling `createElement()`?
+
+```js
+const greeting = React.createElement(
+ __1__,
+ { className: 'greeting' },
+ React.createElement(
+ __2__,
+ {},
+ __3__
+ )
+);
+```
+
+- [ ] 'h2', 'div', 'Hello world!'
+- [ ] 'div', 'h2', 'Hello world!'
+- [x] 'div', 'h2', 'Hello world!'
+- [ ] 'Hello world', 'div', 'h2'
+
+#### JSX returns *One* main element, too
+When writing JSX, keep in mind that it must only return a single element. This element may have any number of descendants, but there must be a single root element wrapping your overall JSX (typically a `<div>` or a `<span>`). Check out the following example:
+
+```jsx
+const message = (
+ <div>
+   <h1>All About JSX:</h1>
+   <ul>
+     <li>JSX</li>
+     <li>is</li>
+     <li>awesome!</li>
+   </ul>
+ </div>
+);
+```
+
+See how there's only one `<div>` element in the code above and that all other JSX is nested inside it? This is how you have to write it if you want multiple elements. To be completely clear, the following is incorrect and will cause an error:
+
+```jsx
+const message = (
+ <h1>All About JSX:</h1>
+ <ul>
+ <li>JSX</li>
+ <li>is</li>
+ <li>awesome!</li>
+ </ul>
+);
+```
+
+In this example, we have two sibling elements that are both at the root level (i.e. `<h1>` and `<ul>`) . This won't work and will give the error:
+
+Syntax error: Adjacent JSX elements must be wrapped in an enclosing tag
+
+Since we know that JSX is really just a syntax extension for `.createElement()`, this makes sense; `.createElement()` takes in only one tag name (as a string) as its first argument.
+
+#### Intro to Components
+So far we've seen how `.createElement()` and JSX can help us produce some HTML. Typically, though, we'll use one of React's key features, Components, to construct our UI. Components refer to *reusable* pieces of code ultimately responsible for returning HTML to be rendered onto the page. More often than not, you'll see React components written with JSX.
+
+Since React's main focus is to streamline building our app's UI, there is only one method that is absolutely required in any React component class: `render()`.
+
+React provides a base component class that we can use to group many elements together and use them as if they were one element.
+
+You could think about React components as the factories that we use to create React elements. So, by building custom components or classes, we can easily generate our own custom elements.
+
+Let's go ahead and build our first component class!
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './styles.css';
+
+class ContactList extends React.Component {
+  render() {
+    const people = [{ name: 'Greg' }, { name: 'Mark' }, { name: 'Steve' }];
+
+    return (
+      <ol>
+        {people.map(person => (
+          <li key={person.name}>{person.name}</li>
+        ))}
+      </ol>
+    );
+  }
+}
+
+ReactDOM.render(<ContactList />, document.getElementById('app'));
+```
+
+> #### 💡 Declaring Components in React 💡
+> In the previous video, we defined the ContactList component like so:
+>
+> ```js
+> class ContactList extends React.Component {
+>   // ...
+> }
+> ```
+>
+> In other words, we are defining a component that's really just a JavaScript class that inherits from React.Component.
+> 
+> In real-world use (and throughout this course), you may also see declarations like:
+>
+> ```js
+> class ContactList extends Component {
+>   // ...
+> }
+> ```
+>
+> Both ways are functionally the same, but be sure your module imports match accordingly! That is, if you choose to declare components like the example directly above, your import from React will now look like:
+>
+> ```js
+> import React, { Component } from 'react';
+> ```
+
+#### Creating Elements Recap
+In the end, remember that React is only concerned with the View layer of our app. This is what the user sees and interacts with. As such, we can use `.createElement()` to render HTML onto a document. More often than not, however, you'll use a syntax extension to describe what your UI should look like. This syntax extension is known as JSX, and just looks similar to plain HTML written right into a JavaScript file. The JSX gets transpiled to React's `.createElement()` method that outputs HTML to be rendered in the browser.
+
+A great mindset to have when building React apps is to think in components. Components represent the modularity and reusability of React. You can think of your component classes as factories that produce instances of components. These component classes should follow the single responsibility principle and just "do one thing". If it manages too many different tasks, it may be a good idea to decompose your component into smaller subcomponents.
+
+##### Further Research
+
+- [Rendering Elements](https://facebook.github.io/react/docs/rendering-elements.html) from the React docs
+
+<!-- 
+### 2.3 Create React App -->
