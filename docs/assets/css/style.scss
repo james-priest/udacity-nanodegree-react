@@ -100,6 +100,9 @@ hr { margin: 20px 0; }
 section>ol, section>ul { 
     margin: 0 40px 20px 30px;
 }
+section>blockquote>ol, section>blockquote>ul {
+    padding: 0 0 0 20px;
+}
 section li {
     line-height: 1.2;
 }

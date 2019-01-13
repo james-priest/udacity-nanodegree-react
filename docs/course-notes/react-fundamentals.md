@@ -966,5 +966,220 @@ A great mindset to have when building React apps is to think in components. Comp
 
 - [Rendering Elements](https://facebook.github.io/react/docs/rendering-elements.html) from the React docs
 
-<!-- 
-### 2.3 Create React App -->
+### 2.3 Create React App
+Skip past these older instruction to see how [Create React App](https://github.com/facebook/create-react-app) is installed on newer versions of node.js.
+
+> #### Old instructions (for reference)
+> ##### 💡Before Installing create-react-app💡
+> If you already have Node.js on your machine, it might be a good idea to upgrade or reinstall to make sure you have the latest version. Keep in mind that Node.js now comes with npm by default.
+>
+> ##### MacOS
+> 1. Install Homebrew by running
+> ```bash
+> /usr/bin/ruby -e "$curl -fsSL
+> https://raw.githubusercontent.com/Homebrew/install/master/install)"
+> ```
+>   in the terminal
+> 2. Check that it was installed by running `brew --version`. You should see the version number that was installed.
+> 3. Run `brew install node`.
+> 4. Run `node --version`.
+> 5. Check that npm was installed as well by running `npm --version`.
+> 6. Run `brew install yarn --without-node`.
+> 7. Run `npm --version`.
+> 8. Run `yarn install && yarn --version`
+>
+> ##### Windows
+> 1. Please download the [Node.js Installer](https://nodejs.org/en/download/), go through the installation process, and restart your computer once you're done.
+> 2. Please follow the yarn [installation instructions](https://yarnpkg.com/lang/en/docs/install).
+> 3. Run `yarn --version` to make sure yarn has been successfully installed.
+>
+> ##### Linux
+> 1. Please follow [these instructions](https://www.ostechnix.com/install-node-js-linux) to install [Node.js](https://nodejs.org/en/download/).
+> 2. Run `sudo apt-get install -y build-essential`.
+> 3. Please follow the yarn [installation instructions](https://yarnpkg.com/lang/en/docs/install).
+> 4. Run `yarn --version` to make sure yarn has been successfully installed.
+>
+> #### Install create-react-app globally
+> Install Create React App (through the command-line with [npm](https://www.npmjs.com/get-npm)).
+> ```bash
+> npm install -g create-react-app
+> ```
+>
+> If get permission errors, check out [this article on global package installs](https://docs.npmjs.com/getting-started/fixing-npm-permissions) in the npm documentation.
+>
+> Note that to find out where global packages are installed, you can run
+> ```bash
+> npm list -g --depth=0
+> ```
+> in your console (more information [here](https://stackoverflow.com/questions/5926672/where-does-npm-install-packages)).
+
+#### What is Create React App
+JSX is awesome, but it does need to be transpiled into regular JavaScript before reaching the browser. Typically this is done with two tools.
+
+- [Babel](https://github.com/babel/babel) - a transpiler which converts JSX & ES6 to vanilla JavaScript
+- [Webpack](https://github.com/webpack/webpack) - a build tool which bundles all our assets (JavaScript, CSS, images, etc.) for web projects
+
+To streamline this initial configuration, Facebook published [Create React App](https://github.com/facebook/create-react-app) to manage the setup for us!
+
+This tool is incredibly helpful to get started in building a React app, as it sets up everything we need with *zero configuration*!
+
+The [Create React App - Quick Overview](https://github.com/facebook/create-react-app#quick-overview) shows how to use this tool to scaffold a React project without having to do a global install which was detailed in the old instructions.
+
+#### Scaffolding Your React App
+Let's do the following:
+
+```bash
+npx create-react-app contacts
+cd contacts
+npm start
+```
+
+Now, create-react-app installs `react`, `react-dom`, and the `react-scripts` package.
+
+React-scripts encapsulates a lot of powerful libraries.
+
+- It installs Babel so we can use the latest JavaScript syntax as well as JSX.
+- It also installs Webpack, so we can generate the build
+- It installs Webpack dev server, which gives us the auto-reload behavior we've seen up until this point.
+
+As with all abstractions, you can peel back the layers on react-scripts one at a time, if you really want to see what's under the hood. But for now, `create-react-app` is a great way to get started quickly with the latest technologies without having to put in all the time needed to learn them before you get started with React.
+
+##### The Yarn Package Manager
+Both in the following video and in the output of create-react-app, we're told to use `yarn start` to start the development server.
+
+[Yarn](https://yarnpkg.com/) is a package manager that's similar to NPM. Yarn was created from the ground up by Facebook to improve on some key aspects that were slow or lacking in NPM.
+
+If you don't want to install Yarn, you don't have to! What's great about it is that almost every use of yarn can be swapped with npm and everything will work just fine! So if the command is `yarn start`, you can use `npm start` to run the same command.
+
+#### create-react-app Recap
+Facebook's `create-react-app` is a command-line tool that scaffolds a React application.
+
+Using this, there is no need to install or configure module bundlers like Webpack, or transpilers like Babel. These come preconfigured (and hidden) with `create-react-app`, so you can jump right into building your app!
+
+Check out these links for more info about create-react-app:
+
+- [create-react-app](https://github.com/facebookincubator/create-react-app) on GitHub
+- [create-react-app Release Post](https://facebook.github.io/react/blog/2016/07/22/create-apps-with-no-configuration.html) from the React blog
+- [Updates to create-react-app](https://facebook.github.io/react/blog/2017/05/18/whats-new-in-create-react-app.html) from the React blog
+
+### 2.4 Composing with Components
+Earlier, we said that components are the building blocks of React. But what is actually meant by that?
+
+If you look at the API and documentation for React, they're relatively small. The vast majority of React's API is all about components. They are the main unit of encapsulation that React gives us.
+
+Components are great, because they help us break down the UI into smaller pieces. These pieces have clear responsibilities and well-defined interfaces. This is valuable when building a large app, because it lets us work on tiny pieces of the app without inadvertently affecting the rest of it.
+
+Another great thing about components, is that they encourage us to build applications using composition instead of inheritance.
+
+So, let's talk a little bit about what it means to use composition to build user interfaces and how React let's us do that.
+
+We open up the index.js and paste in the `<ContactList />` component. And instead of rendering everything inside of the App, I'm going to render it the ContactList.
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+class ContactList extends React.Component {
+  render() {
+    const people = this.props.contacts;
+
+    return (
+      <ol>
+        {people.map(person => (
+          <li key={person.name}>{person.name}</li>
+        ))}
+      </ol>
+    );
+  }
+}
+
+function App() {
+  return (
+    <div className="App">
+      <ContactList />
+      <ContactList />
+      <ContactList />
+    </div>
+  );
+}
+
+const rootElement = document.getElementById('root');
+ReactDOM.render(<App />, rootElement);
+```
+
+We can already see how easy it is to create our own custom elements as we've talked about before, and compose them together. We can take the ContactList and put it right inside the application.
+
+Encapsulating many elements inside of a component gives us a few advantages.
+
+For one, it's really easy to reuse all of those elements. For example, if I wanted multiple copies of the ContactsLists, I could just copy and paste this line three times and get three identical copies of those elements.
+
+Another nice property of these components is that they have a very clean interface so I can configure different components differently just by giving them different props.
+
+Take for example, our ContactList. Let's say, in the first ContactList I want to show three names and in the second contact list, I want to show a completely different set of contacts.
+
+So what I would actually like to do is to be able to configure these ContactLists independently of one another. We can do this with the use of  prop that we pass each ContactList component.
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+class ContactList extends React.Component {
+  render() {
+    const people = this.props.contacts;
+
+    return (
+      <ol>
+        {people.map(person => (
+          <li key={person.name}>{person.name}</li>
+        ))}
+      </ol>
+    );
+  }
+}
+
+function App() {
+  return (
+    <div className="App">
+      <ContactList
+        contacts={[{ name: 'James' }, { name: 'Mark' }, { name: 'Steven' }]}
+      />
+      <ContactList
+        contacts={[{ name: 'Evi' }, { name: 'Sarah' }, { name: 'Susan' }]}
+      />
+      <ContactList
+        contacts={[{ name: 'Spot' }, { name: 'Rover' }, { name: 'Fido' }]}
+      />
+    </div>
+  );
+}
+
+const rootElement = document.getElementById('root');
+ReactDOM.render(<App />, rootElement);
+```
+
+You can see we were able to reuse the elements from ContactList but configure them completely separately. This makes it really easy to reuse  these components by just passing in little bits of configuration via the props.
+
+These two principles,
+
+- the ability to encapsulate a bunch of elements in a component
+- the ability to easily reuse each component by being able to configure each one differently and independently via props
+
+are two really important and fundamental keys to understanding the composition model of React.
+
+#### Favor Composition Over Inheritance
+You might have heard before that it’s better to “favor composition over inheritance”. This is a principle that I believe is difficult to learn today. Many of the most popular programming languages make extensive use of inheritance, and it has carried over into popular UI frameworks like the Android and iOS SDKs.
+
+In contrast, React uses composition to build user interfaces. Yes, we extend React.Component, but we never extend it more than once. Instead of extending base components to add more UI or behavior, we compose elements in different ways using nesting and props. You ultimately want your UI components to be independent, focused, and reusable.
+
+So if you’ve never understood what it means to “favor composition over inheritance” you’ll definitely learn using React!
+
+### 2.5 Recap
+The principles we've discussed in this lesson are absolutely fundamental to getting the most out of a React.
+
+Just to recap, we learned about how JSX just uses JavaScript to let us describe the UI by creating elements instead of writing these rigid string templates.
+
+We also learned how to encapsulate groups of elements in React components, and how to build larger portions of the UI by composing those components together.
+
+We also installed Create React App, and used it to get a quick start on using the latest technologies commonly used to create a modern React application.
+
+But React's code we use in encapsulation story gets really interesting in the next lesson where we talk about how each of these little components can hold, and manage it's own state.
