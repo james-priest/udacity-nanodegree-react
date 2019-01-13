@@ -95,6 +95,9 @@ blockquote > p, blockquote > h4, blockquote > h5, blockquote pre, blockquote > u
 blockquote > p, blockquote pre {
     margin: 11px 10px;
 }
+li>blockquote, ul>blockquote {
+    margin: 20px 0;
+}
 hr { margin: 20px 0; }
 
 section>ol, section>ul { 
