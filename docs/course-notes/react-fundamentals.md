@@ -1173,13 +1173,17 @@ In contrast, React uses composition to build user interfaces. Yes, we extend Rea
 
 So if you’ve never understood what it means to “favor composition over inheritance” you’ll definitely learn using React!
 
-### 2.5 Recap
+### 2.5 Component Recap
 The principles we've discussed in this lesson are absolutely fundamental to getting the most out of a React.
 
-Just to recap, we learned about how JSX just uses JavaScript to let us describe the UI by creating elements instead of writing these rigid string templates.
+Just to recap...
 
-We also learned how to encapsulate groups of elements in React components, and how to build larger portions of the UI by composing those components together.
+1. We learned about how JSX just uses JavaScript to let us describe the UI by creating elements instead of writing these rigid string templates.
+2. We also learned how to encapsulate groups of elements in React components, and how to build larger portions of the UI by composing those components together.
+  > - Components let you split the UI into independent, reusable pieces, and think about each piece in isolation.
+  >
+  > - Conceptually, components are like JavaScript functions. They accept arbitrary inputs (called “props”) and return React elements describing what should appear on the screen.
 
-We also installed Create React App, and used it to get a quick start on using the latest technologies commonly used to create a modern React application.
+3. We also installed Create React App, and used it to get a quick start on using the latest technologies commonly used to create a modern React application.
 
 But React's code we use in encapsulation story gets really interesting in the next lesson where we talk about how each of these little components can hold, and manage it's own state.
