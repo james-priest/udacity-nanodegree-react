@@ -1187,3 +1187,310 @@ Just to recap...
 3. We also installed Create React App, and used it to get a quick start on using the latest technologies commonly used to create a modern React application.
 
 But React's code we use in encapsulation story gets really interesting in the next lesson where we talk about how each of these little components can hold, and manage it's own state.
+
+## 3. State Management
+### 3.1 Project Setup
+[![rf12](../assets/images/rf12-small.jpg)](../assets/images/rf12.jpg)
+
+Three new concepts that we'll be covering are:
+
+- **Props** - Allows you to pass data into components
+- **Funcitonal Components** - An alternative, and probably more intuitive approach to creating components.
+- **Controlled Components** - Allows you to hook up the forms in your application to your component state
+
+#### Contacts App
+We will be building a Contacts app that shows a list of contacts. Each contact has an avatar, name, and twitter handle.
+
+The app will also have a search bar that will allow you to filter the contacts or reset the the state to show all contacts.
+
+It will also allow you to remove a contact and add a contact by entering a name, handle, and uploading an image.
+
+[![rf13](../assets/images/rf13-small.jpg)](../assets/images/rf13.jpg)
+
+What we should think about is how to build out this application. The way we build a large React application is by building out a bunch of small applications or components.
+
+We need to consider how we'd structure this out if we were building this out of components.
+
+#### Front End Project Files
+Create React App will generate a number of default files and starter code that we need to get rid of. There will be two sets of changes you need to make, delete the starter content and add files that we're providing you.
+
+We've done this step this for you. Here's the project repo
+
+- [https://github.com/udacity/reactnd-contacts-app](https://github.com/udacity/reactnd-contacts-app)
+
+Follow these instructions.
+
+- Clone the repo with
+  - `git clone https://github.com/udacity/reactnd-contacts-app.git`
+- checkout the 'starter-files-added' remote branch with this command
+  - `git checkout -b starter-files-added origin/starter-files-added`
+
+#### Back End Server
+The Contacts app project that we're building is a front-end project. However, we'll eventually be storing the contacts on a backend server. Since we're only really focusing on the front-end for this course, we've gone ahead and built this server for you so you can focus on just the React parts of this program.
+
+The server is a simple Node/Express app. The repo for the project is at
+
+- [https://github.com/udacity/reactnd-contacts-server2](https://github.com/udacity/reactnd-contacts-server2).
+
+All you need to do is:
+
+- clone the project with
+  - `git clone https://github.com/udacity/reactnd-contacts-server2.git`
+- install the project dependencies with
+  - `npm install`
+- start the server with
+  - `node server.js`
+
+Once you've started the server, you can forget about it. The Contacts project we're working on will interact with this server, but we won't ever modify any of the server code.
+
+> #### 💡 Running Two Servers💡
+> At this point, you should be running two different servers on your local machine:
+>
+> - Front-end development server: Accessible on **port 3000**
+>   - (`npm start` or `yarn start`)
+> - Back-end server: Accessible on **port 5001**
+>   - (`node server.js`)
+>
+> Please be sure that both are running before moving on in this Lesson.
+
+### 3.2 Pass Data with Props
+Here we have a function whose whole prupose is to fetch a user. The problem is we need to tell the function whcih user to fetch. This is done by passing a parameter to our function.
+
+[![rf14](../assets/images/rf14-small.jpg)](../assets/images/rf14.jpg)
+
+The same thing holds true for React components. In the same way we pass data to a function, we can pass data to a component.
+
+Here the whole purpose of this component is to display a user to the UI. In order to do this we add a custom attribute to our component and give it a value.
+
+[![rf15](../assets/images/rf15-small.jpg)](../assets/images/rf15.jpg)
+
+Now we can access that value from inside our component definition by using `this.props.username`.
+
+In fact any attributes that are added to a component are accessible inside of that component.
+
+[![rf16](../assets/images/rf16-small.jpg)](../assets/images/rf16.jpg)
+
+Here we'll use this `contacts` array temporarily. Eventually, we'll be grabing this from our backend server.
+
+```js
+const contacts = [
+ {
+   "id": "karen",
+   "name": "Karen Isgrigg",
+   "handle": "karen_isgrigg",
+   "avatarURL": "http://localhost:5001/karen.jpg"
+ },
+ {
+   "id": "richard",
+   "name": "Richard Kalehoff",
+   "handle": "richardkalehoff",
+   "avatarURL": "http://localhost:5001/richard.jpg"
+ },
+ {
+   "id": "tyler",
+   "name": "Tyler McGinnis",
+   "handle": "tylermcginnis",
+   "avatarURL": "http://localhost:5001/tyler.jpg"
+ }
+];
+```
+
+We want to create a new component that will take in this array as `props` and be responsible for looping over that array to show a contact record for each item in the array.
+
+[![rf17](../assets/images/rf17-small.jpg)](../assets/images/rf17.jpg)
+
+Whenever we want to build out a new component we create a new file for it. In this case we'll want to name the file "ListContacts.js" because that's what the component will be responsible for.
+
+#### ListContacts - array as props
+We start with our import statement. Then we create our class and extend Component. We'll usually want to immediately jump down to the bottom and do our export statement as well.
+
+```jsx
+// ListContacts.js
+import React, { Component } from 'react';
+
+class ListContacts extends Component {
+  render() {
+    return (
+      <ol className="contact-list">
+
+      </ol>
+    )
+  }
+}
+
+export default ListContacts;
+```
+
+We create the render method and inside our return statement and we start with an ordered list.
+
+Next we need to figure out a way of passing the array from App to our child component.
+
+We first start by importing our ListContacts component. We are then able to use it in our App's render method. We then create a contacts prop and pass in the contacts array.
+
+```jsx
+// App.js
+import React, { Component } from 'react';
+import ListContacts from './ListContacts';
+
+const contacts = [
+  {
+    id: 'karen',
+    name: 'Karen Isgrigg',
+    handle: 'karen_isgrigg',
+    avatarURL: 'http://localhost:5001/karen.jpg'
+  }
+  // additional elements...
+];
+
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <ListContacts contacts={contacts} />
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+We can think of this as we would a function invocation. We can pass data to that function in the same way we're passing data to our component as a prop.
+
+Lastly if we want to test we can console.log the following in ListContacts.js and view this in our Console.
+
+```jsx
+class ListContacts extends Component {
+  render() {
+    console.log('Props', this.props);
+    return (
+      <ol className="contact-list">
+
+      </ol>
+    );
+  }
+}
+```
+
+[![rf18](../assets/images/rf18-small.jpg)](../assets/images/rf18.jpg)
+
+Argument is to function what props is to component.
+
+#### Question 2 of 4
+If there were a `<Clock />` component in an app you're building, how would you pass a `currentTime` prop into it?
+
+- [ ] `<Clock {new Date().getTime()} />`
+- [ ] `<Clock this.props={new Date().getTime()} />`
+- [x] `<Clock currentTime={new Date().getTime()} />`
+- [ ] `<Clock this.currentTime={new Date().getTime()} />`
+
+#### ListContacts - map over array
+
+Next we map over the contacts array and create a list item outputting the name for each. We create a key attribute and output the id.
+
+```jsx
+class ListContacts extends Component {
+  render() {
+    return (
+      <ol className="contact-list">
+        {this.props.contacts.map(contact => (
+          <li key={contact.id}>
+            {contact.name}
+          </li>
+        ))}
+      </ol>
+    );
+  }
+}
+```
+
+Notice that we use a parens instead of curly braces after the ES6 arrow function in order to get the implicit return.
+
+The reason we need to add a key is because eventually one of those list items may change, and by having a unique key attribute on each list item, React is able to perfomantly know which list item has changed and can update just that item rather than having to recreate the entire list every time.
+
+[![rf19](../assets/images/rf19-small.jpg)](../assets/images/rf19.jpg)
+
+#### QUESTION 3 OF 4
+Using the `<Clock />` component example:
+
+```jsx
+<Clock currentTime='3:41pm' />
+```
+
+How would you access the value 3:41pm from inside the component?
+
+- [ ] Clock.currentTime
+- [ ] currentTime
+- [ ] this.currentTime
+- [x] this.props.currentTime
+
+#### ListContacts - display data & inline style
+Now instead of just showing the names, we want to fill out the rest of the component.
+
+We start by adding a className to the list item. We then create a div which will be used for the avatar. We'll want to add an inline style to this div so we can pass in the specific image url for this avatar that is contained in our contacts array.
+
+The style attribute has two curly braces. The first tells React that we're using JavaScript and the second is the object that we're passing in with the inline style rules.
+
+Then we create another div to contain paragraph elements for the name and handle.
+
+```jsx
+class ListContacts extends Component {
+  render() {
+    return (
+      <ol className="contact-list">
+        {this.props.contacts.map(contact => (
+          <li key={contact.id} className="contact-list-item">
+            <div
+              className="contact-avatar"{% raw %}
+              style={{
+                backgroundImage: `url(${contact.avatarURL})`
+              }}{% endraw %}
+            />
+            <div className="contact-details">
+              <p>{contact.name}</p>
+              <p>{contact.handle}</p>
+            </div>
+            <button className="contact-remove">Remove</button>
+          </li>
+        ))}
+      </ol>
+    );
+  }
+}
+```
+
+Lastly, we create a button for the Remove action which is not hooked up yet.
+
+[![rf20](../assets/images/rf20-small.jpg)](../assets/images/rf20.jpg)
+
+#### Question 4 of 4
+How do you pass multiple props individually to a component?
+
+- [x] `<Clock time={Date.now()} zone='MST' />`
+- [ ] `<Clock props={{time: Date.now(), zone: 'MST'}} />`
+- [ ] `<Clock [time=Date.now(), zone='MST'] />`
+- [ ] `<Clock props={[Date.now(), 'MST']} />`
+
+#### Passing Data With Props Recap
+A prop is any input that you pass to a React component. Just like an HTML attribute, a prop name and value are added to the Component.
+
+```jsx
+// passing a prop to a component
+<LogoutButton text='Wanna log out?' />
+```
+
+In the code above, `text` is the prop and the string 'Wanna log out?' is the value.
+
+All props are stored on the `this.props` object. So to access this `text` prop from inside the component, we'd use `this.props.text`:
+
+```jsx
+// access the prop inside the component
+...
+render() {
+ return <div>{this.props.text}</div>
+}
+...
+```
+
+##### Further Research
+- [Components and Props](https://facebook.github.io/react/docs/components-and-props.html) from the React Docs
