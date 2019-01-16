@@ -1461,7 +1461,8 @@ class ListContacts extends Component {
 
 Lastly, we create a button for the Remove action which is not hooked up yet.
 
-[![rf20](../assets/images/rf20-small.jpg)](../assets/images/rf20.jpg)
+[![rf20](../assets/images/rf20-small.jpg)](../assets/images/rf20.jpg)<br>
+**Live Demo:** [Edit on CodeSandbox - Contacts App](https://codesandbox.io/s/qk7olqz52j)
 
 #### Question 4 of 4
 How do you pass multiple props individually to a component?
@@ -1658,4 +1659,188 @@ export default FavoriteMovies;
 
 Here's the final result.
 
-[![rf21](../assets/images/rf21-small.jpg)](../assets/images/rf21.jpg)
+[![rf21](../assets/images/rf21-small.jpg)](../assets/images/rf21.jpg)<br>
+**Live Demo:** [Edit on CodeSandbox - Ex 1 - Passing Data](https://codesandbox.io/s/42xj4xq7l4)
+
+### 3.5 Ex 2 - Passing Data
+The instructions for this exercise are:
+
+> #### Instructions
+> Let's do something a little bit more complicated. Instead of displaying a
+list of users and their movies, this time you need to display a list of movies.
+>
+> For each movie in the list, there are two options:
+>
+> 1. If the movie has been favorited, then display a list of all of the users who said that this movie was their favorite.
+> 2. If the movie has *not* been favorited, display some text stating that no one favorited the movie.
+>
+> As you go about tackling this project, try to make the app *modular* by breaking it into resusable React components.
+>
+> ##### Example
+>
+> ```html
+> <h2>Forrest Gump</h2>
+> <p>Liked By:</p>
+> <ul>
+>   <li>Nicholas Lain</li>
+> </ul>
+>
+> <h2>Get Out</h2>
+> <p>Liked By:</p>
+> <ul>
+>   <li>John Doe</li>
+>   <li>Autumn Green</li>
+> </ul>
+>
+> <h2>Autumn Green</h2>
+> <p>None of the current users liked this movie</p>
+> ```
+
+Same data as before.
+
+```js
+// data.js
+const profiles = [
+  {
+    id: 1,
+    userID: '1',
+    favoriteMovieID: '1',
+  },
+  // more records...
+];
+
+const users = {
+  1: {
+    id: 1,
+    name: 'Jane Cruz',
+    userName: 'coder',
+  },
+  // more records...
+};
+
+const movies = {
+  1: {
+    id: 1,
+    name: 'Planet Earth 1',
+  },
+  // more records...
+};
+
+export {profiles, users, movies};
+```
+
+#### 3.5 Solution
+The data is the same as the previous exercise except this time it had some more complexity.
+
+It required one component to loop through the movies (PopularMovies). Then it required a child component (UserList) to display the names of people that favorited that movie.
+
+Within App I just passed the *profiles*, *users*, *movies* as `props` to my FavoriteMovies component.
+
+```jsx
+// Appp.js
+import React, { Component } from 'react';
+import './App.css';
+import { profiles, users, movies } from './data.js';
+import PopularMovies from './PopularMovies';
+
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src="logo.svg" className="App-logo" alt="logo" />
+          <h1 className="App-title">ReactND - Coding Practice</h1>
+          <p>Exercise 2 - Passing Data</p>
+        </header>
+        <main className="App-main">
+          <h2>How Popular is Your Favorite Movie?</h2>
+          <PopularMovies profiles={profiles} users={users} movies={movies} />
+        </main>
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+Next I destructured `props` and created *moviesArr* from the movies object.
+
+```jsx
+// PopularMovies.js
+import React, { Component } from 'react';
+import UserList from './UserList';
+
+class PopularMovies extends Component {
+  render() {
+    const { profiles, users, movies } = this.props;
+    const moviesArr = Object.values(movies);
+    return (
+      <div className="PopularMovies-container">
+        {moviesArr.map(movie => (
+          <div key={movie.id} className="PopularMovies-cell">
+            <h3>{movie.name}</h3>
+            <UserList movieID={movie.id} users={users} profiles={profiles} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+}
+
+export default PopularMovies;
+```
+
+*moviesArr* follows this format:
+
+- `[{id: 1, name: 'movie 1'}, {id:2, name: 'movie 2'}, ...]`
+
+Now I can map over the movies to output my movie name and pass the following to my UserList component.
+
+- *movieID*
+- *users*
+- *profiles*
+
+In UserList I filter the profiles array by returning only those users that have favorited the specific *movieID* we're on.
+
+```jsx
+// UserList.js
+import React, { Component } from 'react';
+
+class UserList extends Component {
+  render() {
+    const { movieID, profiles, users } = this.props;
+    const filteredProfiles = profiles.filter(
+      profile => Number(profile.favoriteMovieID) === movieID
+    );
+
+    // console.log(filteredProfiles);
+    if (!filteredProfiles || filteredProfiles.length === 0) {
+      return <p>None of the current users liked this movie</p>;
+    }
+
+    return (
+      <div>
+        <p>Liked by:</p>
+        <ul>
+          {filteredProfiles.map(profile => (
+            <li key={profile.userID}>{users[profile.userID].name}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+}
+
+export default UserList;
+```
+
+Next, I check if no *filteredProfiles* array items exist then I output a message and return.
+
+Otherwise I map over *filteredProfiles* and resolve the *users.name* based on the *profile.userID*.
+
+Lastly I added some styling so it lays out nicely.
+
+[![rf23](../assets/images/rf23-small.jpg)](../assets/images/rf23.jpg)<br>
+**Live Demo:** [Edit on CodeSandbox - Ex 2 - Passing Data](https://codesandbox.io/s/m3mny1540p)
+
