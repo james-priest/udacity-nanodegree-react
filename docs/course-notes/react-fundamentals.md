@@ -1466,10 +1466,10 @@ Lastly, we create a button for the Remove action which is not hooked up yet.
 #### Question 4 of 4
 How do you pass multiple props individually to a component?
 
-- [x] `<Clock time={Date.now()} zone='MST' />`
+- [x] `<Clock time={Date.now()} zone='MST' />`{% raw %}
 - [ ] `<Clock props={{time: Date.now(), zone: 'MST'}} />`
 - [ ] `<Clock [time=Date.now(), zone='MST'] />`
-- [ ] `<Clock props={[Date.now(), 'MST']} />`
+- [ ] `<Clock props={[Date.now(), 'MST']} />`{% endraw %}
 
 #### Passing Data With Props Recap
 A prop is any input that you pass to a React component. Just like an HTML attribute, a prop name and value are added to the Component.
@@ -1494,3 +1494,168 @@ render() {
 
 ##### Further Research
 - [Components and Props](https://facebook.github.io/react/docs/components-and-props.html) from the React Docs
+
+### 3.3 Exercise Prep
+#### Workspaces
+In this program, you'll be able to practice what you've learned right inside the classroom!
+
+A Workspace is a development environment integrated into the Udacity Classroom. Your Workspace is backed by a Linux virtual machine (Ubuntu). You have access to a terminal, so you have complete control over installing packages and modifying content.
+
+#### Exercises in Workspaces
+Each Workspace contains an instructions.md file that contains the instructions for the exercise. Each Workspace also contain a Possible Solution folder located inside of the src folder. We recommend not looking inside the Possible Solution folder until you have finished the exercise on your own. That way, you can practice recalling and applying what you've learned, thereby solidifying your understanding of the material.
+
+[![rf22](../assets/images/rf22-small.jpg)](../assets/images/rf22.jpg)
+
+#### Preservation Information
+The first time you open your Workspace, a new virtual machine is created just for you. Any files that you modify in /home/workspace or any new files you add in /home/workspace are automatically backed up and saved. The next time you come back to the Workspace, any previous changes will be preserved.
+
+If you don't interact with the Workspace for 30 minutes, the Workspace will be suspended. The Workspace becomes idle by any of the following:
+
+- not interacting with the browser tab of the Workspace
+- closing the browser tab with the Workspace
+- if your laptop goes to sleep
+- etc
+
+#### Restoring Your Workspace
+If your Workspace has been suspended after a period of inactivity, just click the "Wake Up Workspace" button to restore it. Remember that none of your data is lost.
+
+#### Project Development
+Think of your Workspace as a normal computer:
+
+- Open up the files you need to edit (saving is done automatically).
+- Open terminal windows as necessary.
+  - The terminal should start at /home/workspace, so make sure to cd to the correct directory as necessary.
+- Start the project
+  - start a terminal (no need to cd anywhere)
+  - run `npm install`
+  0- run `npm start`
+- Open the src folder and start working on the exercise.
+- To view your project, click the "Open Preview Tab" button located in the lower left of the screen.
+  - Running `npm start` causes Create React App to display a URL of http://localhost:3000/. Because your Workspace is running in a virtual machine, typing http://localhost:3000/ into your browser will not access the local host of the VM, so make sure to use the "Open Preview Tab" button.
+
+#### Committing to Github
+We strongly recommend committing your files to Github whenever you're working on coding projects. Workspaces provide a convenient way to do that - just use the Workspace Terminal.
+
+To commit files from your Workspace directly to Github:
+
+1. Set up a new Github repository.
+2. Use the Workspace terminal to commit files to Github as usually would. If you need a refresher, click [here](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/). Don't forget to add your `node_modules` folder to the `.gitignore` file.
+
+#### Unable to Access Your Workspace?
+If you are unable to access your Workspace in the Classroom it could be because you have "3rd Party Cookies" disabled in your browser. Workspaces need to set a "3rd party cookie" to enable access.
+
+Check out this [Workspace troubleshooting FAQ](https://udacity.zendesk.com/hc/en-us/articles/115004653246) for information on how to enable 3rd party cookies for your browser.
+
+### 3.4 Ex 1 - Passing Data
+This exercise consisted of the following instructions.
+
+> #### Instructions
+> Use React and the `profiles`, `users`, and `movies` data in App.js to display a list of users alongside their favorite movies.
+>
+> ##### Example
+>
+> Jane Cruz's favorite movie is Planet Earth 1.
+
+The data looks like this.
+
+```js
+// data.js
+const profiles = [
+  {
+    id: 1,
+    userID: '1',
+    favoriteMovieID: '1',
+  },
+  // more records...
+];
+
+const users = {
+  1: {
+    id: 1,
+    name: 'Jane Cruz',
+    userName: 'coder',
+  },
+  // more records...
+};
+
+const movies = {
+  1: {
+    id: 1,
+    name: 'Planet Earth 1',
+  },
+  // more records...
+};
+
+export {profiles, users, movies};
+```
+
+#### 3.4 Solution
+The entry point is **index.jsx**. It imports our styles.css and App component and then renders that App component.
+
+```jsx
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+import './styles.css';
+
+const rootElement = document.getElementById('root');
+ReactDOM.render(<App />, rootElement);
+```
+
+App will act as the parent component. It imports **data.js** and passes that data as `props` to the FavoriteMovies component.
+
+```jsx
+// App.js
+import React, { Component } from 'react';
+import './App.css';
+import FavoriteMovies from './FavoriteMovies';
+import { profiles, users, movies } from './data.js';
+
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <header className="App-header">
+          <img src="logo.svg" className="App-logo" alt="logo" />
+          <h1 className="App-title">ReactND - Coding Practice</h1>
+        </header>
+        <h2>Favorite Movies</h2>
+        <FavoriteMovies profiles={profiles} users={users} movies={movies} />
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+The FavoriteMovies component maps over the props data and gets both user's name and the movie name from the lookup object stores.
+
+```jsx
+// FavoriteMovies.js
+import React, { Component } from 'react';
+
+class FavoriteMovies extends Component {
+  render() {
+    const { profiles, users, movies } = this.props;
+    return (
+      <ol>
+        {profiles.map(profile => (
+          <li key={profile.id}>
+            {users[profile.userID].name}'s favorite movie is{' '}
+            {movies[profile.favoriteMovieID].name}
+          </li>
+        ))}
+      </ol>
+    );
+  }
+}
+
+export default FavoriteMovies;
+```
+
+Here's the final result.
+
+[![rf21](../assets/images/rf21-small.jpg)](../assets/images/rf21.jpg)
