@@ -178,7 +178,7 @@ That's it! Notice that with this code we haven't:
 #### React is Declarative
 We'll get to writing React code very soon, but let's take another glimpse at it to show how it's declarative.
 
-```jsx
+```html
 <button onClick={activateTeleporter}>Activate Teleporter</button>
 ```
 
@@ -585,7 +585,8 @@ const element = React.createElement("div",  null, "hello world");
 ReactDOM.render(element, document.getElementById("root"));
 ```
 
-[![rf5](../assets/images/rf5-small.jpg)](../assets/images/rf5.jpg)
+[![rf5](../assets/images/rf5-small.jpg)](../assets/images/rf5.jpg)<br>
+**Live Demo:** [React Element on CodeSandbox](https://codesandbox.io/s/427v5vvkmw)
 
 #### ReactDOM
 One thing to keep in mind is that we could be rendering out to different destinations.  For that reason, ReactDOM was split out of the React library. Some other destinations include:
@@ -641,7 +642,8 @@ ReactDOM.render(element, document.getElementById("root"));
 
 ```
 
-[![rf7](../assets/images/rf7-small.jpg)](../assets/images/rf7.jpg)
+[![rf7](../assets/images/rf7-small.jpg)](../assets/images/rf7.jpg)<br>
+**Live Demo:** [React Element on CodeSandbox](https://codesandbox.io/s/427v5vvkmw)
 
 When we're creating these React elements we must remember that we are describing DOM nodes not HTML elements. For that reason we must use things like 'className' rather than 'class' since 'class' is a reserved word.
 
@@ -695,7 +697,8 @@ ReactDOM.render(element, document.getElementById("root"));
 
 ```
 
-[![rf8](../assets/images/rf8-small.jpg)](../assets/images/rf8.jpg)
+[![rf8](../assets/images/rf8-small.jpg)](../assets/images/rf8.jpg)<br>
+**Live Demo:** [React Element on CodeSandbox](https://codesandbox.io/s/427v5vvkmw)
 
 #### List Data
 Now, what we currently have is fine but most of the time when you need a list, you'll probably have the items in an array somewhere.
@@ -727,7 +730,8 @@ const element = React.createElement(
 ReactDOM.render(element, document.getElementById("root"));
 ```
 
-[![rf9](../assets/images/rf9-small.jpg)](../assets/images/rf9.jpg)
+[![rf9](../assets/images/rf9-small.jpg)](../assets/images/rf9.jpg)<br>
+**Live Demo:** [React Element on CodeSandbox](https://codesandbox.io/s/427v5vvkmw)
 
 The thing I like about using JavaScript to generate these elements is that I didn't need any special syntax to map over the array. Instead, I just used array.map.
 
@@ -764,7 +768,8 @@ const element = React.createElement(
 ReactDOM.render(element, document.getElementById("root"));
 ```
 
-[![rf11](../assets/images/rf11-small.jpg)](../assets/images/rf11.jpg)
+[![rf11](../assets/images/rf11-small.jpg)](../assets/images/rf11.jpg)<br>
+**Live Demo:** [React Element on CodeSandbox](https://codesandbox.io/s/427v5vvkmw)
 
 So, you'll notice here that the warning goes away. Now, we're not going to go too deep  nto the key prop in this lesson. But know that if you are mapping over an array with React and you're creating elements for each item in that array, each element needs its own unique key prop.
 
@@ -828,6 +833,8 @@ const element = (
 ReactDOM.render(element, document.getElementById('app'));
 ```
 
+**Live Demo:** [React Simple JSX on CodeSandbox](https://codesandbox.io/s/xl6jw432no)
+
 As we said earlier whenever we give React an array, we need to give a unique key prop to each one of the repeating elements, list item in this case.
 
 You'll notice it looks like we're assigning values to HTML attributes. We do this by opening up a JavaScript expression and using `person.name` as the value of the key prop.
@@ -865,7 +872,7 @@ const greeting = React.createElement(
 - [ ] 'Hello world', 'div', 'h2'
 
 #### JSX returns *One* main element, too
-When writing JSX, keep in mind that it must only return a single element. This element may have any number of descendants, but there must be a single root element wrapping your overall JSX (typically a `<div>` or a `<span>`). Check out the following example:
+When writing JSX, keep in mind that it must only return a single element. This element may have any number of descendants, but there must be **a single root element wrapping your overall JSX** (typically a `<div>` or a `<span>`). Check out the following example:
 
 ```jsx
 const message = (
@@ -886,9 +893,9 @@ See how there's only one `<div>` element in the code above and that all other JS
 const message = (
  <h1>All About JSX:</h1>
  <ul>
- <li>JSX</li>
- <li>is</li>
- <li>awesome!</li>
+   <li>JSX</li>
+   <li>is</li>
+   <li>awesome!</li>
  </ul>
 );
 ```
@@ -931,6 +938,8 @@ class ContactList extends React.Component {
 
 ReactDOM.render(<ContactList />, document.getElementById('app'));
 ```
+
+**Live Demo:** [First Component on CodeSandbox](https://codesandbox.io/s/m7xqr84m48)
 
 > #### 💡 Declaring Components in React 💡
 > In the previous video, we defined the ContactList component like so:
@@ -1107,6 +1116,8 @@ const rootElement = document.getElementById('root');
 ReactDOM.render(<App />, rootElement);
 ```
 
+**Live Demo:** [Simple Composition on CodeSandbox](https://codesandbox.io/s/p98n45z1wq)
+
 We can already see how easy it is to create our own custom elements as we've talked about before, and compose them together. We can take the ContactList and put it right inside the application.
 
 Encapsulating many elements inside of a component gives us a few advantages.
@@ -1156,6 +1167,8 @@ function App() {
 const rootElement = document.getElementById('root');
 ReactDOM.render(<App />, rootElement);
 ```
+
+**Live Demo:** [Simple Composition on CodeSandbox](https://codesandbox.io/s/p98n45z1wq)
 
 You can see we were able to reuse the elements from ContactList but configure them completely separately. This makes it really easy to reuse  these components by just passing in little bits of configuration via the props.
 
@@ -1462,7 +1475,7 @@ class ListContacts extends Component {
 Lastly, we create a button for the Remove action which is not hooked up yet.
 
 [![rf20](../assets/images/rf20-small.jpg)](../assets/images/rf20.jpg)<br>
-**Live Demo:** [Edit on CodeSandbox - Contacts App](https://codesandbox.io/s/qk7olqz52j)
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/qk7olqz52j)
 
 #### Question 4 of 4
 How do you pass multiple props individually to a component?
@@ -1660,7 +1673,7 @@ export default FavoriteMovies;
 Here's the final result.
 
 [![rf21](../assets/images/rf21-small.jpg)](../assets/images/rf21.jpg)<br>
-**Live Demo:** [Edit on CodeSandbox - Ex 1 - Passing Data](https://codesandbox.io/s/42xj4xq7l4)
+**Live Demo:** [Ex 1 - Passing Data on CodeSandbox](https://codesandbox.io/s/42xj4xq7l4)
 
 ### 3.5 Ex 2 - Passing Data
 The instructions for this exercise are:
@@ -1842,5 +1855,391 @@ Otherwise I map over *filteredProfiles* and resolve the *users.name* based on th
 Lastly I added some styling so it lays out nicely.
 
 [![rf23](../assets/images/rf23-small.jpg)](../assets/images/rf23.jpg)<br>
-**Live Demo:** [Edit on CodeSandbox - Ex 2 - Passing Data](https://codesandbox.io/s/m3mny1540p)
+**Live Demo:** [Ex 2 - Passing Data on CodeSandbox](https://codesandbox.io/s/m3mny1540p)
 
+### 3.6 Functional Components
+[![rf24](../assets/images/rf24-small.jpg)](../assets/images/rf24.jpg)
+
+Up until this point we've used JavaScript's class syntax with a render() method to build out our components.
+
+```jsx
+// class component
+class User extends React.Component {
+  render() {
+    return (
+      <p>Username: {this.props.username}</p>
+    )
+  }
+}
+```
+
+Eventually we'll be adding more methods to these classes but if all our component has is a render() method then we can use a regular old function to render out our component.
+
+```jsx
+// stateless functional component
+function Username(props) {
+  return (
+    <p>Username: {props.username}</p>
+  )
+}
+```
+
+Notice, however, that we're no longer accessing the components props by using the 'this' keyword. Instead, our functional component is being passed its props as the first argument to the function.
+
+#### Question 1 of 2
+When is it appropriate to use a Stateless Functional Component? Check all that apply.
+
+- [ ] When the component needs to initialize some data
+- [x] When all the component needs is to just render something
+- [ ] When the component doesn't have any props passed in
+- [ ] When the component does not use JSX
+
+#### Question 2 of 2
+If the <IngredientList /> Component in the following code is a Stateless Functional Component, how would you access the items prop inside the Component?
+
+```html
+<IngredientList items={ingredient.items} />
+```
+
+- props.items
+
+We do away with the 'this' keyword.
+
+#### Refactor ListContacts
+Next we are going to refactor our ListContacts component following the rules above.
+
+Here's the component defined as a class.
+
+```jsx
+// ListContact.js
+import React, { Component } from 'react';
+
+class ListContacts extends Component {
+  render() {
+    return (
+      <ol className="contact-list">
+        {this.props.contacts.map(contact => (
+          <li key={contact.id} className="contact-list-item">
+            <div
+              className="contact-avatar"{% raw %}
+              style={{
+                backgroundImage: `url(${contact.avatarURL})`
+              }}{% endraw %}
+            />
+            <div className="contact-details">
+              <p>{contact.name}</p>
+              <p>{contact.handle}</p>
+            </div>
+            <button className="contact-remove">Remove</button>
+          </li>
+        ))}
+      </ol>
+    );
+  }
+}
+
+export default ListContacts;
+```
+
+After making our changes we have a slightly simpler component in the form of a stateless functional component.
+
+```jsx
+// ListContact.js
+import React from 'react';
+
+function ListContacts(props) {
+  return (
+    <ol className="contact-list">
+      {props.contacts.map(contact => (
+        <li key={contact.id} className="contact-list-item">
+          <div
+            className="contact-avatar"{% raw %}
+            style={{
+              backgroundImage: `url(${contact.avatarURL})`
+            }}{% endraw %}
+          />
+          <div className="contact-details">
+            <p>{contact.name}</p>
+            <p>{contact.handle}</p>
+          </div>
+          <button className="contact-remove">Remove</button>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+export default ListContacts;
+```
+
+This required us to drop the 'this' keyword and simply return the UI code from the function that takes props as it's first argument.
+
+#### Stateless Functional Components Recap
+If your component does not keep track of internal state (i.e., all it really has is just a `render()` method), you can declare the component as a Stateless Functional Component.
+
+Remember that at the end of the day, React components are really just JavaScript functions that return HTML for rendering. As such, the following two examples of a simple Email component are equivalent:
+
+```jsx
+// class component
+class Email extends React.Component {
+ render() {
+   return (
+     <div>
+       {this.props.text}
+     </div>
+   );
+ }
+}
+```
+
+```jsx
+// stateless functional component
+const Email = (props) => (
+ <div>
+   {props.text}
+ </div>
+);
+```
+
+In the latter example (written as an ES6 function with an implicit return), rather than accessing `props` from `this.props`, we can pass in props directly as an argument to the function itself. In turn, this regular JavaScript function can serve as the Email component's `render()` method.
+
+##### Further Research
+- [Functional Components vs. Stateless Functional Components vs. Stateless Components](https://tylermcginnis.com/functional-components-vs-stateless-functional-components-vs-stateless-components/) from Tyler
+
+### 3.7 Ex - Fn Components
+The exercise instructions are.
+
+> #### Instructions
+> Modify this app to use Stateless Functional Components. Remember that for
+performance reasons, if a component doesn't need to hold state, we'd want to
+make it a Stateless Functional Component.
+>
+> This exercise will help you practice passing data into Stateless Functional Components.
+
+#### App.js
+
+```jsx
+// before
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h1 className="App-title">ReactND - Coding Practice</h1>
+        </header>
+        <h1>How Popular is Your Favorite Movie?</h1>
+        <MovieCardsList profiles={profiles} movies={movies} users={users} />
+      </div>
+    );
+  }
+}
+```
+
+```jsx
+// after
+function App (props) {
+  return (
+    <div>
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <h1 className="App-title">ReactND - Coding Practice</h1>
+      </header>
+      <h1>How Popular is Your Favorite Movie?</h1>
+      <MovieCardsList profiles={profiles} movies={movies} users={users} />
+    </div>
+  )
+}
+```
+
+#### MovieCardsList
+
+```jsx
+//before
+class MovieCardsList1 extends Component {
+  render() {
+    const { profiles, users, movies } = this.props;
+    const usersByMovie = {};
+
+    profiles.forEach(profile => {
+      const movieID = profile.favoriteMovieID;
+
+      if (usersByMovie[movieID]) {
+        usersByMovie[movieID].push(profile.userID);
+      } else {
+        usersByMovie[movieID] = [profile.userID];
+      }
+    });
+
+    const movieCards = Object.keys(movies).map(id => (
+      <MovieCard
+        key={id}
+        users={users}
+        usersWhoLikedMovie={usersByMovie[id]}
+        movieInfo={movies[id]}
+      />
+    ));
+
+    return <ul>{movieCards}</ul>;
+  }
+}
+```
+
+```jsx
+// after
+function MovieCardsList(props) {
+  const { profiles, users, movies } = this.props;
+  const usersByMovie = {}; // create empty object
+
+  profiles.forEach(profile => {
+    const movieID = profile.favoriteMovieID; // get movieID as key
+
+    if (usersByMovie[movieID]) { // loop thru ea. profile item
+      usersByMovie[movieID].push(profile.userID); // push user onto array
+    } else { // else if movie key does not exit
+      usersByMovie[movieID] = [profile.userID]; // assign user array to key
+    }
+  });
+
+  const movieCards = Object.keys(movies).map(id => (
+    <MovieCard
+      key={id}
+      users={users}
+      usersWhoLikedMovie={usersByMovie[id]}
+      movieInfo={movies[id]}
+    />
+  ));
+
+  return <ul>{movieCards}</ul>;
+}
+```
+
+#### MovieCard
+
+```jsx
+// before
+class MovieCard extends Component {
+  render() {
+    const { users, usersWhoLikedMovie, movieInfo } = this.props;
+
+    return (
+      <li key={movieInfo.id}>
+        <h2>{movieInfo.name}</h2>
+        <h3>Liked By:</h3>
+
+        {!usersWhoLikedMovie || usersWhoLikedMovie.length === 0 ? (
+          <p>None of the current users liked this movie.</p>
+        ) : (
+          <ul>
+            {usersWhoLikedMovie &&
+              usersWhoLikedMovie.map(userId => {
+                return (
+                  <li key={userId}>
+                    <p>{users[userId].name}</p>
+                  </li>
+                );
+              })}
+          </ul>
+        )}
+      </li>
+    );
+  }
+}
+```
+
+```jsx
+// after
+function MovieCard(props) {
+  const { users, usersWhoLikedMovie, movieInfo } = props;
+
+  return (
+    <li key={movieInfo.id}>
+      <h2>{movieInfo.name}</h2>
+      <h3>Liked By:</h3>
+
+      {!usersWhoLikedMovie || usersWhoLikedMovie.length === 0 ? (
+        <p>None of the current users liked this movie.</p>
+      ) : (
+        <ul>
+          {usersWhoLikedMovie &&
+            usersWhoLikedMovie.map(userId => {
+              return (
+                <li key={userId}>
+                  <p>{users[userId].name}</p>
+                </li>
+              );
+            })}
+        </ul>
+      )}
+    </li>
+  );
+}
+
+```
+
+<!-- 
+### 3.8 Add Component State
+Earlier in this Lesson, we learned that `props` refer to attributes from parent components. In the end, props represent "read-only" data that are *immutable*.
+
+A component's state, on the other hand, represents mutable data that ultimately affects what is rendered on the page. State is managed internally by the component itself and is meant to change over time, commonly due to user input (e.g., clicking on a button on the page).
+
+In this section, we'll see how we can encapsulate the complexity of state management to individual components.
+
+#### State
+At this point, you've learned about
+
+1. Creating components
+2. Composing components together
+3. Passing data to components
+
+However, we still haven't talked about what may be the best part of React, state management.
+
+Because of React's component model, we're able to encapsulate the complexity of state management to individual components. This allows us to build a large application by building out a bunch of smaller applications, which are really just components.
+
+To add state to our components, all we need to do is add a state property to our class whose value is an object. This object represents the state of our component.
+
+Each key in the object, represents a distinct piece of state for this component.
+
+[![rf25](../assets/images/rf25-small.jpg)](../assets/images/rf25.jpg)
+
+Now, just as we did with props, we can access the username property on our state by doing `this.state.username`.
+
+What I really love about React is how it allows my brain to separate two important, yet complex concepts.
+
+1. How the component looks
+2. The current state of my application
+
+Because of the separation, the UI, or how the application looks, is simply a function of the application state.
+
+With React your two concerns are:
+
+- Which state is in my application
+- How does my UI change based off of that state
+
+> #### 💡 Class Fields 💡
+> In the code above, we put the state object directly inside the class...not in a constructor() method!
+>
+> ```jsx
+> class User extends React.Component {
+>   state = {
+>     username: 'Tyler'
+>   }
+> }
+> ```
+>
+> ...rather than:
+>
+> ```jsx
+> class User extends React.Component {
+>   constructor(props) {
+>     super(props);
+>     this.state = {
+>       username: 'Tyler'
+>     };
+>   }
+> }
+> ```
+>
+> This is slightly different from Facebook's [Setting the Initial State docs](https://facebook.github.io/react/docs/react-without-es6.html#setting-the-initial-state).
+>
+> Having state outside the `constructor()` means it is a [class field](https://github.com/tc39/proposal-class-fields), which is a proposal for a new change to the language. It currently isn't supported by JavaScript, but thanks to Babel's fantastic powers of transpiling, we can use it! -->
