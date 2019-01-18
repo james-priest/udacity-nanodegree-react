@@ -1857,6 +1857,11 @@ Lastly I added some styling so it lays out nicely.
 [![rf23](../assets/images/rf23-small.jpg)](../assets/images/rf23.jpg)<br>
 **Live Demo:** [Ex 2 - Passing Data on CodeSandbox](https://codesandbox.io/s/m3mny1540p)
 
+Here's a diagram of how the various components lay out within the UI.
+
+[![rf26](../assets/images/rf26-small.jpg)](../assets/images/rf26.jpg)<br>
+**Live Demo:** [Ex 2 - Passing Data on CodeSandbox](https://codesandbox.io/s/m3mny1540p)
+
 ### 3.6 Functional Components
 [![rf24](../assets/images/rf24-small.jpg)](../assets/images/rf24.jpg)
 
@@ -2174,8 +2179,12 @@ function MovieCard(props) {
     </li>
   );
 }
-
 ```
+
+Here's a diagram showing the layout of the various components within the UI.
+
+[![rf27](../assets/images/rf27-small.jpg)](../assets/images/rf27.jpg)<br>
+**Live Demo:** [Ex - Functional Component on CodeSandbox](https://codesandbox.io/s/p3roynm48q)
 
 <!-- 
 ### 3.8 Add Component State
