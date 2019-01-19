@@ -2186,7 +2186,6 @@ Here's a diagram showing the layout of the various components within the UI.
 [![rf27](../assets/images/rf27-small.jpg)](../assets/images/rf27.jpg)<br>
 **Live Demo:** [Ex - Functional Component on CodeSandbox](https://codesandbox.io/s/p3roynm48q)
 
-<!-- 
 ### 3.8 Add Component State
 Earlier in this Lesson, we learned that `props` refer to attributes from parent components. In the end, props represent "read-only" data that are *immutable*.
 
@@ -2251,4 +2250,132 @@ With React your two concerns are:
 >
 > This is slightly different from Facebook's [Setting the Initial State docs](https://facebook.github.io/react/docs/react-without-es6.html#setting-the-initial-state).
 >
-> Having state outside the `constructor()` means it is a [class field](https://github.com/tc39/proposal-class-fields), which is a proposal for a new change to the language. It currently isn't supported by JavaScript, but thanks to Babel's fantastic powers of transpiling, we can use it! -->
+> Having state outside the `constructor()` means it is a [class field](https://github.com/tc39/proposal-class-fields), which is a proposal for a new change to the language. It currently isn't supported by JavaScript, but thanks to Babel's fantastic powers of transpiling, we can use it!
+
+#### Add State to Contacts App
+Right now our contacts array is living independently, outside our App component.
+
+```jsx
+// App.js
+import React, { Component } from 'react';
+import ListContacts from './ListContacts';
+
+const contacts = [
+  {
+    id: 'karen',
+    name: 'Karen Isgrigg',
+    handle: 'karen_isgrigg',
+    avatarURL: 'http://localhost:5001/karen.jpg'
+  },
+  {
+    id: 'richard',
+    name: 'Richard Kalehoff',
+    handle: 'richardkalehoff',
+    avatarURL: 'http://localhost:5001/richard.jpg'
+  },
+  {
+    id: 'tyler',
+    name: 'Tyler McGinnis',
+    handle: 'tylermcginnis',
+    avatarURL: 'http://localhost:5001/tyler.jpg'
+  }
+];
+
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <ListContacts contacts={contacts} />
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+Having this data live in the scope of the App component isn't necessarily bad but the problem is that it's outside of React's visibility.
+
+React will have no knowledge of any changes made to this data such as when we add, edit, or delete records.  
+
+One of React's strengths is state management and by having this data outside of our component we are not utilizing that strength. For that reason we need to move our contacts array into the local state of our App component.
+
+That way when we start modifying our contacts array, React will see those changes and update the UI based on those changes.
+
+What we'll do is add a `state` property to our local component. This takes in a state object and represents the state for the entire App component.
+
+We'll create a `contacts` property on that state object and then copy the value of the contacts array to that property.
+
+```jsx
+// App.js
+class App extends Component {
+  state = {
+    contacts: [
+      {
+        id: 'karen',
+        name: 'Karen Isgrigg',
+        handle: 'karen_isgrigg',
+        avatarURL: 'http://localhost:5001/karen.jpg'
+      },
+      {
+        id: 'richard',
+        name: 'Richard Kalehoff',
+        handle: 'richardkalehoff',
+        avatarURL: 'http://localhost:5001/richard.jpg'
+      },
+      {
+        id: 'tyler',
+        name: 'Tyler McGinnis',
+        handle: 'tylermcginnis',
+        avatarURL: 'http://localhost:5001/tyler.jpg'
+      }
+    ]
+  };
+  render() {
+    return (
+      <div>
+        <ListContacts contacts={this.state.contacts} />
+      </div>
+    );
+  }
+}
+```
+
+Now in order to get access to the local component state we need to access it with `this.state.contacts`.
+
+So, the UI looks the same but what we've done is moved our contacts array from being in the scope of the module to actually being a property on the local component state.
+
+[![rf28](../assets/images/rf28-small.jpg)](../assets/images/rf28.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
+
+> #### ️⚠️ Props in Initial State ⚠️
+> When defining a component's initial state, avoid initializing that state with `props`. This is an error-prone anti-pattern, since state will only be initialized with props when the component is first created.
+>
+> ```jsx
+> this.state = {
+>   user: props.user
+> }
+> ```
+>
+> In the above example, if props are ever updated, the current state will not change unless the component is "refreshed." Using props to produce a component's initial state also leads to duplication of data, deviating from a dependable "source of truth."
+
+#### Quiz Question
+What is true about state in React? Please select all that apply:
+
+- [x] A component's state can be defined at initialization.
+- [x] State that is needed by multiple components needs to be lifted up to the closest common ancestor.
+- [ ] State should be used when you want to store information that will never change.
+- [x] A component can alter it's own internal state.
+
+#### State Recap
+By having a component manage its own state, any time there are changes made to that state, React will know and *automatically* make the necessary updates to the page.
+
+This is one of the key benefits of using React to build UI components: when it comes to re-rendering the page, we just have to think about updating state.
+
+- We don't have to keep track of exactly which parts of the page change each time there are updates.
+- We don't need to decide how we will efficiently re-render the page.
+
+React compares the previous output and new output, determines what has changed, and makes these decisions for us. This process of determining what has changed in the previous and new outputs is called **Reconciliation**.
+
+#### Further Research
+- [Identify Where Your State Should Live](https://facebook.github.io/react/docs/thinking-in-react.html#step-4-identify-where-your-state-should-live)
