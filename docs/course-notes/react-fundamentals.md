@@ -2379,3 +2379,194 @@ React compares the previous output and new output, determines what has changed, 
 
 #### Further Research
 - [Identify Where Your State Should Live](https://facebook.github.io/react/docs/thinking-in-react.html#step-4-identify-where-your-state-should-live)
+
+### 3.9 Updating State
+Now that we have state inside of our application, the next step is to figure out how to update it. Your natural intuition might be to update the state directly.
+
+- `this.state.username = 'James'` - ⚠️ This is wrong ⚠️
+
+Unfortunately, that's not going to work. The reason is because by mutating the state directly, React will have no idea that the state of your component actually changed.
+
+#### setState()
+To solve this problem, React gives you a helper method called `setState()`. There are two ways to use setState.
+
+- setState function - used when new state is based on previous state
+- setState object - used when new state doesn't depend on previous state
+
+The first way is by passing setState a function.
+
+```jsx
+// setState function
+this.setState(prevState => ({ // <- implicit return of an object
+  count: prevState.count + 1
+}))
+```
+
+The function will be passed the previous state as its first argument.
+The object returned from this function will be merged with the current state to form the new state of the component.
+
+The second pattern is to pass an object. This object will be merged with the current state to form the new state of the component.
+
+```jsx
+// setState object
+this.setState({
+  username: 'James'
+})
+```
+
+Typically, you want to use the functional setState when the new state of your component depends on the previous state.
+
+[![rf29](../assets/images/rf29-small.jpg)](../assets/images/rf29.jpg)
+
+For everything else, you can use the object setState. However, I always prefer to use the functional setState.
+
+Regardless of how you use setState, the end result will always be the same: Whenever you invoke setState, React by default is going to re-render your entire application and update the UI.
+
+This is why we say that in React, your UI is just a function of your state. Once your state changes, your UI will automatically update accordingly.
+
+#### Hooking the delete button up to Contact App
+Now that our state is living inside of our component, the next step is to hook up the delete buttons so that the specific contact is deleted whenever the button is clicked.
+
+The reason we're able to do this is because our state is living inside of our App component.
+
+#### removeContact() method
+We're going to add a method to our App component which is responsible for taking in a specific contact and then deleting that contact from our contacts array.
+
+We do this by creating a `removeContact` method that takes in a `contact` object and calls `setState()` passing in the `currentState`.
+
+We specify the property we're updating (contacts) and set it to the new value. We use filter to remove the contact we want to delete.
+
+```jsx
+  removeContact = contact => {
+    this.setState(currentState => ({
+      contacts: currentState.contacts.filter(c => {
+        return c.id !== contact.id;
+      })
+    }));
+  };
+```
+
+Then to allow our ListContacts component to use this method we must pass it as props so we can hook it up to the delete button. Just as we can pass data as props, we can also pass functions as props as well.
+
+Once again, the reason the `removeContact()` method is living inside our App component is because that is where our data lives.
+
+Here is the completed App component.
+
+```jsx
+// App.js
+class App extends Component {
+  state = {
+    contacts: [
+      {
+        id: 'karen',
+        name: 'Karen Isgrigg',
+        handle: 'karen_isgrigg',
+        avatarURL: 'http://localhost:5001/karen.jpg'
+      },
+      // more records..
+     ]
+  };
+  removeContact = contact => {
+    this.setState(currentState => ({
+      contacts: currentState.contacts.filter(c => {
+        return c.id !== contact.id;
+      })
+    }));
+  };
+  render() {
+    return (
+      <div>
+        <ListContacts
+          contacts={this.state.contacts}
+          onDeleteContact={this.removeContact}
+        />
+      </div>
+    );
+  }
+}
+```
+
+#### onClick method
+Next we need hook up our `onDeleteContact` method to the delete button's `onClick` method inside our ListContacts component.
+
+```jsx
+<button
+  className="contact-remove"
+  onClick={() => props.onDeleteContact(contact)}
+>
+  Remove
+</button>
+```
+
+One thing to note is that since we need to pass in `contact` as an argument we need to wrap the `onDeleteContact` function call in an arrow function.
+
+One other way of doing this would be to do the following.
+
+```jsx
+<button
+  className="contact-remove"
+  onClick={props.onDeleteContact.bind(null, contact)}
+>
+  Remove
+</button>
+```
+
+This is the updated app with delete contact feature implemented.
+
+[![rf30](../assets/images/rf30-small.jpg)](../assets/images/rf30.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
+
+#### How State is Set
+Earlier in this lesson, we saw how we can define a component's state at the time of initialization. Since state reflects *mutable* information that ultimately affects rendered output, a component may also update its state throughout its lifecycle using `this.setState()`. As we've learned, when local state changes, React will trigger a re-render of the component.
+
+There are two ways to use `setState()`. The first is to merge state updates. Consider a snippet of the following component:
+
+```jsx
+class Email extends React.Component {
+ state = {
+   subject: '',
+   message: ''
+ }
+ // ...
+});
+```
+
+Though the initial state of this component contains two properties (`subject` and `message`), they can be updated independently. For example:
+
+```jsx
+this.setState({
+ subject: 'Hello! This is a new subject'
+})
+```
+
+This way, we can leave `this.state.message` as-is, but replace `this.state.subject` with a new value.
+
+The second way we can use `setState()` is by passing in a function rather than an object. For example:
+
+```jsx
+this.setState(prevState => ({
+ count: prevState.count + 1
+}))
+```
+
+Here, the function passed in takes a single `prevState` argument. When a component's new state depends on the previous state (i.e., we are incrementing `count` in the previous state by 1), we want to use the functional `setState()`.
+
+#### Quiz Question
+What is true about setting state in our components? Please check all that apply:
+
+- [x] Whenever `setState()` is called, the component also calls `render()` with the new state
+- [x] State updates can be merged by passing in an object to `setState()`
+- [ ] Updating state directly is ideal when you want to re-render a component (i.e. preferring 'this.state.message = 'hi there';` rather than `this.setState({ message: 'hi there' });`)
+- [x] State updates can be asynchronous (i.e. `setState()` can accept a function with the previous state as its first argument)
+- [ ] `setState()` should be called within the component's `render()` method
+
+> In the end, your UI is just a function of your state. Being able to leverage React's automatic re-renders when resetting state can give your app's users a truly dynamic experience.
+
+#### setState() Recap
+While a component can set its state when it initializes, we expect that state to change over time, usually due to user input. The component is able to change its own internal state using `this.setState()`.
+
+Each time state is changed, React knows and will call `render()` to re-render the component. This allows for fast, efficient updates to your app's UI.
+
+Further Research
+[Using State Correctly](https://facebook.github.io/react/docs/state-and-lifecycle.html) from the React Docs
+
