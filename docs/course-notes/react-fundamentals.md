@@ -539,8 +539,8 @@ Let's recap on some of the things we covered in this lesson on why React is grea
 
 Read these 3 articles that cover some of the essentials of React: 
 
-- [Virtual DOM](https://facebook.github.io/react/docs/optimizing-performance.html#avoid-reconciliation)
-- [The Diffing Algorithm](https://facebook.github.io/react/docs/reconciliation.html#the-diffing-algorithm)
+- [Virtual DOM](https://reactjs.org/docs/optimizing-performance.html#avoid-reconciliation)
+- [The Diffing Algorithm](https://reactjs.org/docs/reconciliation.html#the-diffing-algorithm)
 - [How Virtual-DOM and diffing works in React](https://medium.com/@gethylgeorge/how-virtual-dom-and-diffing-works-in-react-6fc805f9f84e)
 
 Answer the following questions (in your own words) and share your answers with your Study Group.
@@ -652,7 +652,7 @@ When we're creating these React elements we must remember that we are describing
 > When we call `React.createElement` we haven't actually created anything in the DOM yet. It's not until we cal `render()` that the browser actually creates a real DOM element.
 
 #### Question 2 of 3
-React allows a lot of HTML attributes to be passed along to the React element. Look through [all supported HTML attributes](https://facebook.github.io/react/docs/dom-elements.html#all-supported-html-attributes) in the React docs and select which of the following attributes are allowed:
+React allows a lot of HTML attributes to be passed along to the React element. Look through [all supported HTML attributes](https://reactjs.org/docs/dom-elements.html#all-supported-html-attributes) in the React docs and select which of the following attributes are allowed:
 
 - [x] poster
 - [x] id
@@ -973,7 +973,7 @@ A great mindset to have when building React apps is to think in components. Comp
 
 ##### Further Research
 
-- [Rendering Elements](https://facebook.github.io/react/docs/rendering-elements.html) from the React docs
+- [Rendering Elements](https://reactjs.org/docs/rendering-elements.html) from the React docs
 
 ### 2.3 Create React App
 Skip past these older instruction to see how [Create React App](https://github.com/facebook/create-react-app) is installed on newer versions of node.js.
@@ -1067,9 +1067,9 @@ Using this, there is no need to install or configure module bundlers like Webpac
 
 Check out these links for more info about create-react-app:
 
-- [create-react-app](https://github.com/facebookincubator/create-react-app) on GitHub
-- [create-react-app Release Post](https://facebook.github.io/react/blog/2016/07/22/create-apps-with-no-configuration.html) from the React blog
-- [Updates to create-react-app](https://facebook.github.io/react/blog/2017/05/18/whats-new-in-create-react-app.html) from the React blog
+- [create-react-app](https://github.com/facebook/create-react-app) on GitHub
+- [create-react-app Release Post](https://reactjs.org/blog/2016/07/22/create-apps-with-no-configuration.html) from the React blog
+- [Updates to create-react-app](https://reactjs.org/blog/2017/05/18/whats-new-in-create-react-app.html) from the React blog
 
 ### 2.4 Composing with Components
 Earlier, we said that components are the building blocks of React. But what is actually meant by that?
@@ -1507,7 +1507,7 @@ render() {
 ```
 
 ##### Further Research
-- [Components and Props](https://facebook.github.io/react/docs/components-and-props.html) from the React Docs
+- [Components and Props](https://reactjs.org/docs/components-and-props.html) from the React Docs
 
 ### 3.3 Exercise Prep
 #### Workspaces
@@ -2248,9 +2248,11 @@ With React your two concerns are:
 > }
 > ```
 >
-> This is slightly different from Facebook's [Setting the Initial State docs](https://facebook.github.io/react/docs/react-without-es6.html#setting-the-initial-state).
+> This is slightly different from Facebook's [Setting the Initial State docs](https://reactjs.org/docs/react-without-es6.html#setting-the-initial-state).
 >
 > Having state outside the `constructor()` means it is a [class field](https://github.com/tc39/proposal-class-fields), which is a proposal for a new change to the language. It currently isn't supported by JavaScript, but thanks to Babel's fantastic powers of transpiling, we can use it!
+>
+> The benefit of declaring state using the class field syntax is that we have less code to type if we don't need to create the `constructor()` method.
 
 #### Add State to Contacts App
 Right now our contacts array is living independently, outside our App component.
@@ -2378,12 +2380,16 @@ This is one of the key benefits of using React to build UI components: when it c
 React compares the previous output and new output, determines what has changed, and makes these decisions for us. This process of determining what has changed in the previous and new outputs is called **Reconciliation**.
 
 #### Further Research
-- [Identify Where Your State Should Live](https://facebook.github.io/react/docs/thinking-in-react.html#step-4-identify-where-your-state-should-live)
+- [Identify Where Your State Should Live](https://reactjs.org/docs/thinking-in-react.html#step-4-identify-where-your-state-should-live)
 
 ### 3.9 Updating State
 Now that we have state inside of our application, the next step is to figure out how to update it. Your natural intuition might be to update the state directly.
 
-- `this.state.username = 'James'` - ⚠️ This is wrong ⚠️
+
+```jsx
+// ⚠️ This is wrong ⚠️
+this.state.username = 'James'
+```
 
 Unfortunately, that's not going to work. The reason is because by mutating the state directly, React will have no idea that the state of your component actually changed.
 
@@ -2396,7 +2402,7 @@ To solve this problem, React gives you a helper method called `setState()`. Ther
 The first way is by passing setState a function.
 
 ```jsx
-// setState function
+// setState passing a function
 this.setState(prevState => ({ // <- implicit return of an object
   count: prevState.count + 1
 }))
@@ -2408,7 +2414,7 @@ The object returned from this function will be merged with the current state to 
 The second pattern is to pass an object. This object will be merged with the current state to form the new state of the component.
 
 ```jsx
-// setState object
+// setState passing an object
 this.setState({
   username: 'James'
 })
@@ -2437,6 +2443,8 @@ We do this by creating a `removeContact` method that takes in a `contact` object
 We specify the property we're updating (contacts) and set it to the new value. We use filter to remove the contact we want to delete.
 
 ```jsx
+// using an ES6 arrow function to define the method means we don't
+// have to bind 'this' to it in the constructor!
   removeContact = contact => {
     this.setState(currentState => ({
       contacts: currentState.contacts.filter(c => {
@@ -2448,7 +2456,7 @@ We specify the property we're updating (contacts) and set it to the new value. W
 
 Then to allow our ListContacts component to use this method we must pass it as props so we can hook it up to the delete button. Just as we can pass data as props, we can also pass functions as props as well.
 
-Once again, the reason the `removeContact()` method is living inside our App component is because that is where our data lives.
+**Once again, the reason the `removeContact()` method is living inside our App component is because that is where our data lives.**
 
 Here is the completed App component.
 
@@ -2490,6 +2498,7 @@ class App extends Component {
 Next we need hook up our `onDeleteContact` method to the delete button's `onClick` method inside our ListContacts component.
 
 ```jsx
+// Method 1
 <button
   className="contact-remove"
   onClick={() => props.onDeleteContact(contact)}
@@ -2503,6 +2512,7 @@ One thing to note is that since we need to pass in `contact` as an argument we n
 One other way of doing this would be to do the following.
 
 ```jsx
+// Method 2
 <button
   className="contact-remove"
   onClick={props.onDeleteContact.bind(null, contact)}
@@ -2510,6 +2520,16 @@ One other way of doing this would be to do the following.
   Remove
 </button>
 ```
+
+> #### ⚠️ Avoid arrow functions & .bind() in render() ⚠️
+> We generally want to avoid declaring arrow functions or binding in render() for optimal performance.
+>
+> You can set up [this ESLint rule (jsx-no-bind)](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-no-bind.md) to help alert you to this issue.
+>
+> See Cory House articles on Medium:
+>
+> - [React Pattern: Extract Child Components to Avoid Binding](https://medium.freecodecamp.org/react-pattern-extract-child-components-to-avoid-binding-e3ad8310725e)
+> - [Why Arrow Functions and bind in React’s Render are Problematic](https://medium.freecodecamp.org/why-arrow-functions-and-bind-in-reacts-render-are-problematic-f1c08b060e36)
 
 This is the updated app with delete contact feature implemented.
 
@@ -2568,5 +2588,270 @@ While a component can set its state when it initializes, we expect that state to
 Each time state is changed, React knows and will call `render()` to re-render the component. This allows for fast, efficient updates to your app's UI.
 
 Further Research
-[Using State Correctly](https://facebook.github.io/react/docs/state-and-lifecycle.html) from the React Docs
+[Using State Correctly](https://reactjs.org/docs/state-and-lifecycle.html) from the React Docs
 
+### 3.10 Ex - Managing State
+This exercise started with a static page and a set of instructions.
+
+[![rf31](../assets/images/rf31-small.jpg)](../assets/images/rf31.jpg)
+
+
+> #### Instructions
+> Create a game that shows an equation of the form
+>
+> - **X + Y + Z = P**
+>
+> Here, X, Y, and Z should be random numbers, and P should be the proposed answer. The user should be able to answer whether it is true that the sum of X, Y, and Z equals the proposed answer P.
+>
+> The user gets a point for each question the user answers correctly. The score is displayed in this format
+>
+> - **[*# of correct answers*] / [*# of questions answered*]**
+>
+> Every time the user answers a question, a new question that uses randomly generated numbers is displayed.
+>
+> Remember that a Component's constructor is the first thing that runs when the object is created. The render method gets called automatically every time the state changes inside of the component and anytime the value of the component's props changes.
+>
+> This exercise will help you practice what you've learned in the course so far, including the trickiest part of React - managing state.
+
+The starter app consisted of the following:
+
+```jsx
+// App.js
+import React, { Component } from 'react';
+import logo from './logo.svg';
+import './App.css';
+
+const value1 = Math.floor(Math.random() * 100);
+const value2 = Math.floor(Math.random() * 100);
+const value3 = Math.floor(Math.random() * 100);
+const proposedAnswer = Math.floor(Math.random() * 3) + value1 + value2 + value3;
+const numQuestions = 0;
+const numCorrect = 0;
+
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h1 className="App-title">ReactND - Coding Practice</h1>
+        </header>
+        <div className="game">
+          <h2>Mental Math</h2>
+          <div className="equation">
+            <p className="text">
+              {`${value1} + ${value2} + ${value3} = ${proposedAnswer}`}
+            </p>
+          </div>
+          <button>True</button>
+          <button>False</button>
+          <p className="text">
+            Your Score: {numCorrect}/{numQuestions}
+          </p>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+#### 3.10 Solution
+I the divided the game into three separate components.
+
+- App.js
+- Game.js
+- Score.js
+
+The `numQuestions` and `numCorrect` values are tracked in App's state.
+
+I defined state as a Class Field in order to reduce the amount of code I would have to type if I included it in the constructor.
+
+I've included what the constructor would look like for illustrative purposes.
+
+I've also shown the handlers defined as a Class Method using an arrow function which eliminates us having to bind the handler to 'this' in the constructor.
+
+```jsx
+// App.js
+import React, { Component } from 'react';
+import './App.css';
+import Game from './Game.js';
+import Score from './Score.js';
+
+class App extends Component {
+  /*constructor(props) {
+    super(props);
+    this.state = {
+      numQuestions: 0,
+      numCorrect: 0
+    }
+    this.handleButtonClick = this.handleButtonClick.bind(this);
+  }*/
+  // state as a Class field means we can avoid defining it in the constructor
+  state = {
+    numQuestions: 0,
+    numCorrect: 0
+  };
+  /*handleButtonClick(e) {
+    // this form means we need to bind 'this' in constructor
+    console.log('e.target', e.target.innerText);
+    this.setState(currState => ({
+      numQuestions: currState.numQuestions + 1
+    }))
+  }*/
+  handleButtonClick = isCorrect => {
+    // this form doesn't require us to bind 'this' in constructor
+    this.setState(currState => ({
+      numQuestions: currState.numQuestions + 1,
+      numCorrect: isCorrect ? currState.numCorrect + 1 : currState.numCorrect
+    }));
+  };
+  // this form allows us to avoid using arrow functions & .bind()
+  //   in render() when creating lists with .map() (see below...)
+  // It is unnecessary here since we are not mapping over multiple <Game />s
+  renderGame = game => <Game onButtonClick={this.handleButtonClick} />;
+
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src="logo.svg" className="App-logo" alt="logo" />
+          <h1 className="App-title">ReactND - Coding Practice</h1>
+          <p>Exercise - Managing State</p>
+        </header>
+        <main className="App-main">
+          {/*
+            // These cause unnecessary re-render of Game components
+            <Game onButtonClick={(e) => this.handleButtonClick(e)} />
+            <Game onButtonClick={this.handleButtonClick.bind(this)} />
+            */}
+          <Game onButtonClick={this.handleButtonClick} />
+          {this.renderGame()}
+          <Score
+            numQuestions={this.state.numQuestions}
+            numCorrect={this.state.numCorrect}
+          />
+        </main>
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+There are two articles that show how to avoid unnecessary renders when setting up handler functions.
+
+
+> #### ⚠️ Avoid arrow functions & .bind() in render() ⚠️
+> We generally want to avoid declaring arrow functions or binding in render() for optimal performance.
+>
+> You can set up [this ESLint rule (jsx-no-bind)](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-no-bind.md) to help alert you to this issue.
+>
+> See Cory House articles on Medium:
+>
+> - [React Pattern: Extract Child Components to Avoid Binding](https://medium.freecodecamp.org/react-pattern-extract-child-components-to-avoid-binding-e3ad8310725e)
+> - [Why Arrow Functions and bind in React’s Render are Problematic](https://medium.freecodecamp.org/why-arrow-functions-and-bind-in-reacts-render-are-problematic-f1c08b060e36)
+
+Here's the Game component.
+
+```jsx
+// Game.js
+import React from 'react';
+
+class Game extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    const gameNums = this.generateNums();
+    this.state = {
+      value1: gameNums[0],
+      value2: gameNums[1],
+      value3: gameNums[2],
+      proposedAnswer: gameNums[3]
+    };
+  }
+
+  generateNums = () => {
+    const value1 = Math.floor(Math.random() * 100);
+    const value2 = Math.floor(Math.random() * 100);
+    const value3 = Math.floor(Math.random() * 100);
+    const proposedAnswer =
+      Math.floor(Math.random() * 3) + value1 + value2 + value3;
+    return [value1, value2, value3, proposedAnswer];
+  };
+
+  updateState = () => {
+    const gameNums = this.generateNums();
+    this.setState(prevState => ({
+      value1: gameNums[0],
+      value2: gameNums[1],
+      value3: gameNums[2],
+      proposedAnswer: gameNums[3]
+    }));
+  };
+
+  checkAnswer = answer => {
+    const isEqual =
+      this.state.value1 + this.state.value2 + this.state.value3 ===
+      this.state.proposedAnswer;
+    return answer === isEqual;
+  };
+
+  onButtonClick = e => {
+    // console.log('e.target', e.target.innerText);
+    this.updateState();
+    const answer = Boolean(e.target.innerText === 'False' ? false : true);
+    const isCorrect = this.checkAnswer(answer);
+    // console.log('isCorrect', isCorrect);
+    this.props.onButtonClick(isCorrect);
+  };
+
+  render() {
+    // const { onButtonClick } = this.props;
+    console.log(`Game component rendered`);
+    console.log(
+      `${this.state.value1 + this.state.value2 + this.state.value3} === ${
+        this.state.proposedAnswer
+      }`
+    );
+    return (
+      <div className="game">
+        <h2>Mental Math</h2>
+        <div className="equation">
+          <p className="text">{`${this.state.value1} + ${this.state.value2} + ${
+            this.state.value3
+          } = ${this.state.proposedAnswer}`}</p>
+        </div>
+        <button onClick={e => this.onButtonClick(e)}>True</button>
+        <button onClick={this.onButtonClick}>False</button>
+      </div>
+    );
+  }
+}
+
+export default Game;
+```
+
+Here's the Score component.
+
+```jsx
+// Score.js
+import React from 'react';
+
+const Score = props => {
+  const { numCorrect, numQuestions } = props;
+  return (
+    <p className="text">
+      Your Score: {numCorrect}/{numQuestions}
+    </p>
+  );
+};
+
+export default Score;
+```
+
+Here's a screenshot of the working application.
+
+[![rf32](../assets/images/rf32-small.jpg)](../assets/images/rf32.jpg)<br>
+**Live Demo:** [Mental Math App on CodeSandbox](https://codesandbox.io/s/vvx41ykywy)
