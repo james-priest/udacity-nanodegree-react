@@ -2922,9 +2922,9 @@ When we use a component that wasn't created by us we can look at the PropTypes t
 #### PropTypes Question
 Consider this component:
 
+```jsx
 import PropTypes from 'prop-types';
 
-```jsx
 class Email extends React.Component {
   render() {
     return (
@@ -2953,3 +2953,41 @@ All in all, PropTypes is a great way to validate intended data types in our Reac
 
 - [prop-types](https://www.npmjs.com/package/prop-types) library from npm
 - [Typechecking With Proptypes](https://facebook.github.io/react/docs/typechecking-with-proptypes.html) from the React Docs
+
+<!-- 
+### 3.12 Controlled Components
+Typically when you're using forms in a web app, the form state lives inside of the DOM. But as we've talked about, the whole point of React is to more effectively manage state inside of your application.
+
+So, do we handle forms in React?
+
+We can solve this problem with what React calls **controlled components**.
+Controlled components are components which render a form,
+but the source of truth for the form state lives
+inside of the component state rather than inside of the DOM.
+The reason they're called controlled components,
+is because React is controlling the state of the form.
+Here, we have a component which is rendering a form with a single input element.
+The first thing to notice is that we've added a value
+attribute to our input of this.state.email.
+What this means is that the text in the input field is going to
+be whatever the email property of our component state is.
+Therefore, the only way to update the state in the input field,
+is to update the email property of the component state.
+As you can tell,
+this is a true controlled component because
+React is in control of the email property of our state.
+If we want the input field to change,
+we can create a handleChange method that uses setState to update the email address.
+Whenever the input field is changed,
+we can call this method by passing it to the onchange attribute.
+Although controlled components require a little bit more typing,
+they do have some benefits.
+First, they support instant input validation.
+Second, they allow you to conditionally disable or enable for months.
+Third, they enforce input formats.
+Now, notice that all of these benefits have to do with
+updating the UI based on some user input.
+This is the heart of not only controlled components,
+but also React in general.
+If the state of our application changes,
+then our UI updates based off of that new state. -->
