@@ -2743,7 +2743,6 @@ export default App;
 
 There are two articles that show how to avoid unnecessary renders when setting up handler functions.
 
-
 > #### ⚠️ Avoid arrow functions & .bind() in render() ⚠️
 > We generally want to avoid declaring arrow functions or binding in render() for optimal performance.
 >
@@ -2855,3 +2854,102 @@ Here's a screenshot of the working application.
 
 [![rf32](../assets/images/rf32-small.jpg)](../assets/images/rf32.jpg)<br>
 **Live Demo:** [Mental Math App on CodeSandbox](https://codesandbox.io/s/vvx41ykywy)
+
+### 3.11 PropTypes
+#### Type checking a Component's Props with PropTypes
+As we implement additional features into our app, we may soon find ourselves debugging our components more frequently. For example, what if the props that we pass to our components end up being an unintended data type (e.g. an object instead of an array)?
+
+PropTypes is a package that lets us define the data type we want to see right from the get-go and warn us during development if the prop that's passed to the component doesn't match what is expected.
+
+To use PropTypes in our app, we need to install [prop-types](https://facebook.github.io/react/docs/typechecking-with-proptypes.html):
+
+```bash
+npm install --save prop-types
+```
+
+Alternatively, if you have been using [yarn](https://www.npmjs.com/package/yarn) to manage packages, feel free to use it as well to install:
+
+```bash
+yarn add prop-types
+```
+
+Let's jump right in and see how it's used!
+
+#### Add PropTypes to Contacts App
+We first start by adding the import to the top of the file we're using it in.
+
+```jsx
+import PropTypes from 'prop-types';
+```
+
+What it allows us to do is add a property to our ListTypes component that will define the props that this component should receive.
+
+```jsx
+// ListContacts.js
+ListContacts.propTypes = {
+  contacts: PropTypes.array.isRequired,
+  onDeleteContact: PropTypes.func.isRequired
+}
+```
+
+App.js is where we include our ListContacts component. It specifies both contacts and onDeleteContact props.
+
+```jsx
+// App.js
+  render() {
+    return (
+      <div>
+        <ListContacts
+          contacts={this.state.contacts}
+          // onDeleteContact={this.removeContact}
+        />
+      </div>
+    );
+  }
+}
+```
+
+If we comment out the second prop we will receive an error message in console telling us exactly what the problem is.
+
+[![rf33](../assets/images/rf33-small.jpg)](../assets/images/rf33.jpg)
+
+It will also notify us if we pass in the wrong datatype.
+
+The best thing about PropTypes is related to 3rd party components.
+
+When we use a component that wasn't created by us we can look at the PropTypes to instantly know what datatype needs to be passed in as props.
+
+#### PropTypes Question
+Consider this component:
+
+import PropTypes from 'prop-types';
+
+```jsx
+class Email extends React.Component {
+  render() {
+    return (
+      <h3>Message: {this.props.text}</h3>
+    );
+  }
+}
+
+Email.propTypes = {
+  text: // ???
+};
+```
+
+We want to validate that a text prop is indeed being passed in, and that its data type is a string. What should the value of the above object's text key be?
+
+```jsx
+Email.propTypes = {
+  text: PropTypes.string.isRequired
+};
+```
+
+#### PropTypes Recap
+All in all, PropTypes is a great way to validate intended data types in our React app. Type checking our data with PropTypes helps us identify these bugs during development to ensure a smooth experience for our app's users.
+
+#### Further Research
+
+- [prop-types](https://www.npmjs.com/package/prop-types) library from npm
+- [Typechecking With Proptypes](https://facebook.github.io/react/docs/typechecking-with-proptypes.html) from the React Docs
