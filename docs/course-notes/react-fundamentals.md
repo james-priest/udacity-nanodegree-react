@@ -2954,40 +2954,489 @@ All in all, PropTypes is a great way to validate intended data types in our Reac
 - [prop-types](https://www.npmjs.com/package/prop-types) library from npm
 - [Typechecking With Proptypes](https://facebook.github.io/react/docs/typechecking-with-proptypes.html) from the React Docs
 
-<!-- 
 ### 3.12 Controlled Components
 Typically when you're using forms in a web app, the form state lives inside of the DOM. But as we've talked about, the whole point of React is to more effectively manage state inside of your application.
 
-So, do we handle forms in React?
+So, how do we handle forms in React? We can solve this problem with what React calls **controlled components**.
 
-We can solve this problem with what React calls **controlled components**.
-Controlled components are components which render a form,
-but the source of truth for the form state lives
-inside of the component state rather than inside of the DOM.
-The reason they're called controlled components,
-is because React is controlling the state of the form.
-Here, we have a component which is rendering a form with a single input element.
-The first thing to notice is that we've added a value
-attribute to our input of this.state.email.
-What this means is that the text in the input field is going to
-be whatever the email property of our component state is.
-Therefore, the only way to update the state in the input field,
-is to update the email property of the component state.
-As you can tell,
-this is a true controlled component because
-React is in control of the email property of our state.
-If we want the input field to change,
-we can create a handleChange method that uses setState to update the email address.
-Whenever the input field is changed,
-we can call this method by passing it to the onchange attribute.
-Although controlled components require a little bit more typing,
-they do have some benefits.
-First, they support instant input validation.
-Second, they allow you to conditionally disable or enable for months.
-Third, they enforce input formats.
-Now, notice that all of these benefits have to do with
-updating the UI based on some user input.
-This is the heart of not only controlled components,
+Controlled components are components which render a form, but the "Source of Truth" for the form state lives inside of the component state rather than inside of the DOM.
+
+The reason they're called controlled components, is because React is controlling the state of the form. Here, we have a component which is rendering a form with a single input element.
+
+The first thing to notice is that we've added a value attribute to our input of `this.state.email`.
+
+[![rf34](../assets/images/rf34-small.jpg)](../assets/images/rf34.jpg)
+
+What this means is that the text in the input field is going to be whatever the email property of our component state is. Therefore, the only way to update the state in the input field, is to update the email property of the component state.
+
+[![rf35](../assets/images/rf35-small.jpg)](../assets/images/rf35.jpg)
+
+As you can tell, this is a true controlled component because React is in control of the email property of our state. If we want the input field to change, we can create a `handleChange` method that uses `setState` to update the email address.
+
+[![rf36](../assets/images/rf36-small.jpg)](../assets/images/rf36.jpg)
+
+Whenever the input field is changed, we can call this method by passing it to the `onchange` attribute.
+
+Although controlled components require a little bit more typing, they do have some benefits.
+
+- First, they support instant input validation.
+- Second, they allow you to conditionally disable or enable form buttons.
+- Third, they enforce input formats.
+
+Now, notice that all of these benefits have to do with updating the UI based on some user input. This is the heart of not only controlled components,
 but also React in general.
-If the state of our application changes,
-then our UI updates based off of that new state. -->
+
+If the state of our application changes, then our UI updates based on that new state.
+
+#### React Developer Tools
+While building React apps, it may be tricky at times to see exactly is going on in your components. After all, with so many props being passed and accessed, numerous nested components, and all the JSX yet to be rendered as HTML, it can be tough to put things into perspective!
+
+**React Developer Tools** allows you to inspect your component hierarchy along with their respective props and states. Once you install the [Chrome extension](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en-US), open the Chrome console and check out the **React** tab. For a detailed overview, feel free to check out the [official documentation](https://github.com/facebook/react-devtools).
+
+Let's see it in action below!
+
+#### Contacts App - Search form as a controlled component
+What we're going to do is build out the "search contact" section of our Contacts App. This will allow us to filter our list, which introduces the topic of forms in React.
+
+[![rf38](../assets/images/rf38-small.jpg)](../assets/images/rf38.jpg)
+
+Now we could bypass React and manage our forms directly through the DOM but that doesn't make a whole lot of sense.
+
+React is really good at managing state. So, many times, it makes sense to also put your form state inside of your component state.
+
+What we're going to do is bind our input field to whatever the value of a certain property on our state is. That's going to allow us to update the UI, based on this form data.
+
+So, if I type a "t", you'll notice that we are filtering our list, but we're also showing the search results section as well.
+
+[![rf37](../assets/images/rf37-small.jpg)](../assets/images/rf37.jpg)
+
+A good rule of thumb is, if you want your form data to update the UI in any other way besides just the input field itself, then make your form a controlled component where React is controlling the state of the input field.
+
+If you're not worried about having your UI update based off the form data, then you can go ahead and stick the form somewhere in the DOM and grab it when you need it.
+
+#### Contacts App - Refactoring ListContacts
+We're going to be adding state to our ListContacts component because we're going to bind our new search input field to our component state.
+
+This means we refactor from using a stateless functional component to a class component.
+
+In doing this we can move our PropTypes definition into our class by creating a 'static propTypes' property. We'll also need to add 'this' keyword to all instances of 'props'.
+
+```jsx
+// ListContacts.js
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class ListContacts extends Component {
+  static propTypes = {
+    contacts: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        handle: PropTypes.string.isRequired,
+        avatarURL: PropTypes.string.isRequired
+      })
+    ),
+    onDeleteContact: PropTypes.func.isRequired
+  };
+  render() {
+    return (
+      <ol className="contact-list">
+        {this.props.contacts.map(contact => (
+          <li key={contact.id} className="contact-list-item">
+            <div
+              className="contact-avatar"{% raw %}
+              style={{
+                backgroundImage: `url(${contact.avatarURL})`
+              }}{% endraw %}
+            />
+            <div className="contact-details">
+              <p>{contact.name}</p>
+              <p>{contact.handle}</p>
+            </div>
+            <button
+              className="contact-remove"
+              onClick={() => this.props.onDeleteContact(contact)}
+            >
+              Remove
+            </button>
+          </li>
+        ))}
+      </ol>
+    );
+  }
+}
+
+export default ListContacts;
+```
+
+Now our app is back to normal. Next, here's what we are going to do.
+
+- Create a 'state' class field
+- Add a 'query' property to our component's state object & set it equal to an empty string
+- Wrap our ordered list with a div and set the className to "list-contacts"
+- Inside that div we'll create another div and add an input field with the following attributes
+  - className of 'search-contacts'
+  - a type of 'text'
+  - placeholder will be "Search Contacts"
+  - value={this.state.query} - this sets the value of the control to our state
+  - onChange={this.updateQuery} - this allows us to update state on every keystroke
+- Add an 'updateQuery' method which will set state based on the input field value
+
+Whenever the input field changes, we want to update the query property on our state. Doing this updates the value inside of the input field.
+
+Lastly, we add a call to 'JSON.stringify' passing it the state in order to see what our state is.
+
+```jsx
+// ListContacts.js
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class ListContacts extends Component {
+  static propTypes = {
+    contacts: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        handle: PropTypes.string.isRequired,
+        avatarURL: PropTypes.string.isRequired
+      })
+    ),
+    onDeleteContact: PropTypes.func.isRequired
+  };
+  state = {
+    query: ''
+  };
+  updateQuery = e => {
+    const query = e.target.value;
+    this.setState(() => ({
+      query: query.trim()
+    }));
+  };
+  render() {
+    return (
+      <div className="list-contacts">
+        {JSON.stringify(this.state)}
+        <div className="list-contacts-top">
+          <input
+            className="search-contacts"
+            type="text"
+            placeholder="Search Contacts"
+            value={this.state.query}
+            onChange={this.updateQuery}
+          />
+        </div>
+        <ol className="contact-list">
+          {this.props.contacts.map(contact => (
+            <li key={contact.id} className="contact-list-item">
+              <div
+                className="contact-avatar"{% raw %}
+                style={{
+                  backgroundImage: `url(${contact.avatarURL})`
+                }}{% endraw %}
+              />
+              <div className="contact-details">
+                <p>{contact.name}</p>
+                <p>{contact.handle}</p>
+              </div>
+              <button
+                className="contact-remove"
+                onClick={() => this.props.onDeleteContact(contact)}
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
+}
+
+export default ListContacts;
+```
+
+Here's what the final outcome looks like.
+
+[![rf39](../assets/images/rf39-small.jpg)](../assets/images/rf39.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/vvx41ykywy)
+
+Note that the `value` attribute is set on the `<input>` element. Since the displayed value will always be the value in the component's state, we can treat state as the "single source of truth" for the form's state.
+
+To recap how user input affects the ListContacts component's own state:
+
+1. The user enters text into the input field.
+2. The `onChange` event listener invokes the `updateQuery()` function.
+3. `updateQuery()` then calls `setState()`, merging in the new state to update the component's internal state.
+4. Because its state has changed, the ListContacts component re-renders.
+
+Let's see how we can leverage this updated state to filter our contacts. To help us with our filtering we'll need the following packages:
+
+- [escape-string-regexp](https://www.npmjs.com/package/escape-string-regexp)
+- [sort-by](https://www.npmjs.com/package/sort-by)
+
+```bash
+npm install --save escape-string-regexp sort-by
+```
+
+#### 3.12 Question 1 of 3
+What is a Controlled Component?
+
+- [ ] A component which controls the state of its children
+- [x] A component which renders a form, but the source of truth  for that form state lives inside of the component state rather than inside the DOM
+- [ ] A component which controls the UI for its children components
+- [ ] A component which renders a form, but the source of truth for that form state lives inside of DOM rather than inside the component
+
+#### Filter and Sort Contacts
+Next we want to filter our list based on whatever we type in the input field.
+
+We start by destructuring both state and props.
+
+```jsx
+  render() {
+    const { query } = this.state;
+    const { contacts, onDeleteContact } = this.props;
+```
+
+We then go through and update each reference to remove 'this.state' and 'this.props'
+
+Next we want to filter our contacts based on whatever is in the input field.
+
+We convert to lowercase and assign the result to a new variable call showingContacts. We then use this new variable in our .map() method.
+
+```jsx
+    const showingContacts = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(query.toLowerCase())
+    );
+```
+
+Here is the entire code.
+
+```jsx
+// ListContacts.js
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class ListContacts extends Component {
+  static propTypes = {
+    contacts: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        handle: PropTypes.string.isRequired,
+        avatarURL: PropTypes.string.isRequired
+      })
+    ),
+    onDeleteContact: PropTypes.func.isRequired
+  };
+  state = {
+    query: ''
+  };
+  updateQuery = e => {
+    const query = e.target.value;
+    this.setState(() => ({
+      query: query.trim()
+    }));
+  };
+  render() {
+    const { query } = this.state;
+    const { contacts, onDeleteContact } = this.props;
+
+    const showingContacts = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(query.toLowerCase())
+    );
+
+    return (
+      <div className="list-contacts">
+        <div className="list-contacts-top">
+          <input
+            className="search-contacts"
+            type="text"
+            placeholder="Search Contacts"
+            value={query}
+            onChange={this.updateQuery}
+          />
+        </div>
+        <ol className="contact-list">
+          {showingContacts.map(contact => (
+            <li key={contact.id} className="contact-list-item">
+              <div
+                className="contact-avatar"{% raw %}
+                style={{
+                  backgroundImage: `url(${contact.avatarURL})`
+                }}{% endraw %}
+              />
+              <div className="contact-details">
+                <p>{contact.name}</p>
+                <p>{contact.handle}</p>
+              </div>
+              <button
+                className="contact-remove"
+                onClick={() => onDeleteContact(contact)}
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
+}
+
+export default ListContacts;
+```
+
+
+So again, because we want to update the UI, we stick the input field on
+the component state. Whenever the component state changes that causes a re-render which then filters our contacts based on whatever the query is.
+
+[![rf40](../assets/images/rf40-small.jpg)](../assets/images/rf40.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/vvx41ykywy)
+
+#### 3.12 Question 2 of 3
+Which benefit applies to Controlled Components that doesn't apply to "uncontrolled" components?
+
+- [ ] Controlled Components are more the "React way" of doing things
+- [ ] Controlled Components are less typing
+- [ ] Controlled Components are more performant
+- [x] Controlled Components allow you to update your UI based on teh form itself
+
+#### Showing The Displayed Contacts Count
+We're almost done working with the controlled component! Our last step is to make our app display the count of how many contacts are being displayed out of the overall total.
+
+We add the following after our search input.
+
+```jsx
+        {showingContacts.length !== contacts.length && (
+          <div className="showing-contacts">
+            <span>
+              Now showing {showingContacts.length} of {contacts.length}
+            </span>
+            <button onClick={this.clearQuery}>Show all</button>
+          </div>
+        )}
+```
+
+We also add the clearQuery method above render.
+
+```jsx
+  clearQuery = () => {
+    this.setState(() => ({
+      query: ''
+    }));
+  };
+```
+
+Here's the completed code.
+
+```jsx
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class ListContacts extends Component {
+  static propTypes = {
+    contacts: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        handle: PropTypes.string.isRequired,
+        avatarURL: PropTypes.string.isRequired
+      })
+    ),
+    onDeleteContact: PropTypes.func.isRequired
+  };
+  state = {
+    query: ''
+  };
+  updateQuery = e => {
+    const query = e.target.value;
+    this.setState(() => ({
+      query: query.trim()
+    }));
+  };
+  clearQuery = () => {
+    this.setState(() => ({
+      query: ''
+    }));
+  };
+  render() {
+    const { query } = this.state;
+    const { contacts, onDeleteContact } = this.props;
+
+    const showingContacts = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(query.toLowerCase())
+    );
+
+    return (
+      <div className="list-contacts">
+        <div className="list-contacts-top">
+          <input
+            className="search-contacts"
+            type="text"
+            placeholder="Search Contacts"
+            value={query}
+            onChange={this.updateQuery}
+          />
+        </div>
+        {showingContacts.length !== contacts.length && (
+          <div className="showing-contacts">
+            <span>
+              Now showing {showingContacts.length} of {contacts.length}
+            </span>
+            <button onClick={this.clearQuery}>Show all</button>
+          </div>
+        )}
+        <ol className="contact-list">
+          {showingContacts.map(contact => (
+            <li key={contact.id} className="contact-list-item">
+              <div
+                className="contact-avatar"{% raw %}
+                style={{
+                  backgroundImage: `url(${contact.avatarURL})`
+                }}{% endraw %}
+              />
+              <div className="contact-details">
+                <p>{contact.name}</p>
+                <p>{contact.handle}</p>
+              </div>
+              <button
+                className="contact-remove"
+                onClick={() => onDeleteContact(contact)}
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
+}
+
+export default ListContacts;
+```
+
+[![rf41](../assets/images/rf41-small.jpg)](../assets/images/rf41.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/vvx41ykywy)
+
+Here's the [documentation on Controlled Components](https://reactjs.org/docs/forms.html#controlled-components) which shows additional examples.
+
+#### 3.12 Question 3 of 3
+Which of the following is true about Controlled Components? Please check all that apply:
+
+- [x] Each update to the state has an associated handler function
+- [x] Form elements receive their current value via an attribute
+- [x] Form input values are generally stored in the component's state
+- [ ] `<textarea>` and `<select>` cannot be controlled elements
+- [x] Event handlers for a controlled element update the component's state
+
+#### Controlled Components Recap
+Controlled components refer to components that render a form, but the "source of truth" for that form state lives inside of the component state rather than inside of the DOM. The benefits of Controlled Components are:
+
+- instant input validation
+- conditionally disable/enable buttons
+- enforce input formats
+
+In our ListContacts component, not only does the component render a form, but it also controls what happens in that form based on user input.
+
+In this case, event handlers update the component's state with the user's search query. And as we've learned: any changes to React state will cause a re-render on the page, effectively displaying our live search results.
