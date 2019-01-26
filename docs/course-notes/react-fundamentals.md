@@ -3160,6 +3160,7 @@ Here's what the final outcome looks like.
 [![rf39](../assets/images/rf39-small.jpg)](../assets/images/rf39.jpg)<br>
 **Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/vvx41ykywy)
 
+#### Contacts App - Recap
 Note that the `value` attribute is set on the `<input>` element. Since the displayed value will always be the value in the component's state, we can treat state as the "single source of truth" for the form's state.
 
 To recap how user input affects the ListContacts component's own state:
@@ -3186,7 +3187,7 @@ What is a Controlled Component?
 - [ ] A component which controls the UI for its children components
 - [ ] A component which renders a form, but the source of truth for that form state lives inside of DOM rather than inside the component
 
-#### Filter and Sort Contacts
+#### Contacts App - Filter and Sort Contacts
 Next we want to filter our list based on whatever we type in the input field.
 
 We start by destructuring both state and props.
@@ -3301,7 +3302,7 @@ Which benefit applies to Controlled Components that doesn't apply to "uncontroll
 - [ ] Controlled Components are more performant
 - [x] Controlled Components allow you to update your UI based on teh form itself
 
-#### Showing The Displayed Contacts Count
+#### Contacts App - Showing The Displayed Contacts Count
 We're almost done working with the controlled component! Our last step is to make our app display the count of how many contacts are being displayed out of the overall total.
 
 We add the following after our search input.
@@ -3440,3 +3441,70 @@ Controlled components refer to components that render a form, but the "source of
 In our ListContacts component, not only does the component render a form, but it also controls what happens in that form based on user input.
 
 In this case, event handlers update the component's state with the user's search query. And as we've learned: any changes to React state will cause a re-render on the page, effectively displaying our live search results.
+
+### 3.13 Ex 1 - Controlled Components
+[![rf42](../assets/images/rf42-small.jpg)](../assets/images/rf42.jpg)
+
+This exercise consisted of the following instructions.
+
+> #### Instructions
+>
+> Edit the code to make the printed text mirror what we type into the input
+field. When we erase all of the text, nothing should be printed to the screen.
+>
+> Remember that the React component that renders the form also controls what
+happens in that form on user input.
+>
+> This exercise will help you solidify what you've learned about Controlled Components.
+
+#### 3.13 Solution
+
+```jsx
+import React, { Component } from "react";
+import "./App.css";
+
+class App extends Component {
+  state = {
+    echo: ""
+  };
+  updateEcho = e => {
+    const echo = e.target.value;
+    this.setState(prevState => ({
+      echo: echo
+    }));
+  };
+  render() {
+    const { echo } = this.state;
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src="logo.svg" className="App-logo" alt="logo" />
+          <h1 className="App-title">ReactND - Coding Practice</h1>
+          <p>Exercise 1 - Controlled Component</p>
+        </header>
+        <main className="App-main">
+          <div className="container">
+            <input
+              type="text"
+              placeholder="Say Something"
+              value={echo}
+              onChange={this.updateEcho}
+            />
+            <p className="echo">Echo:</p>
+            {echo === "" ? (
+              <p>This should mirror the text you typed into the input field.</p>
+            ) : (
+              <p>{echo}</p>
+            )}
+          </div>
+        </main>
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+[![rf43](../assets/images/rf43-small.jpg)](../assets/images/rf43.jpg)<br>
+**Live Demo:** [Exercise 1 - Controlled Component on CodeSandbox](https://codesandbox.io/s/l57r2xzkz9)
