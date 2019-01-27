@@ -3604,13 +3604,17 @@ export default App;
 ```
 
 #### 3.14 Solution
-I broke this down into the following files:
+I started by separating the UI into logical sections. The React docs call it [Breaking the UI Into A Component Hierarchy](https://reactjs.org/docs/thinking-in-react.html#step-1-break-the-ui-into-a-component-hierarchy)
 
-- App.js
-- AddItem.js
-- DeleteItem.js
-- ItemList.js
-- Item.js
+[![rf46](../assets/images/rf46-small.jpg)](../assets/images/rf46.jpg)
+
+This used the following hierarchy:
+
+- App.js (green)
+  - AddItem.js (red)
+  - DeleteItem.js (yellow)
+  - ItemList.js (blue)
+    - Item.js (purple)
 
 I started with App.js.
 
