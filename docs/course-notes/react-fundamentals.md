@@ -3467,7 +3467,7 @@ class App extends Component {
   state = {
     echo: ""
   };
-  updateEcho = e => {
+  handleChange = e => {
     const echo = e.target.value;
     this.setState(prevState => ({
       echo: echo
@@ -3488,7 +3488,7 @@ class App extends Component {
               type="text"
               placeholder="Say Something"
               value={echo}
-              onChange={this.updateEcho}
+              onChange={this.handleChange}
             />
             <p className="echo">Echo:</p>
             {echo === "" ? (
