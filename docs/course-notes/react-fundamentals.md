@@ -3508,3 +3508,256 @@ export default App;
 
 [![rf43](../assets/images/rf43-small.jpg)](../assets/images/rf43.jpg)<br>
 **Live Demo:** [Exercise 1 - Controlled Component on CodeSandbox](https://codesandbox.io/s/l57r2xzkz9)
+
+### 3.14 Ex 2 - Controlled Components
+
+[![rf44](../assets/images/rf44-small.jpg)](../assets/images/rf44.jpg)
+
+Here the instructions.
+
+> #### Instructions
+>
+> This file gives you a functioning app. But, as you can tell, the App
+isn't modular at all - there is only 1 component!
+>
+> **Task**: Break down this app into components and make them work together to achieve
+exactly the same result.
+>
+> Remember that React components should be modular, composable (can be assembled in various
+ways to achieve the desired result on the page), and reusable.
+>
+> This exercise will help you to practice passing data into components, creating Stateless Functional Components, adding state to components, updating state, and creating Controlled Components.
+
+Here's the initial file
+
+```jsx
+// App.js
+import React, { Component } from "react";
+import "./App.css";
+
+class App extends Component {
+  state = {
+    value: "",
+    items: []
+  };
+
+  handleChange = event => {
+    this.setState({ value: event.target.value });
+  };
+
+  addItem = event => {
+    event.preventDefault();
+    this.setState(oldState => ({
+      items: [...oldState.items, this.state.value]
+    }));
+  };
+
+  deleteLastItem = event => {
+    this.setState(prevState => ({ items: this.state.items.slice(0, -1) }));
+  };
+
+  inputIsEmpty = () => {
+    return this.state.value === "";
+  };
+
+  noItemsFound = () => {
+    return this.state.items.length === 0;
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src="logo.svg" className="App-logo" alt="logo" />
+          <h1 className="App-title">ReactND - Coding Practice</h1>
+          <p>Exercise 2 - Contolled Components</p>
+        </header>
+        <main className="App-main">
+          <h2>Shopping List</h2>
+          <form onSubmit={this.addItem}>
+            <input
+              type="text"
+              placeholder="Enter New Item"
+              value={this.state.value}
+              onChange={this.handleChange}
+            />
+            <button disabled={this.inputIsEmpty()}>Add</button>
+          </form>
+
+          <button onClick={this.deleteLastItem} disabled={this.noItemsFound()}>
+            Delete Last Item
+          </button>
+
+          <p className="items">Items</p>
+          <ol className="item-list">
+            {this.state.items.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ol>
+        </main>
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+#### 3.14 Solution
+I broke this down into the following files:
+
+- App.js
+- AddItem.js
+- DeleteItem.js
+- ItemList.js
+- Item.js
+
+I started with App.js.
+
+```jsx
+// App.js
+import React, { Component } from "react";
+import "./App.css";
+import AddItem from "./AddItem";
+import DeleteItem from "./DeleteItem";
+import ItemList from "./ItemList";
+
+class App extends Component {
+  state = {
+    items: []
+  };
+
+  addItem = item => {
+    this.setState(prevState => ({
+      items: [...prevState.items, item]
+    }));
+  };
+
+  deleteLastItem = event => {
+    this.setState(prevState => ({ items: this.state.items.slice(0, -1) }));
+  };
+
+  noItemsFound = () => {
+    return this.state.items.length === 0;
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src="logo.svg" className="App-logo" alt="logo" />
+          <h1 className="App-title">ReactND - Coding Practice</h1>
+          <p>Exercise 2 - Contolled Components</p>
+        </header>
+        <main className="App-main">
+          <h2>Shopping List</h2>
+          <AddItem onAddItem={this.addItem} />
+          <DeleteItem
+            onDeleteLastItem={this.deleteLastItem}
+            onNoItemsFound={this.noItemsFound()}
+          />
+          <ItemList items={this.state.items} />
+        </main>
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+Next was AddItem.js
+
+```jsx
+// AddItem.js
+import React, { Component } from "react";
+
+class AddItem extends Component {
+  state = {
+    value: ""
+  };
+  inputIsEmpty = () => {
+    return this.state.value === "";
+  };
+  handleChange = event => {
+    this.setState({ value: event.target.value });
+  };
+  addItem = e => {
+    e.preventDefault();
+    // this.props.onAddItem(e.target.value); // Nope! target is button
+    this.props.onAddItem(this.state.value);
+  };
+  render() {
+    return (
+      <form onSubmit={this.addItem}>
+        <input
+          type="text"
+          placeholder="Enter New Item"
+          value={this.state.value}
+          onChange={this.handleChange}
+        />
+        <button disabled={this.inputIsEmpty()}>Add</button>
+      </form>
+    );
+  }
+}
+
+export default AddItem;
+```
+
+The next was DeleteItem.js
+
+```jsx
+import React from "react";
+
+function DeleteItem(props) {
+  const { onDeleteLastItem, onNoItemsFound } = props;
+  return (
+    <button onClick={onDeleteLastItem} disabled={onNoItemsFound}>
+      Delete Last Item
+    </button>
+  );
+}
+
+export default DeleteItem;
+```
+
+Then ItemList.js
+
+```jsx
+// ItemList.jsx
+import React from "react";
+import Item from "./Item.js";
+
+function ItemList(props) {
+  const { items } = props;
+  return (
+    <div>
+      <p className="items">Items</p>
+      <ol className="item-list">
+        {items.map((item, index) => (
+          <Item key={index} item={item} />
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+export default ItemList;
+```
+
+Last was Item.js
+
+```jsx
+// Item.js
+import React from "react";
+
+function Item(props) {
+  return <li>{props.item}</li>;
+}
+
+export default Item;
+```
+
+[![rf45](../assets/images/rf45-small.jpg)](../assets/images/rf45.jpg)<br>
+**Live Demo:** [Exercise 2 - Controlled Component on CodeSandbox](https://codesandbox.io/s/422vqv4227)
