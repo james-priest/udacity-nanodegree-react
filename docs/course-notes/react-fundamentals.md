@@ -3765,3 +3765,345 @@ export default Item;
 
 [![rf45](../assets/images/rf45-small.jpg)](../assets/images/rf45.jpg)<br>
 **Live Demo:** [Exercise 2 - Controlled Component on CodeSandbox](https://codesandbox.io/s/422vqv4227)
+
+### 3.15 Lesson Summary
+#### Putting it All Into Perspective
+When it comes to keeping track of data in your app, think about what will be done with that data, and what that data will look like as your user interfaces with your app.
+
+If you want your component to store mutable local data, consider using state to hold this information. Many times, it is state that will be used to manage controlled form elements in your components.
+
+On the other hand, if some information isn't expected to change over time, and is generally designed to be "read-only" throughout your app, consider using props instead.
+
+Both state and props will generally be in the form of an object, and changes in either will trigger a re-render of the component, but they each play very different roles in your app.
+
+We covered a lot in this lesson, and you've made great progress - great work!
+
+##### Lesson Challenge
+Read these articles:
+
+- [Thinking in React](https://reactjs.org/docs/thinking-in-react.html)
+- [Functional Components vs. Stateless Functional Components vs. Stateless Components](https://tylermcginnis.com/functional-components-vs-stateless-functional-components-vs-stateless-components/)
+- [Forms (Controlled Components)](https://reactjs.org/docs/forms.html)
+- [Avoiding React SetState() Pitfalls](https://www.duncanleung.com/blog/2017-07-15-avoiding-react-setstate-pitfalls/)
+- [How to NOT React: Common Anti-Patterns and Gotchas in React](https://codeburst.io/how-to-not-react-common-anti-patterns-and-gotchas-in-react-40141fe0dcd)
+
+Answer the following questions and share your answers with your Study Group.
+
+1. What is the difference between Stateless Functional Components and class components?
+2. Describe the reasoning behind Controlled Components.
+3. What is the correct way to modify state? Make sure to explain what role a child component like “Add User” can have in the app.
+
+### 3.16 Ex 1 - All Together
+Here are the requirements
+
+> #### Instructions
+>
+> For this exercise, imagine that you're building a section of a simple video game website where we should be able to add users and display users, along with the number of games he/she has played.
+>
+> ##### Requirements
+> Create a React app that lets us add a user's first name, last name, and username. When the user is added, the number of games that he/she has played is defaulted to 0. Each username has to be unique, so we cannot add multiple users with the same username. When someone clicks "Add" but the username already exists, the app should not allow for a duplicate user to be added and should show an error message instead.
+>
+> The app should also display a list of users, specifically their usernames and the number of games they've played (which is defaulted to 0). If someone tries to add a user when one of the fields is empty, the "Add" button should be disabled.
+>
+> We should also have a button that lets us toggle between showing and hiding the number of games the users have played. For example, the button can start out as "Hide the Number of Games Played" and the app can display "username1 played 0 games." Clicking that button should change the button text to "Show the Number of Games Played" and the displayed username and score can be changed to "username1 played \* games."
+>
+> ##### Guidelines
+> State management is at the heart of React. It allows us to have a single source of truth for our entire application. That means that we don't need to make sure that our data is synched across multiple components; React does it for us. It happens via unidirectional data flow: parent components pass properties to child components as props.
+>
+> Remember that state cannot be modified outside of the component in which it is declared. If a child component needs to pass some data back up to the parent (e.g. a form that conveys the new user information to the component that holds that the users piece of state), we'll need to pass callbacks from the component that holds state all the way down to the required component. By calling those callbacks, child components are able to pass data to back up to their parents, which are able to modify their state. Props can go through multiple components to get to the component they ultimately need to reach.
+
+> #### Approach
+> This practice exercise will help you cement your understanding of where to put state, how to update and access state, when to use stateless functional components, and how to use controlled components.
+>
+> We recommend following the [Thinking in React Guide](https://reactjs.org/docs/thinking-in-react.html) when you're building your React applications.
+>
+> ##### Step 1. Break down the app into a hierarchy of components
+> Draw a box around each React component. Create a bullet list hierarchy.
+>
+> ##### Step 2. Build a static version in React
+> This static version will take the data model and render the UI. You’ll want to build components that reuse other components and pass data using props. **Don’t use state at all** to build this static version. State is reserved only for interactivity (data that changes over time). Since this is a static version of the app, you don’t need it.
+>
+> ##### Step 3. Figure out the data that should be a part of our state:
+>
+> 1. Is it passed in from a parent via props? If so, it probably isn’t state.
+> 2. Does it remain unchanged over time? If so, it probably isn’t state.
+> 3. Can you compute it based on any other state or props in your component? If so, it isn’t state.
+>
+> ##### Step 4. Identify where each piece of state lives.
+>
+> 1. Identify every component that renders something based on that state.
+> 2. If multiple components need the same piece of state, put that piece of state into those components' parent-most component.
+>
+> If you can’t find a component where it makes sense to own the state, create a new component simply for holding the state and add it somewhere in the hierarchy above the common owner component.
+>
+> ##### Step 5. Add Inverse Data Flow.
+>
+> State should be updated inside of the component where that state lives. If we pass state down from component A to component B and then need to update the state based on something that happened in component B, we can do so via callbacks:
+>
+> Component A will not only pass state to Component B, but it will also pass a callback function that will fire whenever the state should be updated.
+
+#### 3.16 Solution
+The first thing I did was break the UI up into different functional areas.
+
+I first did this with a pen and paper in this order.
+
+1. Draw out UI
+2. Draw boxes around functional components
+3. Create bullet hierarchy
+
+[![rf47](../assets/images/rf47-small.jpg)](../assets/images/rf47.jpg)
+
+This used the following hierarchy:
+
+- App (blue)
+  - UserInput (red)
+  - UserList (yellow)
+    - User (green)
+    - Game Toggle (purple)
+
+I started with App.js
+
+```jsx
+// App.js
+import React, { Component } from "react";
+import "./App.css";
+import UserInput from "./UserInput";
+import UserList from "./UserList";
+
+class App extends Component {
+  state = {
+    // users: []
+    users: [
+      { fname: "james", lname: "priest", username: "jpriest", games: 0 },
+      { fname: "mary", lname: "jane", username: "mj4ever", games: 0 }
+    ]
+  };
+  saveUser = user => {
+    console.log(user);
+    this.setState(prevState => ({
+      users: [...prevState.users, user]
+    }));
+  };
+  render() {
+    const { users } = this.state;
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src="logo.svg" className="App-logo" alt="logo" />
+          <h1 className="App-title">ReactND - Coding Practice</h1>
+          <p>Exercise 1 - All Together</p>
+        </header>
+        <main className="App-main">
+          <h2>User Game List</h2>
+          <div className="container">
+            <UserInput users={users} saveUser={this.saveUser} />
+            <UserList users={users} />
+          </div>
+        </main>
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+Next I built out UserInput.js
+
+```jsx
+// UserInput.js
+import React, { Component } from "react";
+
+class UserInput extends Component {
+  state = {
+    fname: "",
+    lname: "",
+    username: "",
+    games: 0,
+    unique: true
+  };
+  handleChange = e => {
+    const name = e.target.name;
+    const value = e.target.value;
+    // console.log(e.target.name);
+    this.setState({
+      [name]: value,
+      unique: true
+    });
+  };
+  fieldsAreValid = e => {
+    const { fname, lname, username } = this.state;
+    const valid = fname.length > 0 && lname.length > 0 && username.length > 0;
+    return valid;
+  };
+  addUser = e => {
+    e.preventDefault();
+    console.log(this.props.users);
+    console.log(this.state.username);
+    // const { fname, lname, username } = this.state;
+    // this.props.saveUser({ fname, lname, username });
+    if (
+      this.props.users.filter(user => user.username === this.state.username)
+        .length > 0
+    ) {
+      console.log("already taken");
+      this.setState({ unique: false });
+    } else {
+      this.setState({ unique: true });
+      this.props.saveUser({ ...this.state });
+    }
+  };
+  render() {
+    const { fname, lname, username } = this.state;
+    return (
+      <div>
+        <h3>Add User</h3>
+
+        <form onSubmit={this.addUser}>
+          <label>
+            First Name:
+            <input
+              name="fname"
+              type="text"
+              value={fname}
+              onChange={this.handleChange}
+              className="form-element"
+            />
+          </label>
+          <br />
+          <label>
+            Last Name:
+            <input
+              name="lname"
+              type="text"
+              value={lname}
+              onChange={this.handleChange}
+              className="form-element"
+            />
+          </label>
+          <br />
+          <label>
+            Username:
+            <input
+              name="username"
+              type="text"
+              value={username}
+              onChange={this.handleChange}
+              required
+              className={
+                !this.state.unique ? "form-element error" : "form-element"
+              }
+            />
+            {!this.state.unique && (
+              <span className="red">Username must be unique!</span>
+            )}
+          </label>
+          <br />
+          <button disabled={!this.fieldsAreValid()}>Add</button>
+        </form>
+      </div>
+    );
+  }
+}
+
+export default UserInput;
+```
+
+Next was UserList.js
+
+```jsx
+// UserList.js
+import React, { Component } from "react";
+import User from "./User";
+import GameToggle from "./GameToggle";
+
+class UserList extends Component {
+  state = {
+    hide: false
+  };
+  toggleGames = () => {
+    console.log(this.state.hide);
+    this.setState(prevState => ({
+      hide: !prevState.hide
+    }));
+  };
+  render() {
+    const { users } = this.props;
+    const { hide } = this.state;
+    return (
+      <div>
+        <h3>Users</h3>
+        {users.length > 0 && (
+          <table>
+            <thead>
+              <tr>
+                <td>First Name</td>
+                <td>Last Name</td>
+                <td>Username</td>
+                <td>Games</td>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(user => (
+                <User key={user.username} user={user} hide={hide} />
+              ))}
+            </tbody>
+          </table>
+        )}
+        <GameToggle toggleGames={this.toggleGames} hide={hide} />
+      </div>
+    );
+  }
+}
+
+export default UserList;
+```
+
+Then I added User.js
+
+```jsx
+// User.js
+import React from "react";
+
+function User(props) {
+  const { fname, lname, username, games } = props.user;
+
+  return (
+    <tr>
+      <td>{fname}</td>
+      <td>{lname}</td>
+      <td>{username}</td>
+      <td>
+        {username} played {props.hide ? "*" : games} games
+      </td>
+    </tr>
+  );
+}
+
+export default User;
+```
+
+Lastly, I add GameToggle.js
+
+```jsx
+// GameToggle.js
+import React from "react";
+
+function GameToggle(props) {
+  const { hide } = props;
+  return (
+    <button onClick={props.toggleGames}>
+      {hide
+        ? "Show the Number of Games Played"
+        : "Hide the Number of Games Played"}
+    </button>
+  );
+}
+
+export default GameToggle;
+```
+
+Here's the working app.
+
+[![rf48](../assets/images/rf48-small.jpg)](../assets/images/rf48.jpg)<br>
+**Live Demo:** [Exercise 1 - All Together on CodeSandbox](https://codesandbox.io/s/1o593kmy7l)
