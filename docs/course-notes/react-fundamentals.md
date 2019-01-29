@@ -3853,7 +3853,7 @@ I first did this with a pen and paper in this order.
 
 [![rf47](../assets/images/rf47-small.jpg)](../assets/images/rf47.jpg)
 
-This used the following hierarchy:
+This is how I divided up the hierarchy:
 
 - App (blue)
   - UserInput (red)
@@ -4107,3 +4107,236 @@ Here's the working app.
 
 [![rf48](../assets/images/rf48-small.jpg)](../assets/images/rf48.jpg)<br>
 **Live Demo:** [Exercise 1 - All Together on CodeSandbox](https://codesandbox.io/s/1o593kmy7l)
+
+### 3.17 Ex 2 - All Together
+Here are the requirements.
+
+> #### Instructions
+>
+> You're given a starter template with dummy data.
+>
+> **Task**: Add interactivity to the app by refactoring the static code in this template. The goal is to build a React app that shows 2 chat windows for the two existing users - Amy and John.
+>
+> The messages they send to each other should appear in both chat windows.
+> - On Amy's screen, her messages should appear in green and John's messages should appear in blue.
+> - On John's screen, his messages should appear in green and Amy's messages should appear in blue.
+
+[![rf49](../assets/images/rf49-small.jpg)](../assets/images/rf49.jpg)
+
+#### 3.17 Solution
+
+The first thing I did was divide the app up into a component hierarchy.
+
+[![rf50](../assets/images/rf50-small.jpg)](../assets/images/rf50.jpg)
+
+This is how I divided up the hierarchy:
+
+- App (green)
+  - ChatWindow (blue)
+    - MessageHistory (yellow)
+    - MessageInput (red)
+
+Here's App.js
+
+```jsx
+// App.js
+import React, { Component } from "react";
+import "./App.css";
+import ChatWindow from "./ChatWindow";
+
+class App extends Component {
+  users = [{ username: "Amy" }, { username: "John" }];
+  state = {
+    messages: [
+      { username: "Amy", text: "hi, John!" },
+      { username: "Amy", text: "how are you?" },
+      { username: "John", text: "hi, Amy! good, you?" },
+      { username: "Amy", text: "do u like me for real?" },
+      { username: "John", text: "I love u for real😘" },
+      { username: "Amy", text: "oh John 😍😍😍" },
+      { username: "John", text: "oh Amy 🤗🤗🤗" }
+    ]
+  };
+  postMessage = msg => {
+    console.log(msg);
+    this.setState(prevState => ({
+      messages: [...prevState.messages, msg]
+    }));
+  };
+  render() {
+    const { messages } = this.state;
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src="logo.svg" className="App-logo" alt="logo" />
+          <h1 className="App-title">ReactND - Coding Practice</h1>
+          <p>Exercise 2 - All Together</p>
+        </header>
+        <main className="App-main">
+          <div className="container">
+            <ChatWindow
+              username={this.users[0].username}
+              messages={messages}
+              onPostMessage={this.postMessage}
+            />
+            <ChatWindow
+              username={this.users[1].username}
+              messages={messages}
+              onPostMessage={this.postMessage}
+            />
+          </div>
+        </main>
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+Next is ChatWindow.js
+
+```jsx
+// ChatWindow.js
+import React, { Component } from "react";
+import MessageHistory from "./MessageHistory";
+import MessageInput from "./MessageInput";
+import PropTypes from "prop-types";
+
+class ChatWindow extends Component {
+  composeMessage = msg => {
+    const { username } = this.props;
+    const text = msg;
+    const msgObect = {
+      username,
+      text
+    };
+    this.props.onPostMessage(msgObect);
+  };
+  render() {
+    const { username, messages } = this.props;
+    return (
+      <div className="chat-window">
+        <h2>Super Awesome Chat</h2>
+        <div className="name sender">{username}</div>
+        <MessageHistory messages={messages} username={username} />
+        <MessageInput onPostMessage={this.composeMessage} />
+      </div>
+    );
+  }
+}
+
+ChatWindow.propTypes = {
+  username: PropTypes.string.isRequired,
+  messages: PropTypes.arrayOf(
+    PropTypes.shape({
+      username: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired
+    })
+  ),
+  onPostMessage: PropTypes.func.isRequired
+};
+
+export default ChatWindow;
+```
+
+Followed by MessageHistory.js
+
+```jsx
+// MessageHistory.js
+import React from "react";
+import PropTypes from "prop-types";
+
+const MessageHistory = props => {
+  const { messages, username } = props;
+  return (
+    <ul className="message-list">
+      {messages.map((message, index) => (
+        <li
+          key={index}
+          className={
+            message.username === username
+              ? "message sender"
+              : "message recipient"
+          }
+        >
+          <p>{`${message.username}: ${message.text}`}</p>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+MessageHistory.propTypes = {
+  username: PropTypes.string.isRequired,
+  messages: PropTypes.arrayOf(
+    PropTypes.shape({
+      username: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired
+    })
+  )
+};
+
+export default MessageHistory;
+```
+
+Lastly is MessageInput.js
+
+```jsx
+// MessageInput.js
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+
+class MessageInput extends Component {
+  state = {
+    msg: ""
+  };
+  isDisabled = () => {
+    if (this.state.value === "") {
+      return true;
+    }
+    return false;
+  };
+  handleChange = e => {
+    this.setState({
+      msg: e.target.value
+    });
+  };
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.onPostMessage(this.state.msg);
+  };
+  render() {
+    const { msg } = this.state;
+    return (
+      <div>
+        <form className="input-group" onSubmit={this.handleSubmit}>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Enter your message..."
+            value={msg}
+            onChange={this.handleChange}
+          />
+          <div className="input-group-append">
+            <button className="btn submit-button" disabled={this.isDisabled()}>
+              SEND
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+}
+
+MessageInput.propTypes = {
+  onPostMessage: PropTypes.func.isRequired
+};
+
+export default MessageInput;
+```
+
+The final output looks like this.
+
+[![rf51](../assets/images/rf51-small.jpg)](../assets/images/rf51.jpg)<br>
+**Live Demo:** [Exercise 2 - All Together on CodeSandbox](https://codesandbox.io/s/0q078mlyqv)
