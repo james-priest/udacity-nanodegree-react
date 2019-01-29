@@ -4174,16 +4174,14 @@ class App extends Component {
         </header>
         <main className="App-main">
           <div className="container">
-            <ChatWindow
-              username={this.users[0].username}
-              messages={messages}
-              onPostMessage={this.postMessage}
-            />
-            <ChatWindow
-              username={this.users[1].username}
-              messages={messages}
-              onPostMessage={this.postMessage}
-            />
+            {this.users.map(user => (
+              <ChatWindow
+                key={user.username}
+                username={user.username}
+                messages={messages}
+                onPostMessage={this.postMessage}
+              />
+            ))}
           </div>
         </main>
       </div>
