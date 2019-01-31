@@ -4338,3 +4338,291 @@ The final output looks like this.
 
 [![rf51](../assets/images/rf51-small.jpg)](../assets/images/rf51.jpg)<br>
 **Live Demo:** [Exercise 2 - All Together on CodeSandbox](https://codesandbox.io/s/0q078mlyqv)
+
+## 4. Lifecycle Events
+### 4.1 Introduction
+At this point, you should be fairly comfortable dealing with local state inside of your components. However, one thing we haven't talked about yet, is how to fetch and manage data that is living in a database somewhere.
+
+Your first intuition might be to make an Ajax request inside of the render method. Unfortunately, that's a bad idea because the render method needs to be free of side effects.
+
+[![rf52](../assets/images/rf52-small.jpg)](../assets/images/rf52.jpg)
+
+render() shouldn't make Ajax request, or do anything that is asynchronous in nature. It should only **receive props and return a description of the UI.**
+
+So, if we can't make Ajax requests in the render method, where should we make them?
+
+This introduces the concept of life cycle events in React. Lifecycle events are special methods each component has, that allow us to run custom behavior during certain times of the component's life.
+
+[![rf53](../assets/images/rf53-small.jpg)](../assets/images/rf53.jpg)
+
+Times like when a component is being created and inserted into the DOM, when a component receives new props, and a few others.
+
+React has a bunch of different lifecycle events that you can hook into, but for now, we're only going to talk about the most common ones.
+
+- `componentDidMount()` is immediately invoked after the component is inserted into the DOM.
+- `componentWillUnmount()` is invoked immediately before component is removed from the DOM.
+- `getDerivedStateFromProps()` which will be invoked whenever the component is about to receive brand new props.
+
+Now, we still have to answer the initial question, if we wanted to fetch external data from an API, how would we do this?
+
+This is the perfect use case for the `componentDidMount()` lifecycle events.
+
+#### render() Is For Rendering, Only!
+I just mentioned this in the video, but I want to stress it again - **data should not be fetched in the render method**! A component's `render()` method should *only* be used to render that component; it should not make any HTTP requests, fetch data that's used to display the content, or alter the DOM. The render() method also shouldn't call any other functions that do any of these things, either.
+
+So if render() is only used for displaying content, then we put  code that should handle things like Ajax requests in React's **lifecycle events**.
+
+#### Lifecycle Events
+Lifecycle events are specially named methods in a component. These methods are automatically bound to the component instance, and React will call these methods naturally at certain times during the life of a component. There are a number of different lifecycle events, but here are the most commonly used ones.
+
+- **componentDidMount()** - invoked immediately after the component is inserted into the DOM
+- **componentWillUnmount()** - invoked immediately before a component is removed from the DOM
+- **getDerivedStateFromProps()** - invoked after a component is instantiated as well as when it receives brand new props
+
+To use one of these, you'd just create a method in your component with the name and React will call it. It's an easy way to hook into different parts of the lifecycle of React components.
+
+The lifecycle event that we'll be looking at (and will be using a lot in our app!) is the `componentDidMount()` lifecycle event.
+
+You'll sometimes see `shouldComponentUpdate()` in React apps as well. It returns true by default. This means that whenever a component's state (or its parent's state) is updated, the component re-renders.
+
+The [React documentation](https://reactjs.org/docs/react-component.html#shouldcomponentupdate) provides the following guidance for using this lifecycle event:
+
+- The default behavior is to re-render on every state change, and in the vast majority of cases you should rely on the default behavior.
+- Do not rely on it to “prevent” a rendering, as this can lead to bugs.
+- Consider using the built-in `PureComponent` instead of writing `shouldComponentUpdate()` by hand.
+- We do not recommend doing deep equality checks or using JSON.stringify() in shouldComponentUpdate(). It is very inefficient and will harm performance.
+
+### 4.2 componentDidMount()
+If you want to make an Ajax request in React, use the componentDidMount lifecycle event. Let's walk through how this works.
+
+Once our component is added to the view, componentDidMount will be invoked,
+componentDidMount will initiate our Ajax request.
+Once the request has finished and we have the response, setState is called which updates the state of our component with our newly requested data.
+
+This will tick off a re-render and update the UI.
+
+[![rf54](../assets/images/rf54-small.jpg)](../assets/images/rf54.jpg)
+
+#### How componentDidMount() Works
+If you remember from the previous section, componentDidMount() is the lifecycle hook that is run right after the component is added to the DOM and should be used if you're fetching remote data or doing an Ajax request. Here's what the React docs have to say about it:
+
+> componentDidMount() is invoked immediately after a component is mounted. Initialization that requires DOM nodes should go here. If you need to load data from a remote endpoint, this is a good place to instantiate the network request. Setting state in this method will trigger a re-rendering.
+
+Let's take a look at an example User component:
+
+```jsx
+import React, { Component } from 'react';
+import fetchUser from '../utils/UserAPI';
+
+class User extends Component {
+ constructor(props) {
+   super(props);
+
+   this.state = {
+     name: '',
+     age: ''
+   };
+ }
+
+ componentDidMount() {
+   fetchUser().then((user) => this.setState({
+     name: user.name,
+     age: user.age
+   }));
+ }
+
+ render() {
+   return (
+     <div>
+       <p>Name: {this.state.name}</p>
+       <p>Age: {this.state.age}</p>
+     </div>
+   );
+   }
+}
+
+export default User;
+```
+
+You'll notice that this component has a componentDidMount() lifecycle event. This component seems pretty straightforward, but let's walk through the order of how it works:
+
+1. The `render()` method is called which updates the page with a `<div>` that has one paragraph for the name and one paragraph for the age. What's important to realize is that `this.state.name` and `this.state.age` are empty strings (at first), so the name and age *don't actually display*
+2. Once the component has been mounted, the `componentDidMount()` lifecycle event occurs
+   - The `fetchUser` request from the `UserAPI` is run which sends a request to the user database
+   - When the data is returned, `setState()` is called and updates the `name` and `age` properties
+3. Since the state has changed, `render()` gets called again. This re-renders the page, but now `this.state.name` and `this.state.age` have values
+
+Let's use `componentDidMount()` to fetch real users from a server in our Contacts app!
+
+> #### ⚠️ Required API File ⚠️
+> If you used create-react-app to build your project, then you'll need [the ContactsAPI file](https://github.com/udacity/reactnd-contacts-complete/blob/master/src/utils/ContactsAPI.js) for the following video.
+
+#### Update Components App with componentDidMount
+As of right now the contacts array lives within the state field of our App component.
+
+In reality we'd get this data by making an API request from a public API service using something like fetch().
+
+Here's our ContactsAPI.js file which is responsible for making fetch requests to our database
+
+```js
+// ./utils/ContactsAPI.js
+const api = process.env.REACT_APP_CONTACTS_API_URL || 'http://localhost:5001';
+
+let token = localStorage.token;
+
+if (!token)
+  token = localStorage.token = Math.random()
+    .toString(36)
+    .substr(-8);
+
+const headers = {
+  Accept: 'application/json',
+  Authorization: token
+};
+
+export const getAll = () =>
+  fetch(`${api}/contacts`, { headers })
+    .then(res => res.json())
+    .then(data => data.contacts);
+
+export const remove = contact =>
+  fetch(`${api}/contacts/${contact.id}`, { method: 'DELETE', headers })
+    .then(res => res.json())
+    .then(data => data.contact);
+
+export const create = body =>
+  fetch(`${api}/contacts`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  }).then(res => res.json());
+```
+
+We then need to import this into App.js with the following.
+
+```js
+import * as ContactsAPI from './utils/ContactsAPI';
+```
+
+Next we remove the hard-coded contacts array out of state and create this componentDidMount method.
+
+```js
+// App.js
+class App extends Component {
+  state = {
+    contacts: []
+  };
+  componentDidMount = () => {
+    ContactsAPI.getAll().then(contacts => {
+      this.setState(() => ({ contacts }));
+    });
+  };
+  render() {...}
+}
+```
+
+This calls the getAll method which returns a Promise.  When that Promise resolves we will have our contacts which we use to setState with.
+
+#### 4.2 Question 1 of 2
+In which lifecycle method should you make Ajax/API requests?
+
+- [x] componentDidMount
+- [ ] componentWillUnmount
+- [ ] render
+- [ ] shouldComponentUpdate
+
+#### 4.2 Question 2 of 2
+Why shouldn't you make Ajax requests in the render method?
+
+- [x] render() method shouldn't be concerned with much more than just returning UI
+- [ ] render() doesn't support normal JavaScript
+- [x] You don't have complete control over when the render() method will be invoked
+- [ ] You can't invoke functions inside of the render() method.
+
+#### Remove Contacts
+With what we have so far, we're fetching all users from the Contacts API and adding them to `this.state.contacts`. Pretty good so far. What's missing, though, is the removing feature. Currently, when we remove a contact, it gets removed from `this.state.contacts`, but it still exists in the backend database.
+
+Let's use the Contacts API's `remove()` method to update the backend.
+
+#### Components App - removeContact
+This next step is to invoke the remove method when removeContact method is called.
+
+```jsx
+// App.js
+  removeContact = contact => {
+    this.setState(currentState => ({
+      contacts: currentState.contacts.filter(c => c.id !== contact.id)
+    }));
+    ContactsAPI.remove(contact);
+  }
+```
+
+The method above actually splits the operation into two. It first calls setState to remove the contact from the UI and then it calls ContactsAPI.remove to remove the contact from the DB.
+
+Here we remove the item from state ONLY IF the DB item is removed successfully. Otherwise , we handle the error with a catch statement.
+
+```jsx
+  removeContact = contact => {
+    ContactsAPI.remove(contact)
+      .then(contact => {
+        this.setState(prevState => ({
+          contacts: prevState.contacts.filter(c => c.id !== contact.id)
+        }));
+      })
+      .catch(error => console.log("DB error"));
+  };
+```
+
+#### componentDidMount() Recap
+componentDidMount() is one of a number of lifecycle events that React offers. componentDidMount() gets called after the component is "mounted" (which means after it is rendered).
+
+If you need to dynamically fetch data or run an Ajax request, you should do it in componentDidMount().
+
+##### Further Research
+[componentDidMount()](https://reactjs.org/docs/react-component.html#componentdidmount) from the React Docs
+
+### 4.3 Lesson Summary
+To recap, lifecycle events are special methods that React provides that allow us to hook into different points in a component's life to run some code. Now, there are a number of different lifecycle events. They will run at different points, but we can break them down into three distinct categories:
+
+#### Adding to the DOM
+The following lifecycle events will be called in order when a component is being added to the DOM:
+
+1. constructor()
+2. getDerivedStateFromProps()
+3. render()
+4. componentDidMount()
+
+> ##### ⚠️componentWillMount() has been deprecated. ⚠️
+>
+> As of React 16.3, componentWillMount() has been replaced with UNSAFE_componentWillMount(). Only UNSAFE_componentWillMount() will work starting with React 17.0. UNSAFE_componentWillMount() is now considered to be a legacy method and should not be used in new code.
+
+#### Re-rendering
+The following lifecycle events will be called in order when a component is re-rendered to the DOM:
+
+1. getDerivedStateFromProps()
+2. shouldComponentUpdate()
+3. render()
+4. getSnapshotBeforeUpdate()([specific use cases](https://reactjs.org/docs/react-component.html#getsnapshotbeforeupdate))
+5. componentDidUpdate()
+
+> ##### ⚠️componentWillReceiveProps() and componentWillUpdate() have been deprecated. ⚠️
+
+As of React 16.3, they have been replaced with UNSAFE_componentWillUpdate() and UNSAFE_componentWillReceiveProps(). Only UNSAFE_componentWillUpdate() and UNSAFE_componentWillReceiveProps() will work starting with React 17.0. UNSAFE_componentWillUpdate() and UNSAFE_componentWillReceiveProps() are now considered to be legacy methods and should not be used in new code.
+
+#### Removing from the DOM
+This lifecycle event is called when a component is being removed from the DOM:
+
+- componentWillUnmount()
+
+#### Further Research
+- [componentDidMount()](https://reactjs.org/docs/react-component.html#componentdidmount) from the React Docs
+- [componentWillUnmount()](https://reactjs.org/docs/react-component.html#componentwillunmount) from the React Docs
+- [The Component Lifecycles](https://reactjs.org/docs/react-component.html#the-component-lifecycle) from the React Docs
+
+Here is what the final code looks like.
+
+[![rf55](../assets/images/rf55-small.jpg)](../assets/images/rf55.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
