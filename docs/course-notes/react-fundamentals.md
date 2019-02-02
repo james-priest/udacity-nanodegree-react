@@ -4697,8 +4697,255 @@ These methods are called when there is an error during rendering, in a lifecycle
 - [static getDerivedStateFromError()](https://reactjs.org/docs/react-component.html#static-getderivedstatefromerror)
 - [componentDidCatch()](https://reactjs.org/docs/react-component.html#componentdidcatch)
 
+## 5. React Router
+React Router is a tool that lets us use React to build Single Page Applications.
 
+### 5.1 Intro
+#### Single-Page Apps
+Single-page applications can work in different ways. One way a single-page app loads is by downloading *the entire* site's contents all at once. This way, when you're navigating around on the site, everything is already available to the browser, and it doesn't need to refresh the page.
 
+Another way single-page apps work is by downloading everything that's needed to render the page the user requested. Then when the user navigates to a new page, asynchronous JavaScript requests are made for *just* the content that was requested.
 
+Another key factor in a good single-page app is that **the URL controls the page content**. Single-page applications are highly interactive, and users want to be able to get back to a certain state using just the URL. Why is this important? Bookmarkability! (pretty sure that's not a word...yet) When you bookmark a site, that bookmark is only a URL, it doesn't record the state of that page.
 
+Have you noticed that any of the actions you perform in the app do not update the page's URL? We need to create React applications that offer bookmarkable pages!
 
+#### React Router
+React Router turns React projects into single-page applications. It does this by providing a number of specialized components that manage the creation of links, manage the app's URL, provide transitions when navigating between different URL locations, and so much more.
+
+According to the React Router website:
+
+> *React Router is a collection of **navigational components** that compose declaratively with your application.*
+
+You can check out the website at [https://reacttraining.com/](https://reacttraining.com/).
+
+In the next section, we'll dynamically render content to the page based on a value in the project's `this.state` object. We'll use this basic example as an idea of how React Router works by controlling what's being seen via state. 
+
+Then we'll switch over to using React Router. We'll walk you through installing React Router, adding it to the project, and hooking everything together so it can manage your links and URLs.
+
+### 5.2 Dynamically Render Pages
+As the app currently functions, there's no way to add new contacts! That's a shame because I really need to add Richard to my list of contacts. So let's create a form that'll let us create new contacts and save them to the server.
+
+#### 5.2 Quiz Question
+We're about to create a form that will create new contacts. Where should the code for the form UI go?
+
+- [ ] in App.js
+- [ ] in ListComponents.js
+- [ ] in index.js
+- [x] in a new component
+
+We don't want the form to display all of the time, so we'll start out by having the form show up only if a setting is enabled. We'll store this setting in `this.state`. Doing it this way will give us an idea of how React Router functions.
+
+#### Contacts App - Manual Routing with State
+Before we use React Router we are going to implement a manual way of conditionally showing the CreateContact page.
+
+We start by adding CreateContact.js
+
+```jsx
+// CreateContact.js
+import React, { Component } from 'react';
+
+class CreateContact extends Component {
+  render() {
+    return <div>Create Contact</div>;
+  }
+}
+
+export default CreateContact;
+```
+
+Next we do the following to App.js.
+
+- Import CreateContact.js
+- Add a state field called 'screen' to track which component to show
+- Create conditional rendering based on `state.screen` value
+
+```jsx
+// App.js
+import React, { Component } from 'react';
+import ListContacts from './ListContacts';
+import * as ContactsAPI from './utils/ContactsAPI';
+import CreateContact from './CreateContact';
+
+class App extends Component {
+  state = {
+    contacts: [],
+    screen: 'create'
+  };
+  componentDidMount() {
+    ContactsAPI.getAll().then(contacts => {
+      this.setState(() => ({
+        contacts
+      }));
+    });
+  }
+  removeContact = contact => {
+    this.setState(currentState => ({
+      contacts: currentState.contacts.filter(c => {
+        return c.id !== contact.id;
+      })
+    }));
+
+    ContactsAPI.remove(contact).then(contact => {
+      console.log(contact); // <- removed contact
+    });
+  };
+  render() {
+    return (
+      <div>
+        {this.state.screen === 'list' && (
+          <ListContacts
+            contacts={this.state.contacts}
+            onDeleteContact={this.removeContact}
+          />
+        )}
+        {this.state.screen === 'create' && <CreateContact />}
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+We did a couple things so far.
+
+- We created the CreateContact component that'll be in charge of the form to create new contacts.
+- We favored composition by creating CreateContact as a standalone component that we added to the render() method.
+
+In an attempt to do an *extremely* simple recreation of how React Router works, we added a `screen` property to `this.state`, and used this property to control what content should display on the screen.
+
+#### Short-circuit Evaluation Syntax
+In the conditional rendering, we used a somewhat odd looking syntax:
+
+```jsx
+{this.state.screen === 'list' && (
+  <ListContacts
+  contacts={this.state.contacts}
+  onDeleteContact={this.removeContact}
+  />
+)};
+```
+
+and
+
+```jsx
+{this.state.screen === 'create' && (
+  <CreateContact />
+)}
+```
+
+This can be a little confusing with both the JSX code for a component and the code to run an expression. But this is really just the logical expression `&&`:
+
+```js
+expression && expression
+```
+
+What we're using here is a JavaScript technique called **short-circuit evaluation**. If the first expression evaluates to true, then the second expression is run. However, if the first expression evaluates to false, then the second expression is skipped. We're using this as a guard to first verify the value of `this.state.screen` before displaying the correct component.
+
+For a deeper dive into this, check out [the short-circuit evaluation info on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_Operators#Short-circuit_evaluation).
+
+#### Add A Button
+Right now we have to manually change the state to get the app to display the different screens. We want the user to be able to control that in the app itself, so let's add a button!
+
+We do this in ListContacts.js right after the search input. We destructure a new prop called onNavigate and set Add Contact button's onClick to it.
+
+```jsx
+// ListContacts.js
+  render() {
+    const { query } = this.state;
+    const { contacts, onDeleteContact, onNavigate } = this.props;
+    return (
+      <div className="list-contacts">
+        <div className="list-contacts-top">
+          <input
+            className="search-contacts"
+            type="text"
+            placeholder="Search Contacts"
+            value={query}
+            onChange={this.updateQuery}
+          />
+          <a
+            href="#create"
+            onClick={() => onNavigate()}
+            className="add-contact"
+          >
+            Add Contact
+          </a>
+        </div>
+```
+
+Next we update App.js with the onNavigate method that will be passed as props to ListContacts.js.
+
+We inline an arrow function that will set state for the 'screen' property to 'create'. This will trigger the CreateContact component to display.
+
+We also include an AddContact method that we'll pass as props to CreateContact component. This method will trigger ListContacts to display.
+
+```jsx
+// App.js
+  addContact = contact => {
+    console.log("Contact added", contact);
+    this.setState(() => ({
+      screen: "list"
+    }));
+  };
+  render() {
+    return (
+      <div>
+        {this.state.screen === 'list' && (
+          <ListContacts
+            contacts={this.state.contacts}
+            onDeleteContact={this.removeContact}
+            onNavigate={() => {
+              this.setState({ screen: 'create' });
+            }}
+          />
+        )}
+        {this.state.screen === 'create' && (
+          <CreateContact onCreateContact={this.addContact} />
+        )}
+      </div>
+    );
+  }
+```
+
+Lastly we update the CreateContact component by adding a button that we'll hook up to the onCreateContact method that is being passed in.
+
+```jsx
+// CreateContact.js
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+
+class CreateContact extends Component {
+  static propTypes = {
+    onAddContact: PropTypes.func.isRequired
+  };
+  render() {
+    const { onAddContact } = this.props;
+    return (
+      <div>
+        Create Contact
+        <button
+          onClick={() => {
+            onAddContact({
+              id: "james",
+              name: "James Priest",
+              handle: "@james",
+              avatarURL: "/james.jpg"
+            });
+          }}
+        >
+          Add Contact
+        </button>
+      </div>
+    );
+  }
+}
+
+export default CreateContact;
+```
+
+Here's the UI.
+
+[![rf58](../assets/images/rf58-small.jpg)](../assets/images/rf58.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
