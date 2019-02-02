@@ -2,7 +2,7 @@
 title: Udacity React Fundamentals
 description: Notes by James Priest
 ---
-<!-- markdownlint-disable MD022 MD032 -->
+<!-- markdownlint-disable MD022 MD026 MD032 MD033 -->
 <!-- # React Nanodegree -->
 # React Fundamentals
 
@@ -228,7 +228,7 @@ The data lives in the parent component and is passed down to the child component
 Now, this might seem like extra work, but having the data flow in one direction and having one place where the data is modified makes it much easier to understand how the application works.
 
 #### 1.4 Quiz
-##### Question 1 of 2
+##### 1.4 Question 1 of 2
 A `FlightPlanner` component stores the information for booking a flight. It also contains `DatePicker` and `DestinationPicker` as child components. Here's what the code might look like:
 
 ```html
@@ -244,10 +244,9 @@ If this were a React application, which component should be in charge of making 
 - [ ] `DatePicker`
 - [ ] `DestinationPicker`
 
-
 Now let's say that the `FlightPlanner` component has two child components: `LocationPicker` and `DatePicker`. `LocationPicker` itself is a parent component that has two child components: `OriginPicker` and `DestinationPicker`.
 
-##### Question 2 of 2
+##### 1.4 Question 2 of 2
 If the following sample code were a React application, which of the following components should be in charge of making updates to data? Check all that apply.
 
 ```html
@@ -298,7 +297,7 @@ Here's a couple links for a quick refresher.
 - [Udacity ES6 course - Syntax notes](https://james-priest.github.io/100-days-of-code-log-r2/ES6-Syntax.html) - destructuring, spread, & rest operators
 - [Currying and ES6 Arrow Functions](http://codekirei.com/posts/currying-with-arrow-functions/) - with double arrow functions
 
-Over the past couple of years, functional programming has had a large impact on the JavaScript ecosystem and community. Functional programming is an advanced topic in JavaScript and fills hundreds of books. It's too complex to delve into the benefits of functional programming (we've got to get to React content, right?!?). 
+Over the past couple of years, functional programming has had a large impact on the JavaScript ecosystem and community. Functional programming is an advanced topic in JavaScript and fills hundreds of books. It's too complex to delve into the benefits of functional programming (we've got to get to React content, right?!?).
 
 React builds on a lot of the techniques of functional programming...techniques that you'll learn as you go through this program. However, there are a couple of important JavaScript functions that are vital to functional programming that we should look at. These are the Array's `.map()` and `.filter()` methods.
 
@@ -364,7 +363,7 @@ const musicData = [
     { artist: 'Beyonce', name: 'Lemonade', sales: 1554000 },
     { artist: 'Chris Stapleton', name: 'Traveller', sales: 1085000 },
     { artist: 'Pentatonix', name: 'A Pentatonix Christmas', sales: 904000 },
-    { artist: 'Original Broadway Cast Recording', 
+    { artist: 'Original Broadway Cast Recording',
       name: 'Hamilton: An American Musical', sales: 820000 },
     { artist: 'Twenty One Pilots', name: 'Blurryface', sales: 738000 },
     { artist: 'Prince', name: 'The Very Best of Prince', sales: 668000 },
@@ -373,7 +372,7 @@ const musicData = [
 ];
 
 // SOLUTION
-const albumSalesStrings = 
+const albumSalesStrings =
   musicData.map(obj => `${obj.name} by ${obj.artist} sold ${obj.sales} copies`);
 
 console.log(albumSalesStrings);
@@ -440,7 +439,7 @@ const musicData = [
     { artist: 'Beyonce', name: 'Lemonade', sales: 1554000 },
     { artist: 'Chris Stapleton', name: 'Traveller', sales: 1085000 },
     { artist: 'Pentatonix', name: 'A Pentatonix Christmas', sales: 904000 },
-    { artist: 'Original Broadway Cast Recording', 
+    { artist: 'Original Broadway Cast Recording',
       name: 'Hamilton: An American Musical', sales: 820000 },
     { artist: 'Twenty One Pilots', name: 'Blurryface', sales: 738000 },
     { artist: 'Prince', name: 'The Very Best of Prince', sales: 668000 },
@@ -483,7 +482,7 @@ The first item in the `popular` array will be 'Adele is a great performer'.
 /* Combining .filter() and .map()
  *
  * Using the musicData array, .filter, and .map():
- *   - filter the musicData array down to just the albums that have 
+ *   - filter the musicData array down to just the albums that have
  *     sold over 1,000,000 copies
  *   - on the array returned from .filter(), call .map()
  *   - use .map() to return a string for each item in the array in the
@@ -501,7 +500,7 @@ const musicData = [
     { artist: 'Beyonce', name: 'Lemonade', sales: 1554000 },
     { artist: 'Chris Stapleton', name: 'Traveller', sales: 1085000 },
     { artist: 'Pentatonix', name: 'A Pentatonix Christmas', sales: 904000 },
-    { artist: 'Original Broadway Cast Recording', 
+    { artist: 'Original Broadway Cast Recording',
       name: 'Hamilton: An American Musical', sales: 820000 },
     { artist: 'Twenty One Pilots', name: 'Blurryface', sales: 738000 },
     { artist: 'Prince', name: 'The Very Best of Prince', sales: 668000 },
@@ -537,7 +536,7 @@ Let's recap on some of the things we covered in this lesson on why React is grea
 
 #### Lesson Challenge
 
-Read these 3 articles that cover some of the essentials of React: 
+Read these 3 articles that cover some of the essentials of React:
 
 - [Virtual DOM](https://reactjs.org/docs/optimizing-performance.html#avoid-reconciliation)
 - [The Diffing Algorithm](https://reactjs.org/docs/reconciliation.html#the-diffing-algorithm)
@@ -608,7 +607,7 @@ Apps built with React typically have a single `root` DOM node. For example, an H
 
 By passing this DOM node into `getElementById()`, React will end up controlling the entirety of its contents. Another way to think about this is that this particular `<div>` will serve as a "hook" for our React app; this is the area where React will take over and render our UI!
 
-#### Question 1 of 3
+#### 2.2 Question 1 of 3
 What will `myBio` hold when the following code is run?
 
 ```js
@@ -651,7 +650,7 @@ When we're creating these React elements we must remember that we are describing
 >
 > When we call `React.createElement` we haven't actually created anything in the DOM yet. It's not until we cal `render()` that the browser actually creates a real DOM element.
 
-#### Question 2 of 3
+#### 2.2 Question 2 of 3
 React allows a lot of HTML attributes to be passed along to the React element. Look through [all supported HTML attributes](https://reactjs.org/docs/dom-elements.html#all-supported-html-attributes) in the React docs and select which of the following attributes are allowed:
 
 - [x] poster
@@ -662,19 +661,19 @@ React allows a lot of HTML attributes to be passed along to the React element. L
 I just used React's `.createElement()` method to construct a "React element". The `.createElement()` method has the following signature:
 
 ```js
-React.createElement( /* type */, /* props */, /* content */ ); 
+React.createElement( /* type */, /* props */, /* content */ );
 ```
 
 Let's break down what each item can be:
 
 - `type` – either a string or a React Component
-  
+
   This can be a string of any existing HTML element (e.g. `'p'`, `'span'`, or `'header'`) or you could pass a React *component* (we'll be creating components with JSX, in just a moment).
 - `props` – either `null` or an object
-  
+
   This is an object of HTML attributes and custom data about the element.
 - `content` – `null`, a string, a React Element, or a React Component
-  
+
   Anything that you pass here will be the content of the rendered element. This can include plain text, JavaScript code, other React elements, etc.
 
 #### Nested Elements
@@ -741,7 +740,7 @@ Another thing that's interesting here is that this person object was already in 
 
 Now one thing to note, when you're using an array as children is that React is going to complain if you don't give it a key.
 
-If we look at the console here in the browser, you'll see a warning. 
+If we look at the console here in the browser, you'll see a warning.
 
 > Each child in an array or iterator should have a unique "key" prop. Check the top-level render call using ol.
 
@@ -841,7 +840,7 @@ You'll notice it looks like we're assigning values to HTML attributes. We do thi
 
 Another thing to note is that event though we're using JSX which is nice and concise, this code gets compiled down to real JavaScript using  `createElement` inside our 'bundle.js'.
 
-#### Question 3 of 3
+#### 2.2 Question 3 of 3
 Consider the following example in JSX:
 
 ```jsx
@@ -951,7 +950,7 @@ ReactDOM.render(<ContactList />, document.getElementById('app'));
 > ```
 >
 > In other words, we are defining a component that's really just a JavaScript class that inherits from React.Component.
-> 
+>
 > In real-world use (and throughout this course), you may also see declarations like:
 >
 > ```js
@@ -971,7 +970,7 @@ In the end, remember that React is only concerned with the View layer of our app
 
 A great mindset to have when building React apps is to think in components. Components represent the modularity and reusability of React. You can think of your component classes as factories that produce instances of components. These component classes should follow the single responsibility principle and just "do one thing". If it manages too many different tasks, it may be a good idea to decompose your component into smaller subcomponents.
 
-##### Further Research
+##### 2.2 Further Research
 
 - [Rendering Elements](https://reactjs.org/docs/rendering-elements.html) from the React docs
 
@@ -1208,7 +1207,7 @@ But React's code we use in encapsulation story gets really interesting in the ne
 Three new concepts that we'll be covering are:
 
 - **Props** - Allows you to pass data into components
-- **Funcitonal Components** - An alternative, and probably more intuitive approach to creating components.
+- **Functional Components** - An alternative, and probably more intuitive approach to creating components.
 - **Controlled Components** - Allows you to hook up the forms in your application to your component state
 
 #### Contacts App
@@ -1267,7 +1266,7 @@ Once you've started the server, you can forget about it. The Contacts project we
 > Please be sure that both are running before moving on in this Lesson.
 
 ### 3.2 Pass Data with Props
-Here we have a function whose whole prupose is to fetch a user. The problem is we need to tell the function whcih user to fetch. This is done by passing a parameter to our function.
+Here we have a function whose whole purpose is to fetch a user. The problem is we need to tell the function which user to fetch. This is done by passing a parameter to our function.
 
 [![rf14](../assets/images/rf14-small.jpg)](../assets/images/rf14.jpg)
 
@@ -1283,7 +1282,7 @@ In fact any attributes that are added to a component are accessible inside of th
 
 [![rf16](../assets/images/rf16-small.jpg)](../assets/images/rf16.jpg)
 
-Here we'll use this `contacts` array temporarily. Eventually, we'll be grabing this from our backend server.
+Here we'll use this `contacts` array temporarily. Eventually, we'll be grabbing this from our backend server.
 
 ```js
 const contacts = [
@@ -1389,7 +1388,7 @@ class ListContacts extends Component {
 
 Argument is to function what props is to component.
 
-#### Question 2 of 4
+#### 3.2 Question 2 of 4
 If there were a `<Clock />` component in an app you're building, how would you pass a `currentTime` prop into it?
 
 - [ ] `<Clock {new Date().getTime()} />`
@@ -1419,11 +1418,11 @@ class ListContacts extends Component {
 
 Notice that we use a parens instead of curly braces after the ES6 arrow function in order to get the implicit return.
 
-The reason we need to add a key is because eventually one of those list items may change, and by having a unique key attribute on each list item, React is able to perfomantly know which list item has changed and can update just that item rather than having to recreate the entire list every time.
+The reason we need to add a key is because eventually one of those list items may change, and by having a unique key attribute on each list item, React is able to performantly know which list item has changed and can update just that item rather than having to recreate the entire list every time.
 
 [![rf19](../assets/images/rf19-small.jpg)](../assets/images/rf19.jpg)
 
-#### QUESTION 3 OF 4
+#### 3.2 QUESTION 3 OF 4
 Using the `<Clock />` component example:
 
 ```jsx
@@ -1477,7 +1476,7 @@ Lastly, we create a button for the Remove action which is not hooked up yet.
 [![rf20](../assets/images/rf20-small.jpg)](../assets/images/rf20.jpg)<br>
 **Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/qk7olqz52j)
 
-#### Question 4 of 4
+#### 3.2 Question 4 of 4
 How do you pass multiple props individually to a component?
 
 - [x] `<Clock time={Date.now()} zone='MST' />`{% raw %}
@@ -1506,7 +1505,7 @@ render() {
 ...
 ```
 
-##### Further Research
+##### 3.2 Further Research
 - [Components and Props](https://reactjs.org/docs/components-and-props.html) from the React Docs
 
 ### 3.3 Exercise Prep
@@ -1678,7 +1677,7 @@ Here's the final result.
 ### 3.5 Ex 2 - Passing Data
 The instructions for this exercise are:
 
-> #### Instructions
+> #### 3.5 Instructions
 > Let's do something a little bit more complicated. Instead of displaying a
 list of users and their movies, this time you need to display a list of movies.
 >
@@ -1687,9 +1686,9 @@ list of users and their movies, this time you need to display a list of movies.
 > 1. If the movie has been favorited, then display a list of all of the users who said that this movie was their favorite.
 > 2. If the movie has *not* been favorited, display some text stating that no one favorited the movie.
 >
-> As you go about tackling this project, try to make the app *modular* by breaking it into resusable React components.
+> As you go about tackling this project, try to make the app *modular* by breaking it into reusable React components.
 >
-> ##### Example
+> ##### 3.5 Example
 >
 > ```html
 > <h2>Forrest Gump</h2>
@@ -1750,7 +1749,7 @@ It required one component to loop through the movies (PopularMovies). Then it re
 Within App I just passed the *profiles*, *users*, *movies* as `props` to my FavoriteMovies component.
 
 ```jsx
-// Appp.js
+// App.js
 import React, { Component } from 'react';
 import './App.css';
 import { profiles, users, movies } from './data.js';
@@ -1891,7 +1890,7 @@ function Username(props) {
 
 Notice, however, that we're no longer accessing the components props by using the 'this' keyword. Instead, our functional component is being passed its props as the first argument to the function.
 
-#### Question 1 of 2
+#### 3.6 Question 1 of 2
 When is it appropriate to use a Stateless Functional Component? Check all that apply.
 
 - [ ] When the component needs to initialize some data
@@ -1899,7 +1898,7 @@ When is it appropriate to use a Stateless Functional Component? Check all that a
 - [ ] When the component doesn't have any props passed in
 - [ ] When the component does not use JSX
 
-#### Question 2 of 2
+#### 3.6 Question 2 of 2
 If the <IngredientList /> Component in the following code is a Stateless Functional Component, how would you access the items prop inside the Component?
 
 ```html
@@ -2008,13 +2007,13 @@ const Email = (props) => (
 
 In the latter example (written as an ES6 function with an implicit return), rather than accessing `props` from `this.props`, we can pass in props directly as an argument to the function itself. In turn, this regular JavaScript function can serve as the Email component's `render()` method.
 
-##### Further Research
+##### 3.6 Further Research
 - [Functional Components vs. Stateless Functional Components vs. Stateless Components](https://tylermcginnis.com/functional-components-vs-stateless-functional-components-vs-stateless-components/) from Tyler
 
 ### 3.7 Ex - Fn Components
 The exercise instructions are.
 
-> #### Instructions
+> #### 3.7 Instructions
 > Modify this app to use Stateless Functional Components. Remember that for
 performance reasons, if a component doesn't need to hold state, we'd want to
 make it a Stateless Functional Component.
@@ -2298,7 +2297,7 @@ export default App;
 
 Having this data live in the scope of the App component isn't necessarily bad but the problem is that it's outside of React's visibility.
 
-React will have no knowledge of any changes made to this data such as when we add, edit, or delete records.  
+React will have no knowledge of any changes made to this data such as when we add, edit, or delete records.
 
 One of React's strengths is state management and by having this data outside of our component we are not utilizing that strength. For that reason we need to move our contacts array into the local state of our App component.
 
@@ -2361,7 +2360,7 @@ So, the UI looks the same but what we've done is moved our contacts array from b
 >
 > In the above example, if props are ever updated, the current state will not change unless the component is "refreshed." Using props to produce a component's initial state also leads to duplication of data, deviating from a dependable "source of truth."
 
-#### Quiz Question
+#### 3.8 Quiz Question
 What is true about state in React? Please select all that apply:
 
 - [x] A component's state can be defined at initialization.
@@ -2379,12 +2378,11 @@ This is one of the key benefits of using React to build UI components: when it c
 
 React compares the previous output and new output, determines what has changed, and makes these decisions for us. This process of determining what has changed in the previous and new outputs is called **Reconciliation**.
 
-#### Further Research
+#### 3.8 Further Research
 - [Identify Where Your State Should Live](https://reactjs.org/docs/thinking-in-react.html#step-4-identify-where-your-state-should-live)
 
 ### 3.9 Updating State
 Now that we have state inside of our application, the next step is to figure out how to update it. Your natural intuition might be to update the state directly.
-
 
 ```jsx
 // ⚠️ This is wrong ⚠️
@@ -2529,7 +2527,7 @@ One other way of doing this would be to do the following.
 > See Cory House articles on Medium:
 >
 > - [React Pattern: Extract Child Components to Avoid Binding](https://medium.freecodecamp.org/react-pattern-extract-child-components-to-avoid-binding-e3ad8310725e)
-> - [Why Arrow Functions and bind in React’s Render are Problematic](https://medium.freecodecamp.org/why-arrow-functions-and-bind-in-reacts-render-are-problematic-f1c08b060e36)
+> - [Why Arrow Functions and bind in React's Render are Problematic](https://medium.freecodecamp.org/why-arrow-functions-and-bind-in-reacts-render-are-problematic-f1c08b060e36)
 
 This is the updated app with delete contact feature implemented.
 
@@ -2571,12 +2569,12 @@ this.setState(prevState => ({
 
 Here, the function passed in takes a single `prevState` argument. When a component's new state depends on the previous state (i.e., we are incrementing `count` in the previous state by 1), we want to use the functional `setState()`.
 
-#### Quiz Question
+#### 3.9 Quiz Question
 What is true about setting state in our components? Please check all that apply:
 
 - [x] Whenever `setState()` is called, the component also calls `render()` with the new state
 - [x] State updates can be merged by passing in an object to `setState()`
-- [ ] Updating state directly is ideal when you want to re-render a component (i.e. preferring 'this.state.message = 'hi there';` rather than `this.setState({ message: 'hi there' });`)
+- [ ] Updating state directly is ideal when you want to re-render a component (i.e. preferring `'this.state.message = 'hi there';` rather than `this.setState({ message: 'hi there' });`)
 - [x] State updates can be asynchronous (i.e. `setState()` can accept a function with the previous state as its first argument)
 - [ ] `setState()` should be called within the component's `render()` method
 
@@ -2595,8 +2593,7 @@ This exercise started with a static page and a set of instructions.
 
 [![rf31](../assets/images/rf31-small.jpg)](../assets/images/rf31.jpg)
 
-
-> #### Instructions
+> #### 3.10 Instructions
 > Create a game that shows an equation of the form
 >
 > - **X + Y + Z = P**
@@ -2751,7 +2748,7 @@ There are two articles that show how to avoid unnecessary renders when setting u
 > See Cory House articles on Medium:
 >
 > - [React Pattern: Extract Child Components to Avoid Binding](https://medium.freecodecamp.org/react-pattern-extract-child-components-to-avoid-binding-e3ad8310725e)
-> - [Why Arrow Functions and bind in React’s Render are Problematic](https://medium.freecodecamp.org/why-arrow-functions-and-bind-in-reacts-render-are-problematic-f1c08b060e36)
+> - [Why Arrow Functions and bind in React's Render are Problematic](https://medium.freecodecamp.org/why-arrow-functions-and-bind-in-reacts-render-are-problematic-f1c08b060e36)
 
 Here's the Game component.
 
@@ -2949,10 +2946,10 @@ Email.propTypes = {
 #### PropTypes Recap
 All in all, PropTypes is a great way to validate intended data types in our React app. Type checking our data with PropTypes helps us identify these bugs during development to ensure a smooth experience for our app's users.
 
-#### Further Research
+#### 3.11 Further Research
 
 - [prop-types](https://www.npmjs.com/package/prop-types) library from npm
-- [Typechecking With Proptypes](https://facebook.github.io/react/docs/typechecking-with-proptypes.html) from the React Docs
+- [Typechecking With PropTypes](https://facebook.github.io/react/docs/typechecking-with-proptypes.html) from the React Docs
 
 ### 3.12 Controlled Components
 Typically when you're using forms in a web app, the form state lives inside of the DOM. But as we've talked about, the whole point of React is to more effectively manage state inside of your application.
@@ -3287,7 +3284,6 @@ class ListContacts extends Component {
 export default ListContacts;
 ```
 
-
 So again, because we want to update the UI, we stick the input field on
 the component state. Whenever the component state changes that causes a re-render which then filters our contacts based on whatever the query is.
 
@@ -3300,7 +3296,7 @@ Which benefit applies to Controlled Components that doesn't apply to "uncontroll
 - [ ] Controlled Components are more the "React way" of doing things
 - [ ] Controlled Components are less typing
 - [ ] Controlled Components are more performant
-- [x] Controlled Components allow you to update your UI based on teh form itself
+- [x] Controlled Components allow you to update your UI based on the form itself
 
 #### Contacts App - Showing The Displayed Contacts Count
 We're almost done working with the controlled component! Our last step is to make our app display the count of how many contacts are being displayed out of the overall total.
@@ -3447,7 +3443,7 @@ In this case, event handlers update the component's state with the user's search
 
 This exercise consisted of the following instructions.
 
-> #### Instructions
+> #### 3.13 Instructions
 >
 > Edit the code to make the printed text mirror what we type into the input
 field. When we erase all of the text, nothing should be printed to the screen.
@@ -3515,7 +3511,7 @@ export default App;
 
 Here the instructions.
 
-> #### Instructions
+> #### 3.14 Instructions
 >
 > This file gives you a functioning app. But, as you can tell, the App
 isn't modular at all - there is only 1 component!
@@ -3570,7 +3566,7 @@ class App extends Component {
         <header className="App-header">
           <img src="logo.svg" className="App-logo" alt="logo" />
           <h1 className="App-title">ReactND - Coding Practice</h1>
-          <p>Exercise 2 - Contolled Components</p>
+          <p>Exercise 2 - Controlled Components</p>
         </header>
         <main className="App-main">
           <h2>Shopping List</h2>
@@ -3651,7 +3647,7 @@ class App extends Component {
         <header className="App-header">
           <img src="logo.svg" className="App-logo" alt="logo" />
           <h1 className="App-title">ReactND - Coding Practice</h1>
-          <p>Exercise 2 - Contolled Components</p>
+          <p>Exercise 2 - Controlled Components</p>
         </header>
         <main className="App-main">
           <h2>Shopping List</h2>
@@ -3778,7 +3774,7 @@ Both state and props will generally be in the form of an object, and changes in 
 
 We covered a lot in this lesson, and you've made great progress - great work!
 
-##### Lesson Challenge
+##### 3.15 Lesson Challenge
 Read these articles:
 
 - [Thinking in React](https://reactjs.org/docs/thinking-in-react.html)
@@ -3796,7 +3792,7 @@ Answer the following questions and share your answers with your Study Group.
 ### 3.16 Ex 1 - All Together
 Here are the requirements
 
-> #### Instructions
+> #### 3.16 Instructions
 >
 > For this exercise, imagine that you're building a section of a simple video game website where we should be able to add users and display users, along with the number of games he/she has played.
 >
@@ -4111,7 +4107,7 @@ Here's the working app.
 ### 3.17 Ex 2 - All Together
 Here are the requirements.
 
-> #### Instructions
+> #### 3.17 Instructions
 >
 > You're given a starter template with dummy data.
 >
@@ -4205,11 +4201,11 @@ class ChatWindow extends Component {
   composeMessage = msg => {
     const { username } = this.props;
     const text = msg;
-    const msgObect = {
+    const msgObject = {
       username,
       text
     };
-    this.props.onPostMessage(msgObect);
+    this.props.onPostMessage(msgObject);
   };
   render() {
     const { username, messages } = this.props;
@@ -4581,7 +4577,7 @@ componentDidMount() is one of a number of lifecycle events that React offers. co
 
 If you need to dynamically fetch data or run an Ajax request, you should do it in componentDidMount().
 
-##### Further Research
+##### 4.2 Further Research
 [componentDidMount()](https://reactjs.org/docs/react-component.html#componentdidmount) from the React Docs
 
 ### 4.3 Lesson Summary
@@ -4617,7 +4613,7 @@ This lifecycle event is called when a component is being removed from the DOM:
 
 - componentWillUnmount()
 
-#### Further Research
+#### 4.3 Further Research
 - [componentDidMount()](https://reactjs.org/docs/react-component.html#componentdidmount) from the React Docs
 - [componentWillUnmount()](https://reactjs.org/docs/react-component.html#componentwillunmount) from the React Docs
 - [The Component Lifecycles](https://reactjs.org/docs/react-component.html#the-component-lifecycle) from the React Docs
@@ -4627,10 +4623,82 @@ Here is what the final code looks like.
 [![rf55](../assets/images/rf55-small.jpg)](../assets/images/rf55.jpg)<br>
 **Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
 
-#### Challenge
-Read these 4 articles:
+#### Deeper Dive into Lifecycle
+These 4 articles touch on different aspect of the component lifecycle. Some detail methods that are now deprecated but these are noted in the articles.
 
 - [Understanding the React Component Lifecycle](http://busypeoples.github.io/post/react-component-lifecycle/)
 - [React component’s lifecycle](https://medium.com/react-ecosystem/react-components-lifecycle-ce09239010df)
 - [Understanding React — Component life-cycle](https://medium.com/@baphemot/understanding-reactjs-component-life-cycle-823a640b3e8d)
 - [React JS: what is a PureComponent?](http://lucybain.com/blog/2018/react-js-pure-component/)
+
+### 4.4 Lifecycle Event Stages
+At it's most basic, a React component describes what to render through it's *render()*  method.
+
+But what if we want to do something before or after the component has **rendered** or **mounted**? What if we want to **avoid a re-render**?
+
+React provides several methods that notify us when certain stages of the lifecycle process occurs. These are called the **component's lifecycle methods** and they are invoked in a predictable order.
+
+They can be split into three groups or stages with a fourth one being Error Handling.
+
+- Mounting
+- Updating
+- Unmounting
+
+- Error Handling
+
+#### Common Lifecycle Methods
+
+Below is a [diagram showing the most common lifecycle methods](http://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/) divided by stage.
+
+[![rf56](../assets/images/rf56-small.jpg)](../assets/images/rf56.jpg)
+
+Here's the same list in a hierarchy.
+
+- Mounting
+  - [constructor()](https://reactjs.org/docs/react-component.html#constructor)
+  - [render()](https://reactjs.org/docs/react-component.html#render)
+  - [componentDidMount()](https://reactjs.org/docs/react-component.html#componentdidmount)
+- Updating
+  - [render()](https://reactjs.org/docs/react-component.html#render)
+  - [componentDidUpdate()](https://reactjs.org/docs/react-component.html#componentdidupdate)
+- Unmounting
+  - [componentWillUnmount()](https://reactjs.org/docs/react-component.html#componentwillunmount)
+
+#### Rarely Used Lifecycle Methods
+Here's a list of methods broken down by stage with the common ones marked in **bold**.
+
+[![rf57](../assets/images/rf57-small.jpg)](../assets/images/rf57.jpg)
+
+##### Mounting
+These methods are called in the following order when an instance of a component is being created and inserted into the DOM.
+
+- **constructor()**
+- [static getDerivedStateFromProps()](https://reactjs.org/docs/react-component.html#static-getderivedstatefromprops)
+- **render()**
+- **componentDidMount()**
+
+##### Updating
+An update can be caused by changes to props or state. These methods are called in the following order when a component is being re-rendered:
+
+- [static getDerivedStateFromProps()](https://reactjs.org/docs/react-component.html#static-getderivedstatefromprops)
+- [shouldComponentUpdate()](https://reactjs.org/docs/react-component.html#shouldcomponentupdate)
+- **render()**
+- [getSnapshotBeforeUpdate()](https://reactjs.org/docs/react-component.html#getsnapshotbeforeupdate)
+- **componentDidUpdate()**
+
+##### Unmounting
+This method is called when a component is being removed from the DOM:
+
+- **componentWillUnmount()**
+
+##### Error Handling
+These methods are called when there is an error during rendering, in a lifecycle method, or in the constructor of any child component.
+
+- [static getDerivedStateFromError()](https://reactjs.org/docs/react-component.html#static-getderivedstatefromerror)
+- [componentDidCatch()](https://reactjs.org/docs/react-component.html#componentdidcatch)
+
+
+
+
+
+
