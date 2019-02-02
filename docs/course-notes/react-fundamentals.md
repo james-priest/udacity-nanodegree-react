@@ -4949,3 +4949,14 @@ Here's the UI.
 
 [![rf58](../assets/images/rf58-small.jpg)](../assets/images/rf58.jpg)<br>
 **Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
+
+The problem is that when we use the BACK button, the app breaks and is not able to navigate or replicate the state of our SPA from before.
+
+This is no good because this is an essential feature fo the web. When a user clicks the BACK button they expect to see the previous screen but this is really tricky to do with component state all on our own.
+
+React Router exists to alleviate this issue so we can keep our UI and URL in sync
+
+#### Dynamic Routing Recap
+In the code we added in this section, we tried our attempt at using state to control what content displays to the user. We saw things break down, though, when we used the back button.
+
+Now, let's switch over to using React Router to manage our app's screens.
