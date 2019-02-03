@@ -4960,3 +4960,249 @@ React Router exists to alleviate this issue so we can keep our UI and URL in syn
 In the code we added in this section, we tried our attempt at using state to control what content displays to the user. We saw things break down, though, when we used the back button.
 
 Now, let's switch over to using React Router to manage our app's screens.
+
+### 5.3 The BrowserRouter Component
+As we've just seen, when the user presses the 'back' button in the browser, they will probably have to refresh the page to see the proper content at that location. This isn't the best experience for our user! When we update location, we can update the app as well using JavaScript. This is where React Router comes in.
+
+#### Install React Router
+To use React Router in our app, we need to install `react-router-dom`.
+
+```bash
+npm install --save react-router-dom
+```
+
+#### BrowserRouter
+The first component we're going to look at from React Router is called Browser Router.
+
+It's going to listen for changes in the URL, and then make sure the correct screen shows up whenever the URL changes.
+
+[![rf60](../assets/images/rf60-small.jpg)](../assets/images/rf60.jpg)
+
+#### Contacts App - BrowserRouter
+This component is going to listen for changes in the URL and then make sure the correct screen shows up whenever the URL changes.
+
+In order to use this we need to update index.js.
+
+```jsx
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+import "./index.css";
+import App from "./App";
+
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById("root")
+);
+```
+
+After importing `react-router-dom` we wrap the App component with the BrowserRouter component.
+
+#### BrowserRouter Explained
+What's nice about React Router is that everything is just a component. This makes using it nice, but it also makes diving into the code more convenient as well. Let's take a look at what exactly BrowserRouter is doing under the hood.
+
+Here is the code straight from the React Router repository.
+
+```jsx
+// BrowserRouter package source...
+class BrowserRouter extends React.Component {
+  static propTypes = {
+    basename: PropTypes.string,
+    forceRefresh: PropTypes.bool,
+    getUserConfirmation: PropTypes.func,
+    keyLength: PropTypes.number,
+    children: PropTypes.node
+  }
+
+  history = createHistory(this.props)
+
+  render() {
+    return <Router history={this.history} children={this.props.children} />
+  }
+}
+```
+
+When you use `BrowserRouter`, what you're really doing is rendering a `Router` component and passing it a history `prop`. Wait, what is history? history comes from the [history library](https://github.com/ReactTraining/history) (also built by React Training). 
+
+The whole purpose of this library is it abstracts away the differences in various environments and provides a minimal API that lets you manage the history stack, navigate, confirm navigation, and persist state between sessions.
+
+So in a nutshell, when you use `BrowserRouter`, you're creating a `history` object which will listen to changes in the URL and make sure your app is made aware of those changes.
+
+#### BrowserRouter Component Recap
+In summary, for React Router to work properly, you need to wrap your whole app in a `BrowserRouter` component. Also, `BrowserRouter` wraps the history library which makes it possible for your app to be made aware of changes in the URL.
+
+##### 5.3 Further Research
+- [history](https://github.com/reacttraining/history)
+
+### 5.4 The Link Component
+The link component from React Router is critical. It's the way that the user navigates through your app.
+
+When the user clicks a link, it talks to the BrowserRouter and tells it to update the URL.
+
+[![rf61](../assets/images/rf61-small.jpg)](../assets/images/rf61.jpg)
+
+It's also accessible. Meaning, if you use the keyboard to navigate an app, it'll still work. Or maybe you want to right-click and open a new window?
+That's going to still work, too.
+
+These components do what users expect a link on the web to do.
+
+#### Contacts App - Link Component
+What we need  to do is replace our create contact link with a Link component in ListContacts.js
+
+We will also update `href` to `to` and we will remove the `onClick` handler since Link will handle the navigation for us.
+
+```jsx
+// ListContacts.js
+  render() {
+    // code...
+    return (
+      <div className="list-contacts">
+        <div className="list-contacts-top">
+          <input
+            className="search-contacts"
+            type="text"
+            placeholder="Search Contacts"
+            value={query}
+            onChange={this.updateQuery}
+          />
+          <Link to="create" className="add-contact">
+            Add Contact
+          </Link>
+          {/* more code... */}
+```
+
+We can also remove the onNavigate prop from this component.
+
+[![rf59](../assets/images/rf59-small.jpg)](../assets/images/rf59.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
+
+#### Link Component Explained
+As you've seen, Link is a straightforward way to provide declarative, accessible navigation around your application. By passing a `to` property to the Link component, you tell your app which path to route to.
+
+```jsx
+<Link to="/about">About</Link>
+```
+
+If you're experienced with routing on the web, you'll know that sometimes our links need to be a little more complex than just a string. For example, you can pass along query parameters or link to specific parts of a page. What if you wanted to pass state to the new route? To account for these scenarios, instead of passing a string to Link's `to` prop, you can pass it an object like this,
+
+```jsx
+<Link{% raw %}
+  to={{
+    pathname: "/courses",
+    search: "?sort=name",
+    hash: "#the-hash",
+    state: { fromDashboard: true }
+  }}
+>
+  Courses
+</Link>{% endraw %}
+```
+
+You won't need to use this feature all of the time, but it's good to know it exists. You can read more about Link in the [React Router official docs](https://reacttraining.com/react-router/web/api/Link).
+
+#### 5.4 Quiz Question
+When creating anchors for our app's routes, let's say we want `<a href="/members" class="members">Members</a>` in the DOM. How should we write this using React Router's `<Link>` component?
+
+- [ ] `<Link to="/members" class="members">Members</Link>`
+- [ ] `<a to="/members" class="members">Members</a>`
+- [x] `<Link to="/members" className="members">Members</Link>`
+- [ ] `<ink to="/members" class="members" linkText="Members" />`
+
+#### Link Recap
+React Router provides a Link component which allows you to add declarative, accessible navigation around your application. You'll use it in place of anchor tags (`a`) as you're typically used to.
+
+React Router's `<Link>` component is a great way to make navigation through your app accessible for users. Passing a `to` prop to your link, for example, helps guide your users to an absolute path (e.g., `/about`):
+
+```jsx
+<Link to="/about">About</Link>
+```
+
+Since the `<Link>` component fully renders a proper anchor tag (`<a>`) with the appropriate `href`, you can expect it to behave how a normal link on the web behaves.
+
+##### 5.4 Further Research
+- [Link at React Training](https://reacttraining.com/react-router/web/api/Link)
+- [Source Code](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/modules/Link.js)
+
+### 5.5 The Route Component
+The final component we need is called the route. Route takes a path that will match the URL, or not.
+
+If the path matches the URL, then the route will render some UI. But it won't render anything if it doesn't match.
+
+[![rf62](../assets/images/rf62-small.jpg)](../assets/images/rf62.jpg)
+
+Much like the code that we had that was checking our component's state to decide which screen we wanted to render, Route will do that same sort of thing. But instead of checking component's state, it will check the URL.
+
+What does that mean? It means that the back button's still going to work.
+
+#### Contacts App - Route Component
+This is the third and final thing we need to do in order to get React Router to start managing the URL and the UI for us.
+
+We start back in App.js and import Route from 'react-router-dom'.
+
+Then instead of conditionally rendering based on state we are now going to render a Route based on path.
+
+```jsx
+// App.js
+import * as ContactsAPI from './utils/ContactsAPI';
+import CreateContact from './CreateContact';
+import { Route } from 'react-router-dom';
+
+class App extends Component {
+  state = {
+    contacts: []
+  };
+  // more code... (handlers and methods)
+  render() {
+    return (
+      <div>
+        <Route
+          path="/"
+          exact
+          render={() => (
+            <ListContacts
+              contacts={this.state.contacts}
+              onDeleteContact={this.removeContact}
+            />
+          )}
+        />
+        <Route
+          path="/create"
+          component={CreateContact}
+        />
+      </div>
+    );
+  }
+}
+```
+
+We can use `render` prop to render the component and pass in additional props like handler functions.
+
+Otherwise, we can use `component` prop of Route when we are just passing in the component name without additional props.
+
+One thing to note is the use of `exact` prop so that both components aren't rendered when we are at '/create'.
+
+We've also gotten rid of our `onNavigate` props and the `screen` state since React Router is now managing this for us.
+
+#### 5.5 Quiz Question
+If the browser loads the URL /houses/green, which of the following Routes will match?
+
+- [x] `<Route path="/houses" component={Houses} />`
+- [ ] `<Route exact path="/houses" component={Houses} />`
+- [x] `<Route path="/houses/green" component={Houses} />`
+- [x] `<Route exact path="/houses/green" component={Houses} />`
+- [x] `<Route path="/" component={Houses} />`
+
+#### Route Component Recap
+The main takeaway from this section is that with a Route component if you want to be able to pass props to a specific component that the router is going to render, you'll need to use Route’s `render` prop. As you saw, render puts you in charge of rendering the component which in turn allows you to pass any props to the rendered component as you'd like.
+
+In summary, the Route component is a critical piece of building an application with React Router because it's the component which is going to decide which components are rendered based on the current URL path.
+
+[![rf63](../assets/images/rf63-small.jpg)](../assets/images/rf63.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
+
+Clicking the Add Contact button now serves the CreateContact component.
+
+[![rf64](../assets/images/rf64-small.jpg)](../assets/images/rf64.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
