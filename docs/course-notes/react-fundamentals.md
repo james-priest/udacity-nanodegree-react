@@ -4719,7 +4719,7 @@ According to the React Router website:
 
 You can check out the website at [https://reacttraining.com/](https://reacttraining.com/).
 
-In the next section, we'll dynamically render content to the page based on a value in the project's `this.state` object. We'll use this basic example as an idea of how React Router works by controlling what's being seen via state. 
+In the next section, we'll dynamically render content to the page based on a value in the project's `this.state` object. We'll use this basic example as an idea of how React Router works by controlling what's being seen via state.
 
 Then we'll switch over to using React Router. We'll walk you through installing React Router, adding it to the project, and hooking everything together so it can manage your links and URLs.
 
@@ -5024,7 +5024,7 @@ class BrowserRouter extends React.Component {
 }
 ```
 
-When you use `BrowserRouter`, what you're really doing is rendering a `Router` component and passing it a history `prop`. Wait, what is history? history comes from the [history library](https://github.com/ReactTraining/history) (also built by React Training). 
+When you use `BrowserRouter`, what you're really doing is rendering a `Router` component and passing it a history `prop`. Wait, what is history? history comes from the [history library](https://github.com/ReactTraining/history) (also built by React Training).
 
 The whole purpose of this library is it abstracts away the differences in various environments and provides a minimal API that lets you manage the history stack, navigate, confirm navigation, and persist state between sessions.
 
@@ -5351,3 +5351,58 @@ Here is the final list.
 
 [![rf67](../assets/images/rf67-small.jpg)](../assets/images/rf67.jpg)<br>
 **Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
+
+### 5.7 React Router Recap
+[![rf68](../assets/images/rf68-small.jpg)](../assets/images/rf68.jpg)
+
+Our app has a new screen and since we're using React Router, all of our user's expectations are met.
+
+- When they click on our new link, the router transitions the new screen and the URL updates.
+- They can then click the back button to go back, and the forward button to go forward.
+- They can refresh the page, right-click a link to open in a new tab,
+or share this URL with a friend.
+
+This is how the web works, and we don't want to break it.
+
+#### Further Learning
+If you're interested in learning more about React Router, we recommend these three resources.
+
+- [Build your own React Router v4](https://tylermcginnis.com/build-your-own-react-router-v4/) will walk through how to implement your own mini version of React Router to better understand its implementation details
+- [React Training's official documentation for React Router](https://reacttraining.com/react-router/web/guides/philosophy) blog post
+- [Tyler McGinnis React Router](https://tylermcginnis.com/courses/react-router/) full course
+
+##### 5.7 Lesson Challenge
+Read Tyler's [Nested routes with React Router v4](https://tylermcginnis.com/react-router-nested-routes/) blog post and answer the following questions. Share your answers with your classmates.
+
+1. What is the difference between `Link` and `Route`?
+2. What is the difference between `match.path` and `match.url`? Give a use case for each.
+3. Create a code example where you (1) pass props to a component that's rendered by React Router and (2) use nested routes.
+
+### 5.8 Course Resources
+#### Keep Learning
+Great work! You've learned how to build applications in React, but there's always more to learn! Check out the following resources to up your skills:
+
+- [The React Docs](https://facebook.github.io/react/docs/hello-world.html
+- [Tyler's Blog](https://tylermcginnis.com/)
+
+#### People to Follow
+Whether it be popular blog posts or developers to follow on Twitter, a large part of getting everything out of a new technology is utilizing existing community resources. So we want to share with you with our favorite resources from the React community that we've found helpful over the last few years. Hopefully you'll find them helpful as well.
+
+- [Dan Abramov](https://twitter.com/dan_abramov)
+- [Sebastian Markbåge](https://twitter.com/sebmarkbage)
+- [Henry Zhu](https://twitter.com/left_pad)
+- [Peggy Rayzis](https://twitter.com/peggyrayzis)
+- [Merrick Christensen](https://twitter.com/iammerrick)
+- [Christopher Chedeau](https://twitter.com/vjeux)
+- [React](https://twitter.com/reactjs)
+- [Tyler McGinnis](https://twitter.com/tylermcginnis)
+
+#### Blog posts to read
+- [You're missing the point of React](https://medium.com/@dan_abramov/youre-missing-the-point-of-react-a20e34a51e1a)
+- [React "Aha" Moments](https://tylermcginnis.com/react-aha-moments/)
+- [9 Things every React.js Beginner should know](https://camjackson.net/post/9-things-every-reactjs-beginner-should-know)
+- [React Elements vs React Components](https://tylermcginnis.com/react-elements-vs-react-components/)
+
+If you want to learn more advanced topics in React, you can check out [tylermcginnis.com](https://tylermcginnis.com/).
+
+Thanks for joining us on this journey! Now it's time to move on to learning Redux!
