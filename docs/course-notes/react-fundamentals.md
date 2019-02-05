@@ -5206,3 +5206,148 @@ Clicking the Add Contact button now serves the CreateContact component.
 
 [![rf64](../assets/images/rf64-small.jpg)](../assets/images/rf64.jpg)<br>
 **Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
+
+### 5.6 Finish Contact Form
+Right now, the page to create contacts is empty! Let's build out a form on that page so we start adding our own custom contacts.
+
+> #### ⚠️ Required File ⚠️
+>
+> At the beginning of the program, we gave you the option to clone our starter project or to start from scratch using create-react-app. If you haven't added it yet, you'll need [the ImageInput.js file](https://github.com/udacity/reactnd-contacts-complete/blob/master/src/ImageInput.js) for the following video.
+
+The ImageInput component is a custom `<input>` that dynamically reads and resizes image files before submitting them to the server as data URLs. It also shows a preview of the image. This file is given to you because it contains features related to files and images on the web that aren't crucial to your education in this context.
+
+#### Contacts App - Create Contact Form
+At this point we need to add the following code to our CreateContact.js component.
+
+```jsx
+// CreateContact.js
+import { Link } from 'react-router-dom';
+import ImageInput from './ImageInput';
+
+class CreateContact extends Component {
+  render() {
+    if (this.state.toList === true) {
+      return <Redirect to="/" />;
+    }
+    return (
+      <div>
+        <Link className="close-create-contact" to="/">
+          Close
+        </Link>
+        <form className="create-contact-form">
+          <ImageInput
+            className="create-contact-avatar-input"
+            name="avatarURL"
+            maxHeight={64}
+          />
+          <div className="create-contact-details">
+            <input type="text" name="name" placeholder="Name" required />
+            <input type="text" name="handle" placeholder="Handle" required />
+            <button>Add Contact</button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+}
+
+export default CreateContact;
+```
+
+[![rf65](../assets/images/rf65-small.jpg)](../assets/images/rf65.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
+
+#### Serialize The Form Data
+At this point, our form will serialize the values from user input (i.e., the `name` and `email`), adding them as a query string to the URL. We can add some additional functionality by having our app serialize these form fields on its own. After all, we want the app to ultimately handle creating the contact and saving it to the state.
+
+To accomplish this, we'll use the [form-serialize](https://www.npmjs.com/package/form-serialize) package to output this information as a regular JavaScript object for the app to use.
+
+```jsx
+npm install --save form-serialize
+```
+
+Next we make the following additions to CreateContact.js
+
+```jsx
+// CreateContact.js
+import serializeForm from 'form-serialize';
+
+class CreateContact extends Component {
+  // more code...
+  handleSubmit = e => {
+    e.preventDefault();
+    const values = serializeForm(e.target, { hash: true });
+
+    if (this.props.onCreateContact) {
+      this.props.onCreateContact(values);
+    }
+  };
+  // more code...
+  render() {
+    return (
+      <div>
+        <Link className="close-create-contact" to="/">
+          Close
+        </Link>
+        <form onSubmit={this.handleSubmit} className="create-contact-form">
+        {/* more code... */}
+      </div>
+    );
+  }
+}
+```
+
+#### Update Server With New Contact
+We have our contact form. We're serializing our data and passing it up to the parent component. All we need to do to have a fully functional app is to save the contact to the server.
+
+Next we make the following changes to App.js
+
+```jsx
+// App.js
+class App extends Component {
+  // more code...
+  createContact = contact => {
+    ContactsAPI.create(contact).then(contact => {
+      this.setState(prevContacts => ({
+        contacts: prevContacts.contacts.concat(contact)
+      }));
+    });
+  };
+  render() {
+    return (
+      <div>
+        <Route
+          exact
+          path="/"
+          render={() => (
+            <ListContacts
+              contacts={this.state.contacts}
+              onDeleteContact={this.removeContact}
+            />
+          )}
+        />
+        <Route
+          path="/create"
+          render={({ history }) => (
+            <CreateContact
+              onCreateContact={contact => {
+                this.createContact(contact);
+                history.push('/');
+              }}
+            />
+          )}
+        />
+      </div>
+    );
+  }
+}
+```
+
+Here's the Create Contact form.
+
+[![rf66](../assets/images/rf66-small.jpg)](../assets/images/rf66.jpg)
+
+Here is the final list.
+
+[![rf67](../assets/images/rf67-small.jpg)](../assets/images/rf67.jpg)<br>
+**Live Demo:** [Contacts App on CodeSandbox](https://codesandbox.io/s/kjpv2kv2o)
