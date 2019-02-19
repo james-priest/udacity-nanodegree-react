@@ -2,6 +2,8 @@
 # React Nanodegree
 This site contains my course notes along with project submissions and walkthoughs for Udacity's 4-month [React Nanodegree Program](https://www.udacity.com/course/react-nanodegree--nd019).
 
+[![udacity-react](docs/assets/images/udacity-react-small.jpg)](assets/images/udacity-react.jpg)
+
 ## Course Notes
 Lesson transcripts along with screenshots, sample code, & links.
 
