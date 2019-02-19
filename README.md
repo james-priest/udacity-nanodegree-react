@@ -7,9 +7,9 @@ This site contains my course notes along with project submissions and walkthough
 ## Course Notes
 Lesson transcripts along with screenshots, sample code, & links.
 
-- Part 1 - [React Fundamentals](docs/course-notes/react-fundamentals.md) (Lessons 1-5)
-- Part 2 - [React & Redux](docs/course-notes/react-redux.md) (Lessons 1-7)
-- Part 3 - [React Native](docs/course-notes/react-native.md) (Lessons 1-5)
+- Part 1 - [React Fundamentals](https://james-priest.github.io/udacity-nanodegree-react/course-notes/react-fundamentals.html) (Lessons 1-5)
+- Part 2 - [React & Redux](https://james-priest.github.io/udacity-nanodegree-react/course-notes/react-redux.html) (Lessons 1-7)
+- Part 3 - [React Native](https://james-priest.github.io/udacity-nanodegree-react/course-notes/react-native.html) (Lessons 1-5)
 
 ## Projects
 
