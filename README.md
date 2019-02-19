@@ -1,18 +1,28 @@
 <!-- markdownlint-disable MD022 MD032 -->
 # React Nanodegree
-This site contains my code notes and project submissions for the 4-month [Udacity React Nanodegree Program](https://www.udacity.com/course/react-nanodegree--nd019).
+This site contains my course notes along with project submissions and walkthoughs for Udacity's 4-month [React Nanodegree Program](https://www.udacity.com/course/react-nanodegree--nd019).
 
 ## Course Notes
-These notes contain lesson transcripts along with screenshots, sample code, & links.
+Lesson transcripts along with screenshots, sample code, & links.
 
-### Part 1 - React Fundamentals
-- [React Fundamentals](docs/course-notes/react-fundamentals.md) (Lessons 1-5)
+- Part 1 - [React Fundamentals](docs/course-notes/react-fundamentals.md) (Lessons 1-5)
+- Part 2 - [React & Redux](docs/course-notes/react-redux.md) (Lessons 1-7)
+- Part 3 - [React Native](docs/course-notes/react-native.md) (Lessons 1-5)
 
-### Part 2 - React & Redux
-- [React & Redux](docs/course-notes/react-redux.md) (Lessons 1-7)
+## Projects
 
-### Part 3 - React Native
-- [React Native](docs/course-notes/react-native.md) (Lessons 1-5)
+### 1. React Fundamentals Project
+- GitHub Repo: [MyReads: A Book Tracking App](https://github.com/james-priest/reactnd-project-myreads)
+- Documentation: [Code Notes & Walkthrough](https://james-priest.github.io/reactnd-project-myreads/)
+- Demo: [MyReads on CodeSandbox](https://codesandbox.io/s/github/james-priest/reactnd-project-myreads)
+
+### 2. React & Redux Project
+- GitHub Repo: Would You Rather...?
+- Documentation: Code Notes & Walkthrough
+
+### 3. React Native Project
+- GitHub Repo: Mobile Flashcards
+- Documentation: Code Notes & Walkthrough
 
 <!-- 
 ### Optional Courses
