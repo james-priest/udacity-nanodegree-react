@@ -84,22 +84,106 @@ You’ll learn to leverage the react-redux bindings in order to leverage the ben
 ##### Lesson 7 - Real World Redux
 You’ll take your knowledge of Redux and utilize it by building a real world Redux application. You’ll also learn advanced Redux topics like reducer composition and normalization.
 
-<!-- 
 ### 1.2 The Store
-Think about any application you've ever made.
-Most likely that app was composed of two things, UI and state.
-Now, think of any bug you've ever had.
-Odds are that bug was caused by state mismanagement.
-Your application was expecting the state to be one thing,
-but it was actually something else.
-When your computer freezes and you have to restart it,
-that's because some state inside of your computer got to a weird place.
-By restarting it, you reset that state.
-When a website says you have a new notification,
-but you click on that and there's nothing new,
-that's because the state of the app was mismanaged.
-As I said previously,
-the goal of this course is to make state management,
-any app you build more predictable.
-One of the best ways to improve the quality of the apps you
-build is to improve the predictability of the state in an application. -->
+Think about any application you've ever made. Most likely that app was composed of two things, UI and state.
+
+Now, think of any bug you've ever had. Odds are that bug was caused by state mismanagement.
+Your application was expecting the state to be one thing, but it was actually something else.
+
+When your computer freezes and you have to restart it, that's because some state inside of your computer got to a weird place. By restarting it, you reset that state. When a website says you have a new notification, but you click on that and there's nothing new, that's because the state of the app was mismanaged.
+
+As was said previously, the goal of this course is to make state management, on any app you build, more predictable. One of the best ways to improve the quality of the apps you build is to improve the predictability of the state in an application.
+
+#### 1.2 App Data
+A traditional app might look something like this:
+
+[![rr4](../assets/images/rr4-small.jpg)](../assets/images/rr4.jpg)<br>
+App data is sprinkled throughout the app.
+
+Notice in the image above, that this simple application has a lot of state:
+
+- There are the images in the sidebar on the left.
+- There are rows of tracks in the main area.
+- Each Track will have its own information that it's maintaining.
+- There's the search field at the top that introduces new state to the app (the searched for artist/track information).
+
+And this is just one, simple page of this application. In most sites you use, there is information littered throughout every single page of the entire app.
+
+Remember that the main goal of Redux is to make the state management of an application more predictable. Let's see what that might look like:
+
+[![rr5](../assets/images/rr5-small.jpg)](../assets/images/rr5.jpg)<br>
+Application data is just referenced by the app.
+
+In this example, the app appears exactly the same to the end user, however, it's functioning quite differently under the hood. All of the data is stored *outside of the UI code* and is just *referenced* from the UI code.
+
+With a change like this, if the data needs to be modified at all, then all of the data is located in one place and needs to be only changed once. Then the areas of the app that are referencing pieces of data, will be updated since the source they're pulling from has changed.
+
+#### 1.2 State Tree
+One of the key points of Redux is that all of the data is stored in a single object called the state tree. But what does a state tree actually look like? Good question! Here's an example:
+
+```text
+{
+  recipes: [
+    { … },
+    { … },
+    { … }
+  ],
+  ingredients: [
+    { … },
+    { … },
+    { … },
+    { … },
+    { … },
+    { … }
+  ],
+  products: [
+    { … },
+    { … },
+    { … },
+    { … }
+  ]
+}
+```
+
+See how all of the data for this imaginary cooking site is stored in a single object? So all of the state (or "application data") for this site is stored in one, single location. This is what we mean when we say "state tree"...it's just all of the data stored in a single object.
+
+Throughout this course, whenever we refer to an application's "state tree", we'll use a triangle to convey this concept.
+
+[![rr7](../assets/images/rr7-small.jpg)](../assets/images/rr7.jpg)<br>
+
+Now that we've decided we're going to put all of our state into a single location called the state tree, the next thing we need to figure out, is how we'll actually interact with it.
+
+If we're actually going to build a real application with our state tree, there are three ways in which we'll need to interface with it.
+
+- First, we'll need a way of getting the state.
+- Second, we'll need a way to listen for when the state changes.
+- Third, we'll need a way to update the state.
+
+Let's go ahead and wrap all of these things together into a single concept called the store.
+
+[![rr6](../assets/images/rr6-small.jpg)](../assets/images/rr6.jpg)<br>
+
+So, when we talk about the store, we're talking about the state tree as well as three ways in which we'll interact with it
+
+- Getting the state
+- Listening for updates to the state
+- Updating the state
+
+#### 1.2 Quiz Question
+What are the ways we can interact with the state tree?
+
+- [x] Getting changes from the state
+- [x] Listening for changes from the state
+- [x] Updating the state
+
+#### 1.2 Summary
+Summary
+In this lesson, we looked at the data in an application. We saw that in traditional apps, the data is mixed in with the UI and markup. This can lead to hard-to-find bugs where updating the state in one location doesn't update it in every location.
+
+We learned that the main goal that Redux is trying to offer is predictable state management. The way that Redux tries to accomplish this is through having a *single state tree*. This state tree is an object that stores the entire state for an application. Now that all state is stored in one location, we discovered three ways to interact with it:
+
+1. getting the state
+2. listening for changes to the state
+3. updating the state
+
+Then we combine the three items above and the state tree object itself into one unit which we called *the store*. We'll look at creating this store in the next lesson.
