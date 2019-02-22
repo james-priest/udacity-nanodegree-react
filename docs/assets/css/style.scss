@@ -95,16 +95,21 @@ blockquote > p, blockquote > h4, blockquote > h5, blockquote pre, blockquote > u
 blockquote > p, blockquote pre {
     margin: 11px 10px;
 }
+
 li>blockquote, ul>blockquote {
     margin: 20px 0;
 }
 hr { margin: 20px 0; }
 
-section>ol, section>ul { 
+section > ol, section > ul { 
     margin: 0 40px 20px 30px;
 }
-section>blockquote>ol, section>blockquote>ul {
+section > blockquote > ol, section > blockquote > ul {
     padding: 0 0 0 20px;
+}
+section > blockquote > table {
+    margin: 0 10px 20px;
+    width: calc(100% - 20px);
 }
 section li {
     line-height: 1.4;

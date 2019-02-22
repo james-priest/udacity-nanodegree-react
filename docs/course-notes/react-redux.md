@@ -52,7 +52,7 @@ To fix this, we're going to take a slow gradual approach.
 
 Now, we're covering quite a lot, but remember we're going to take it slow and go step-by-step.
 
-#### 1.1 Lesson Roadmap
+#### 1.1.1 Lesson Roadmap
 Since Redux is not a topic for beginners and can be a daunting area to break into. We've broken down your path to learning Redux into the following lessons:
 
 - Lesson 1 - Managing State
@@ -94,7 +94,7 @@ When your computer freezes and you have to restart it, that's because some state
 
 As was said previously, the goal of this course is to make state management, on any app you build, more predictable. One of the best ways to improve the quality of the apps you build is to improve the predictability of the state in an application.
 
-#### 1.2 App Data
+#### 1.2.1 App Data
 A traditional app might look something like this:
 
 [![rr4](../assets/images/rr4-small.jpg)](../assets/images/rr4.jpg)<br>
@@ -118,7 +118,7 @@ In this example, the app appears exactly the same to the end user, however, it's
 
 With a change like this, if the data needs to be modified at all, then all of the data is located in one place and needs to be only changed once. Then the areas of the app that are referencing pieces of data, will be updated since the source they're pulling from has changed.
 
-#### 1.2 State Tree
+#### 1.2.2 State Tree
 One of the key points of Redux is that all of the data is stored in a single object called the state tree. But what does a state tree actually look like? Good question! Here's an example:
 
 ```text
@@ -169,14 +169,14 @@ So, when we talk about the store, we're talking about the state tree as well as 
 - Listening for updates to the state
 - Updating the state
 
-#### 1.2 Quiz Question
+#### 1.2.3 Quiz Question
 What are the ways we can interact with the state tree?
 
 - [x] Getting changes from the state
 - [x] Listening for changes from the state
 - [x] Updating the state
 
-#### 1.2 Summary
+#### 1.2.4 Summary
 Summary
 In this lesson, we looked at the data in an application. We saw that in traditional apps, the data is mixed in with the UI and markup. This can lead to hard-to-find bugs where updating the state in one location doesn't update it in every location.
 
@@ -188,7 +188,7 @@ We learned that the main goal that Redux is trying to offer is predictable state
 
 Then we combine the three items above and the state tree object itself into one unit which we called *the store*. We'll look at creating this store in the next lesson.
 
-### 1.3 Create Store: Getting & Listening
+### 1.3 Getting State & Listening for Changes
 In this section, we'll be building the store. If you remember from the previous section, the store has the following information:
 
 - the state tree
@@ -198,7 +198,7 @@ In this section, we'll be building the store. If you remember from the previous 
 
 [![rr6](../assets/images/rr6-small.jpg)](../assets/images/rr6.jpg)
 
-#### 1.3 Create Store from Scratch
+#### 1.3.1 Create Store from Scratch
 So this is what we're going to do in this lesson - we're going to actually create the store code ourselves, from scratch.
 
 In the following video, we'll start with a blank `index.js` file and create a factory function that creates store objects. Then we'll have the store keep track of the state, and we'll write the method to get the state from the store.
@@ -232,7 +232,7 @@ We started building out the `createStore` function. Currently, this factory func
 
 Let's take a look at the `getState()` function
 
-> #### 1.3 Question 1 of 5
+> #### 1.3.2 Question 1 of 5
 > Thinking about the code we just wrote, what does the `getState()` function do?
 >
 > - [ ] It modifies the existing state variable.
@@ -330,7 +330,7 @@ const unsubscribe = store.subscribe(() => {
 unsubscribe();
 ```
 
-> #### 1.3 Question 2 of 5
+> #### 1.3.3 Question 2 of 5
 >
 > Which of the following is true about `store.subscribe()`?
 >
@@ -365,7 +365,7 @@ Now remember, the whole goal here is to increase the predictability of the state
 
 In fact, the only way in which we can increase predictability in terms of updating the state, is by establishing a strict set of rules for how updates can be made.
 
-> #### NFL Ana`logy
+> #### NFL Analogy
 > Let's look at an NFL team for example. In order for a team to maximize their chances of winning, they always have to be on the same page. They need to operate as one cohesive unit. Every miscommunication can and will lead to negative consequences.
 >
 > So in a sense, NFL teams have the same goals that we do. Increasing predictability. But how do they go about accomplishing this?
@@ -380,7 +380,7 @@ We've got our first rule!
 
 Ok...well, without knowing what an "event" is, this rule is less than helpful :-\ Fear not, because we're going to look at what events are next:
 
-#### 1.3 TO-DO Example
+#### 1.3.4 TO-DO Example
 Previously, you were introduced to Rule #1 for increasing the predictability of state within the store: Have a collection of events that can occur in the application which will change the state of the store.
 
 Now, what does this actually look like? Let's say we were building a to-do list app. One event that would change the state of the store would be when the user adds a new item to their to-do list.
@@ -438,7 +438,7 @@ All actions must have a type property. Now, what we've done is we've created a c
 
 If the state of our app changes, we'll know that one of those actions occurred.
 
-#### 1.3 Shopping Cart Example
+#### 1.3.5 Shopping Cart Example
 When an event takes place in a Redux application, we use a plain JavaScript object to keep track of what the specific event was. This object is called an **Action**.
 
 Let's take another look at an Action:
@@ -488,21 +488,21 @@ var addItem = function addItem(item) {
 };
 ```
 
-> #### 1.3 Question 3 of 5
+> #### 1.3.6 Question 3 of 5
 >
 > Is it true that *every* Action must have a `type` property?
 >
 > - [x] Yes - Redux will throw an error if missing
 > - [ ] No
 
-> #### 1.3 Question 4 of 5
+> #### 1.3.7 Question 4 of 5
 >
 > Can an Action have three or more fields?
 >
 > - [x] Yes - There's no limit but it's best to keep objects as light as possible
 > - [ ] No
 
-> #### 1.3 Question 5 of 5
+> #### 1.3.8 Question 5 of 5
 > Consider each
 >
 > ```js
@@ -551,7 +551,365 @@ var addItem = function addItem(item) {
 > - [ ] D
 > - [ ] E
 
-#### 1.3 Summary
+#### 1.3.9 Summary
 In this section, we started creating our store by building out a `createStore()` function. So far, this function keeps track of the state, and provides a method to get the state and one to keep track of listener functions that will be run whenever the state changes.
 
 In the next section, we'll add a method to handle updating the state.
+
+### 1.4 Updating State
+Let's step back one more time and think about what Redux is all about. The whole goal of Redux is to increase predictability:
+
+> *Redux is a predictable state container for JavaScript apps.*
+
+With this in mind, let's see dig into how we can use actions and our state tree to predictably manage an application's state.
+
+We have the entire state of the application in the state tree. We also know about every action that can change the application state. So we have these two distinct pieces of data, but we need something to tie them together.
+
+[![rr17](../assets/images/rr17-small.jpg)](../assets/images/rr17.jpg)
+
+Meaning, we need a way to update our state based on the current action which occurred.
+
+What if we just used a function to do this? We could have that function taking two arguments,
+the current state, and the action which occurred. Then, based off of that action, this function would be responsible for returning the new updated state.
+
+[![rr18](../assets/images/rr18-small.jpg)](../assets/images/rr18.jpg)
+
+That sounds pretty good but we can't forget that the whole goal here is predictability. This function has to be as predictable as possible. But, what does that actually mean?
+
+We should be able to know what the return value will be of the function based on the input values.
+
+Now this sounds complicated but it turns out that the functional programming community has
+already solved this problem and they've given it a name. It's called pure functions.
+
+This brings us to rule number two for increasing predictability.
+
+> *The function that returns the new state needs to be a pure function.*
+
+So far, our rules are:
+
+1. Only an event can change the state of the store.
+2. The function that returns the new state needs to be a pure function.
+
+A [pure function](https://en.wikipedia.org/wiki/Pure_function) can be a bit theoretical, so we'll take it step by step and explain why a pure function is so powerful and how it helps improve predictability.
+
+#### 1.4.1 What are Pure Functions
+[![rr19](../assets/images/rr19-small.jpg)](../assets/images/rr19.jpg)
+
+**Pure functions** are integral to how state in Redux applications is updated. By definition, pure functions:
+
+1. Return the same result if the same arguments are passed in
+2. Depend solely on the arguments passed into them
+3. Do not produce side effects, such as API requests and I/O operations
+
+Let’s check out an example of a pure function, `square()`:
+
+```js
+// `square()` is a pure function
+
+const square = x => x * x;
+```
+
+`square()` is a pure function because it outputs the same value every single time, given that the same argument is passed into it. There is no dependence on any other values to produce that result, and we can safely expect *just* that result to be returned -- no side effects (more on this in a bit!).
+
+On the other hand, let’s check out an example of an *impure* function, `calculateTip()`:
+
+```js
+// `calculateTip()` is an impure function
+
+const tipPercentage = 0.15;
+
+const calculateTip = cost => cost * tipPercentage;
+```
+
+`calculateTip()` calculates and returns a number value. However, it relies on a variable (`tipPercentage`) that lives outside the function to produce that value. Since it fails one of the requirements of pure functions, `calculateTip()` is an impure function. However, we could convert this function to a pure function by passing in the outside variable, `tipPercentage`, as a second argument to this function!
+
+```js
+const calculateTip = (cost, tipPercentage = 0.15) => cost * tipPercentage;
+```
+
+#### 1.4.2 Why Pure Functions Are Great
+For our purposes, the most important feature of a pure function is that it's predictable. If we have a function that takes in our state and an action that occurred, the function should (if it's pure!) return the exact same result *every single time*.
+
+You're going to be sick of this by the end ;-) but this course (and Redux!) are all about predictability!
+
+> #### 1.4.3 Question 1 of 4
+> What is true about pure functions? Check all that apply.
+>
+> - [x] Pure functions do not rely on information other than the arguments passed in to them to generate an outputs
+> - [ ] Pure functions can produce different outputs even with the same arguments passed in each time.
+> - [x] Pure functions do not depend on external state
+> - [ ] Pure functions are expected to modify shared state
+> - [ ] Pure functions should modify the original arguments passed into them
+
+> #### 1.4.4 Question 2 of 4
+> Which of the following are pure functions? Please check all that apply:
+>
+> - [ ]
+>   ```js
+>   Math.random();
+>   ```
+> - [x]
+>   ```js
+>   const add = (a, b) => (
+>     a + b
+>   );
+>   ```
+> - [ ]
+>   ```js
+>   Date.now();
+>   ```
+> - [ ]
+>   ```js
+>   const addAndPrint = (a, b) => (
+>     const sum = a + b;
+>     console.log(`The sum is : ${sum}`);
+>     return sum;
+>   );
+>   ```
+> - [x]
+>   ```js
+>   const double = array => (
+>     let doubleArray = [];
+>     array.forEach(n => doubleArray.push(n * 2));
+>     return doubleArray;
+>   );
+>   ```
+
+#### 1.4.5 Todos App
+Now, back in our Todos app, what we need is a way update the internal state of our store based on the specific action that occurred.
+
+The way we do this is by creating a function (called a reducer) that takes two arguments.
+
+- state - which is the internal state inside our store
+- action - an object with a `type` property that describes the action.
+
+[![rr20](../assets/images/rr20-small.jpg)](../assets/images/rr20.jpg)
+
+For this to work properly the function needs to be a pure function. This means that it cannot directly mutate any of the data in the state object or array.
+
+The function takes the state and the action and then returns a new copy of state with any changes made.
+
+Our reducer will be called `todos` since this is a Todos app. It will listen for a specific event type and then create a new state object which it returns in response to that event. If no match is made it returns the state unchanged.
+
+```js
+// reducer
+function todos(state = [], action) {
+  if (action.type === 'ADD_TODO') {
+    return state.concat([action.todo]);
+  }
+
+  return state;
+}
+```
+
+In this case we add the todo item directly onto our state array using the `concat` method which is a non-mutating method. It returns a new array.
+
+Here is how we would call the todos reducer function and what the arguments would consist of.
+
+```js
+// state array & action object
+state = [];
+action = {
+  type: 'ADD_TODO',
+  todo: { id: 0, name: 'Learn Redux', completed: false }
+};
+
+// call to reducer
+const newState = todos(state, action);
+console.log(newState); // [ { id: 0, name: 'Learn Redux', completed: false } ]
+```
+
+So, this gives us a preview into how we will be updating the state from our `createStore` function.
+
+Now all we need to do is invoke our todos function (parsing current state as well as the action that occurred) to get the new state.
+
+One other thing to note is that we are using ES6's new default value for state. This is in case we don't have a state object it will start out as an empty array.
+
+This function is called a reducer because it follows the Array.prototype.reduce format of taking the state, an action, and then reducing that to a brand new state.
+
+So, going back to this visual, the function here is a reducer since it takes in the state and an action, and returns the new state.
+
+[![rr20](../assets/images/rr20-small.jpg)](../assets/images/rr20.jpg)
+
+> A reducer must ALWAYS be a pure function.
+
+#### 1.4.6 Reducer Quiz
+This quiz was crazy. It required reading the [Reducers section of the Redux docs](https://redux.js.org/basics/reducers) in order to figure out.
+
+Here's the instructions.
+
+```js
+/* Create A Reducer
+ *
+ * You need to create a reducer called "appReducer" that accepts two arguments:
+ * - First, an array containing information about ice cream
+ * - Second, an object with a 'DELETE_FLAVOR' `type` key
+ * (i.e., the object contains information to delete the flavor from the state)
+ *
+ * The action your reducer will receive will look like this:
+ * { type: 'DELETE_FLAVOR', flavor: 'Vanilla' }
+ *
+ * And the initial state will look something like this:
+ * [{ flavor: 'Chocolate', count: 36 }, { flavor: 'Vanilla', count: 210 }];
+ */
+```
+
+Given that we have the following:
+
+- state: `[{ flavor: 'Chocolate', count: 36 }, { flavor: 'Vanilla', count: 210 }]`
+- action: `{ type: 'DELETE_FLAVOR', flavor: 'Vanilla' }`
+
+Create a reducer that will return the new state.
+
+```js
+function appReducer(state, action) {
+  if (typeof state === 'undefined') {
+    return [];
+  }
+  if (action.type === 'DELETE_FLAVOR') {
+    return Object.assign(
+      [],
+      state,
+      state.map(iceCream => {
+        if (iceCream.flavor === action.flavor) {
+          return Object.assign({}, iceCream, {
+            count: iceCream.count - 1
+          });
+        }
+        return iceCream;
+      })
+    );
+  }
+  return state;
+}
+```
+
+This uses [Object.assign()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign) to create a new object/array (1st parameter) by copying the previous state (2nd parameter) and overwriting any keys/values/objects with the third & subsequent parameters.
+
+The method signature is:
+
+> Object.assign(*target*, *...sources*)
+
+Each subsequent source will overwrite the previous source. Also, this only performs a shallow copy. If the source value is a reference to an object, it only copies that reference value.
+
+For deep cloning we must use an alternate method such as:
+
+- `let obj3 = JSON.parse(JSON.stringify(obj1));`.
+
+#### 1.4.7 Todos App continued
+Reviewing what we have so far, there are three parts to the app.
+
+[![rr21](../assets/images/rr21-small.jpg)](../assets/images/rr21.jpg)
+
+
+- The actions represent the different events that will change the state of our store.
+- The reducer is a function which takes in the current state and an action which occurred, and returns the new state.
+- createStore is responsible for creating the actual store.
+
+If you remember back to our implementation of createStore, so far we have three of the four parts.
+
+- [x] State Tree - as a `state` variable
+- [x] Getting the state - we have a `getState` function
+- [x] Listening for changes - we have a `subscribe` function
+- [ ] Updating the state
+
+The last part we need to figure out, is how to update the state. To do that, we'll create a new function called `dispatch`.
+
+`dispatch` will be responsible for updating the state inside of our actual store.
+
+To do that it needs to receive the action which is going to tell dispatch the specific event that occurred inside of the application.
+
+```js
+  const dispatch = action => {
+    state = todos(state, action);
+    listeners.forEach(listener => listener());
+  };
+```
+
+Now, with access to the state and to the action that occurred, `dispatch` can call our `todos` function passing it state and action and assign the result back to the state variable.
+
+Next, because we just modified the state, we loop through the array of listener functions and invoke each one.
+
+So, now whenever the user wants to update the state internally inside of our store, what they do is invoke dispatch, passing it the specific action which occurred.
+
+> #### 1.4.8 Question 4 of 4
+> Match the following store methods.
+>
+> | Functionality | Store Method |
+> | --- | --- |
+> | gets the current state | .getState() |
+> | takes in functions that will be called when the state changes | .subscribe() |
+> | the application's state | the state tree |
+> | modifies the state | .dispatch() |
+
+#### 1.4.9 Todos App add reducer function
+We will now organize our app to better reflect the separation between library code and app code.
+
+Library code would be our `createStore()` function and App code would be our `todos` function. We need to pass this function in to `createStore()`.
+
+Here's what that would look like.
+
+```js
+// Library code
+function createStore(reducer) {
+  // The store should have four parts
+  // 1. The state
+  // 2. Get the state
+  // 3. Listen for changes on the state
+  // 4. Update the state
+
+  let state;
+  let listeners = [];
+
+  const getState = () => state;
+
+  const subscribe = listener => {
+    listeners.push(listener);
+    return () => {
+      listeners = listeners.filter(l => l !== listener);
+    };
+  };
+
+  const dispatch = action => {
+    state = reducer(state, action);
+    listeners.forEach(listener => listener());
+  };
+
+  return {
+    getState,
+    subscribe,
+    dispatch
+  };
+}
+```
+
+Here's what the App code would look like.
+
+```js
+// App code
+function todos(state = [], action) {
+  if (action.type === 'ADD_TODO') {
+    return state.concat([action.todo]);
+  }
+
+  return state;
+}
+
+const store = createStore(todos);
+```
+
+The new `dispatch()` method is pretty small, but is vital to our functioning store code. To briefly recap how the method functions:
+
+- `dispatch()` is called with an Action
+- the reducer that was passed to `createStore()` is called with the current state tree and the action... this updates the state tree
+- because the state has (potentially) changed, all listener functions that have been registered with the `subscribe()` method are called
+
+#### 1.4.10 Summary
+In this section, we learned about a number of important points about Redux.
+
+We learned about
+
+- pure functions
+- a Reducer function (which, itself, needs to be a pure function)
+- dispatching changes in our store
+- identifying which parts of our code are generic library code and which are specific to our app
