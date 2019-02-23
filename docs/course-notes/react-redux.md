@@ -913,3 +913,102 @@ We learned about
 - a Reducer function (which, itself, needs to be a pure function)
 - dispatching changes in our store
 - identifying which parts of our code are generic library code and which are specific to our app
+
+### 1.5 Dispatching an Action
+We now have the four parts of our store
+
+- [x] Internal state
+- [x] A way to get the state
+- [x] Listen for changes on the state
+- [x] Update the state
+
+We also have a reducer function (`todos`) which specifies how the state will change based on the action that has ocurred in the application.
+
+```js
+// Library code
+function createStore(reducer) {
+  let state;
+  let listeners = [];
+
+  const getState = () => state;
+
+  const subscribe = listener => {
+    listeners.push(listener);
+    return () => {
+      listeners = listeners.filter(l => l !== listener);
+    };
+  };
+
+  const dispatch = action => {
+    state = reducer(state, action);
+    listeners.forEach(listener => listener());
+  };
+
+  return {
+    getState,
+    subscribe,
+    dispatch
+  };
+}
+
+// App code (reducer)
+function todos(state = [], action) {
+  if (action.type === 'ADD_TODO') {
+    return state.concat([action.todo]);
+  }
+
+  return state;
+}
+```
+
+Now we can create the store with the following.
+
+```js
+// Create the store
+const store = createStore(todos);
+
+// subscribe to the listener
+store.subscribe(() => {
+  console.log('The new state is: ', store.getState());
+});
+
+// dispatch an action
+store.dispatch({
+  type: 'ADD_TODO',
+  todo: { id: 0, name: 'Learn Redux', complete: false }
+});
+```
+
+We pass our reducer to createStore, subscribe a listener to be notified of change events, and dispatch an action.
+
+What's cool is now we can call dispatch as many times as we want. We do so by passing in the type and a new todo item which is added to the state.
+
+So whenever we want to update the state of our store, all we need to do now is call dispatch add pass it the action which occurred.
+
+[![rr22](../assets/images/rr22-small.jpg)](../assets/images/rr22.jpg)
+
+We've finally finished creating the `createStore` function! Using the image above as a guide, let's break down what we've accomplished:
+
+- we created a function called `createStore()` that returns a *store* object
+- `createStore()` must be passed a "reducer" function when invoked
+- the store object has three methods on it:
+  - `.getState()` - used to get the current state from the store
+  - `.subscribe()` - used to provide a listener function the store will call when the state changes
+  - `.dispatch()` - used to make changes to the store's state
+  - the store object's methods have access to the state of the store via closure
+
+> #### 1.5.1 QUIZ QUESTION
+> Which of the following are true statements about the store? Please select all that apply.
+>
+> - [x] Updates to the store can only be triggered by dispatching action.
+> - [ ] The `createStore()` function is imported from React
+> - [x] The store's subscribe() function helps connect React components to the store
+> - [ ] Updates to the store can only be triggered by overwriting the store object directly (i.e., without dispatching an action)
+
+#### 1.5.2 Summary
+Up until this point, we've been building out the `createStore()` function, piece by piece. In this section, we put all of those pieces together to create a fully functioning project. Then we took that code and demoed it in the console.
+
+We showed that subscribing to the store returned a function we could use to unsubscribe later. We also dispatched an action and saw how the state was updated as a result.
+
+In the next section, we'll keep building up our app-specific parts of the code to handle different actions and to be more error-proof.
+
