@@ -1244,3 +1244,183 @@ We also created the goals reducer which handles:
 So our application can now manage the state of our todos and goals, and it can do all of this, predictably!
 
 In the next and final section of this lesson, we'll look at how we can convert some of our existing functionality to follow best practices.
+
+### 1.7 Better Practices
+The next thing for us to do is implement constants in place of strings. This is a less error-prone way of programming.
+
+```js
+// App code (reducer)
+const ADD_TODO = 'ADD_TODO';
+const REMOVE_TODO = 'REMOVE_TODO';
+const TOGGLE_TODO = 'TOGGLE_TODO';
+const ADD_GOAL = 'ADD_GOAL';
+const REMOVE_GOAL = 'REMOVE_GOAL';
+
+function todos(state = [], action) {
+  switch (action.type) {
+    case ADD_TODO:
+      return state.concat([action.todo]);
+    case REMOVE_TODO:
+      return state.filter(todo => todo.id !== action.id);
+    case TOGGLE_TODO:
+      return state.map(todo =>
+        todo.id !== action.id
+          ? todo
+          : Object.assign({}, todo, { complete: !todo.complete })
+      );
+    default:
+      return state;
+  }
+}
+
+function goals(state = [], action) {
+  switch (action.type) {
+    case ADD_GOAL:
+      return state.concat([action.goal]);
+    case REMOVE_GOAL:
+      return state.filter(goal => goal.id !== action.id);
+    default:
+      return state;
+  }
+}
+```
+
+> #### 1.7.1 Question 1 of 2
+> Why prefer constants over strings in action types?
+>
+> - [ ] Constants are more serializable
+> - [x] We can ensure an error will be thrown for misspelled action types
+> - [ ] There is no difference between using constants versus strings
+
+#### 1.7.2 Action Creators
+Next we want to write code so we don't have to repeat ourselves on each dispatch invocation.
+
+Here are each of the dispatch calls. We can see that we are repeating ourselves quite a bit.
+
+```js
+store.dispatch({
+  type: ADD_TODO,
+  todo: { id: 0, name: 'Wash the car', complete: false }
+});
+store.dispatch({
+  type: ADD_TODO,
+  todo: { id: 1, name: 'Walk the dog', complete: true }
+});
+store.dispatch({
+  type: ADD_TODO,
+  todo: { id: 2, name: 'Go to the gym', complete: true }
+});
+store.dispatch({
+  type: TOGGLE_TODO,
+  id: 0
+});
+store.dispatch({
+  type: REMOVE_TODO,
+  id: 0
+});
+store.dispatch({
+  type: ADD_GOAL,
+  goal: { id: 0, name: 'Learn Redux' }
+});
+store.dispatch({
+  type: ADD_GOAL,
+  goal: { id: 1, name: 'Learn Python' }
+});
+store.dispatch({
+  type: ADD_GOAL,
+  goal: { id: 2, name: 'Learn Vue' }
+});
+store.dispatch({
+  type: REMOVE_GOAL,
+  id: 0
+});
+```
+
+What we are going to do is write Action Creators which will build the action that will be passed to our store on dispatch.
+
+```js
+// Action creators
+function addTodoAction(todo) {
+  return {
+    type: ADD_TODO,
+    todo
+  };
+}
+
+function removeTodoAction(id) {
+  return {
+    type: REMOVE_TODO,
+    id
+  };
+}
+
+function toggleTodoAction(id) {
+  return {
+    type: TOGGLE_TODO,
+    id
+  };
+}
+
+function addGoalAction(goal) {
+  return {
+    type: ADD_GOAL,
+    goal
+  };
+}
+
+function removeGoalAction(id) {
+  return {
+    type: REMOVE_GOAL,
+    id
+  };
+}
+```
+
+Now we can have a much more concise dispatch invocation.
+
+```js
+// dispatch an action
+store.dispatch(addTodoAction({ id: 0, name: 'Wash the car', complete: false }));
+store.dispatch(addTodoAction({ id: 1, name: 'Walk the dog', complete: true }));
+store.dispatch(addTodoAction({ id: 2, name: 'Go to the gym', complete: true }));
+store.dispatch(toggleTodoAction(0));
+store.dispatch(removeTodoAction(0));
+store.dispatch(addGoalAction({ id: 0, name: 'Learn Redux' }));
+store.dispatch(addGoalAction({ id: 1, name: 'Learn Python' }));
+store.dispatch(addGoalAction({ id: 2, name: 'Learn Vue' }));
+store.dispatch(removeGoalAction(0));
+```
+
+#### 1.7.3 Question 2 of 2
+
+```js
+/* Create An Action Creator
+ *
+ * You need to create an action creator called 'mealCreator' that should:
+ *   - Accept an id
+ *   - Return a Redux action with a 'type' property that has a value
+ *      of 'CREATE_MEAL'
+ *   - Include the id passed to the action creator
+*/
+const CREATE_MEAL = 'CREATE_MEAL';
+> function mealCreator(id) {
+  return {
+    type: CREATE_MEAL,
+    id
+  };
+}
+```
+
+#### 1.7.4 Summary
+In this section, we converted our actions to use JavaScript constants instead of strings. We also refactored our `.dispatch()` calls from passing in unique objects directly to them, to calling special functions that create the action objects - these special functions that create action objects are called Action Creators.
+
+### 1.8 Lesson Summary
+We've now covered the most important parts of the state management library.
+
+- The Store
+  - Internal state
+  - getting state
+  - listening for changes
+  - updating state
+- Actions
+- Reducers
