@@ -518,7 +518,7 @@ var addItem = function addItem(item) {
 > const receivePost = post => ({
 >   type: RECEIVE_POST,
 >   post: post
-> }); 
+> });
 > ```
 >
 > ```js
@@ -801,7 +801,6 @@ Reviewing what we have so far, there are three parts to the app.
 
 [![rr21](../assets/images/rr21-small.jpg)](../assets/images/rr21.jpg)
 
-
 - The actions represent the different events that will change the state of our store.
 - The reducer is a function which takes in the current state and an action which occurred, and returns the new state.
 - createStore is responsible for creating the actual store.
@@ -1012,3 +1011,236 @@ We showed that subscribing to the store returned a function we could use to unsu
 
 In the next section, we'll keep building up our app-specific parts of the code to handle different actions and to be more error-proof.
 
+### 1.6 Managing More Actions
+As of right now, our code is handling the ADD_TODO action. There are still a couple more actions that our app is supposed to be able to handle:
+
+- the REMOVE_TODO action
+- the TOGGLE_TODO action
+
+#### 1.6.1 New Actions
+Our app can not only handle adding todo items -- it can now handle removing a todo item, as well as toggling a todo item (as complete or incomplete)! To make this all possible, we updated our `todos` reducer to be able to respond to actions of the `type` REMOVE_TODO and TOGGLE_TODO.
+
+Before moving on, let's make sure we're on the same page on how this was all implemented. Our `todos` reducer originally looked like the following:
+
+```js
+function todos (state = [], action) {
+  if (action.type === 'ADD_TODO') {
+    return state.concat([action.todo]);
+  }
+
+  return state;
+}
+```
+
+To resolve additional action types, we added a few more conditions to our reducer logic:
+
+```js
+function todos (state = [], action) {
+  if (action.type === 'ADD_TODO') {
+    return state.concat([action.todo]);
+  } else if (action.type === 'REMOVE_TODO') {
+    // ...
+  } else if (action.type === 'TOGGLE_TODO') {
+    // ...
+  } else {
+    return state;
+  }
+}
+```
+
+Note that just like the original `todos` reducer, we simply return the original state if the reducer receives an action type that it's not concerned with.
+
+To remove a todo item, we called `filter()` on the state. This returns a new state (an array) with only todo items whose id's do not match the id of the todo we want to remove:
+
+```js
+function todos (state = [], action) {
+  if (action.type === 'ADD_TODO') {
+    return state.concat([action.todo]);
+  } else if (action.type === 'REMOVE_TODO') {
+    return state.filter((todo) => todo.id !== action.id);
+  } else if (action.type === 'TOGGLE_TODO') {
+    // ...
+  } else {
+    return state;
+  }
+}
+```
+
+To handle toggling a todo item, we want to change the value of the `complete` property on whatever `id` is passed along on the action. We mapped over the entire state, and if `todo.id` matched `action.id`, we used `Object.assign()` to return a new object with merged properties:
+
+```js
+function todos (state = [], action) {
+  if (action.type === 'ADD_TODO') {
+    return state.concat([action.todo]);
+  } else if (action.type === 'REMOVE_TODO') {
+    return state.filter((todo) => todo.id !== action.id);
+  } else if (action.type === 'TOGGLE_TODO') {
+    return state.map(todo =>
+      todo.id !== action.id
+        ? todo
+        : Object.assign({}, todo, { complete: !todo.complete })
+    );
+  } else {
+    return state;
+  }
+}
+```
+
+We then refactored our entire `todos` reducer to use a `switch` statement rather than multiple `if`/`else` statements:
+
+```js
+function todos(state = [], action) {
+  switch (action.type) {
+    case 'ADD_TODO':
+      return state.concat([action.todo]);
+    case 'REMOVE_TODO':
+      return state.filter(todo => todo.id !== action.id);
+    case 'TOGGLE_TODO':
+      return state.map(todo =>
+        todo.id !== action.id
+          ? todo
+          : Object.assign({}, todo, { complete: !todo.complete })
+      );
+    default:
+      return state;
+  }
+}
+```
+
+In the above snippet, we matched `cases` against an expression (i.e., `action.type`), and executed statements associated with that particular `case`.
+
+Let's now extend our app with some additional functionality!
+
+#### 1.6.2 Adding Goals to our App
+Currently, the app keeps track of a single piece of state - a list of todo items.
+
+Let's make the app a bit more complicated and add in a second piece of state for our app to track - goals.
+
+We now are going to add a goals reducer to track goals as well.
+
+```js
+function goals(state = [], action) {
+  switch (action.type) {
+    case 'ADD_GOAL':
+      return state.concat([action.todo]);
+    case 'REMOVE_GOAL':
+      return state.filter(goal => goal.id !== action.id);
+    default:
+      return state;
+  }
+}
+```
+
+Now have two reducer functions:
+
+- todos
+- goals
+
+However, the `createStore()` function we built can only handle a single reducer function:
+
+```js
+// createStore takes one reducer function as an argument
+const store = createStore(todos);
+```
+
+We can't call createStore() passing it two reducer functions:
+
+```js
+// this will not work
+const store = createStore(todos, goals);
+```
+
+So we've got a problem...
+
+#### 1.6.3 Multiple Reducers
+
+At this point, we now have two reducers, our Todos Reducer and our Goals Reducer. Each is responsible for handling their specific slice of the state tree.
+
+[![rr25](../assets/images/rr25-small.jpg)](../assets/images/rr25.jpg)
+
+This introduces a new problem though. When we called createStore we passed it our single Todos reducer.
+
+```js
+const store = createStore(todos);
+```
+
+Whenever dispatch was called, we'd call this reducer, passing it the current state and the action which was dispatched, and we get back the new state.
+
+Well, now we not only have our Todos reducer, we also have our Goals reducer and each are expected to receive their specific slice of the state tree whenever an action is dispatched.
+
+[![rr23](../assets/images/rr23-small.jpg)](../assets/images/rr23.jpg)
+
+What we need to do is instead of passing createStore our single Todos reducer, we want to create almost like a root reducer function, which will be responsible for calling the correct reducer whenever specific actions are dispatched.
+
+[![rr24](../assets/images/rr24-small.jpg)](../assets/images/rr24.jpg)
+
+What we need is our app to now work with both our to Todos reducer as well as our Goals reducer.
+
+Let's see what that will look like.
+
+```js
+function todos(state = [], action) {
+  switch (action.type) {
+    case 'ADD_TODO':
+      return state.concat([action.todo]);
+    case 'REMOVE_TODO':
+      return state.filter(todo => todo.id !== action.id);
+    case 'TOGGLE_TODO':
+      return state.map(todo =>
+        todo.id !== action.id
+          ? todo
+          : Object.assign({}, todo, { complete: !todo.complete })
+      );
+    default:
+      return state;
+  }
+}
+
+function goals(state = [], action) {
+  switch (action.type) {
+    case 'ADD_GOAL':
+      return state.concat([action.goal]);
+    case 'REMOVE_GOAL':
+      return state.filter(goal => goal.id !== action.id);
+    default:
+      return state;
+  }
+}
+
+function app(state = {}, action) {
+  return {
+    todos: todos(state.todos, action),
+    goals: goals(state.goals, action)
+  };
+}
+
+// Create the store passing the root reducer.
+const store = createStore(app);
+```
+
+The app started out with one piece of state, `todos`, when we added in the `goals` state, we now had two separate pieces of state. Each piece of state needed its own reducer.
+
+Since the create store function can only take in one reducer, we had to create a reducer that acts as the main reducer, commonly called the root reducer, that in turn calls both of the other reducers to get each piece of state to build the final state of the app.
+
+> #### 1.6.4 Quiz Question
+> Select all statements that are true.
+>
+> [x] Reducers must be pure
+> [x] Though each reducer handles a different slice of state, we must combine reducers into a single reducer to pass to the store
+> [x] `createStore()` takes only one `reducer` argument
+> [x] Reducers are typically named after the slices of state they manage.
+
+#### 1.6.5 Summary
+In this section, we bolstered our application to handle a number of different actions as well as an entirely new piece of state! In addition to our app handling the ADD_TODO action, it now handles:
+
+- the REMOVE_TODO action
+- the TOGGLE_TODO action
+
+We also created the goals reducer which handles:
+
+- an ADD_GOAL action
+- a REMOVE_GOAL action
+
+So our application can now manage the state of our todos and goals, and it can do all of this, predictably!
+
+In the next and final section of this lesson, we'll look at how we can convert some of our existing functionality to follow best practices.
