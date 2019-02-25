@@ -1424,3 +1424,267 @@ We've now covered the most important parts of the state management library.
   - updating state
 - Actions
 - Reducers
+
+## 2. UI + Redux
+### 2.1 Introduction
+In the previous lesson, we learned how to improve the predictability of the state in our application by building our own state management library.
+
+[![rr26](../assets/images/rr26-small.jpg)](../assets/images/rr26.jpg)
+
+In this lesson, we'll take that state management library and add some UI to it. This will allow us to take a closer look at how our custom library can manage the state of an actual application.
+
+### 2.2 UI
+#### 2.2.1 Move code to HTML
+What we will do is host our javascript in html. We create index.html with the following code.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Udacity Todos Goals</title>
+</head>
+<body>
+  
+  <script>
+    // copy store code into here
+  </script>
+</body>
+</html>
+```
+
+We now want make sure to copy our JavaScript into this html and delete index.js.
+
+<!-- 
+#### 2.2.2 What We're Going to Build
+Now that we have an index.html file and all of the JavaScript code has been transferred over to script tags, let's start adding in a User Interface. Since our project has two pieces of state, we'll need two areas:
+
+1. Todo list area
+2. Goals area
+
+[![rr27](../assets/images/rr27-small.jpg)](../assets/images/rr27.jpg)
+
+So this is what we're going for. It's not the best looking website ever created, but this isn't a course on CSS ;-). If you want to make it stunningly beautiful, feel free to add some CSS to your project 👍🏼
+
+We already have the Redux portion of our application working, but so far, we've just been manually running snippets of code to interact with the Redux Store. Let's create the UI above so that we can interact with the store using the browser.
+
+#### 2.2.3 Basic UI
+So, now what the eventual goal here, is we want to show both our Todo list, as well as our goals list. We want to give the user an option to add new items to both lists via the UI right now.
+
+So basically, our library code is going to manage the state of our application and the DOM or the view, is just going to be a representation of that state.
+
+What we need to do is to add some actual UI to our app, so we could hook that UI up to our library code in order to get the state of our application.
+
+```html
+<body>
+  <div>
+    <h1>Todo List</h1>
+    <form id="todoForm">
+      <input id='todo' type='text' placeholder='Add Todo' required />
+      <button id='todoBtn'>Add Todo</button>
+    </form>
+    <ol id='todos'></ol>
+  </div>
+  <div>
+    <h1>Goals</h1>
+    <form id="goalForm">
+      <input id='goal' type='text' placeholder='Add Goal' required />
+      <button id='goalBtn'>Add Goal</>
+    </form>
+    <ul id='goals'></ul>
+  </div>
+  <script>
+    // store code here
+  </script>
+</body>
+```
+
+#### 2.2.4 Summary
+In this section, we added some minimal UI to our application. The actually state of our app hasn't changed at all, though.
+
+In the next section, we'll hook up our shiny new UI to our state so that entering content via the UI will update the application's state.
+
+### 2.3 UI + State
+The changes we'll add will make is so whenever the Todo input field is submitted, it will add a Todo item to the state...and whenever the Goal input field is submitted, it will add a new Goal item to the state.
+
+Let's break this down into the steps that happen. First, we need to listen for when the buttons are clicked; we did this with the plain DOM .addEventListener() method:
+
+```js
+document.getElementById('todoForm').addEventListener('submit', addTodo)
+document.getElementById('goalForm').addEventListener('submit', addGoal)
+```
+
+Pressing the #todoBtn will call addTodo which will add the new item to the state:
+
+```js
+function generateId() {
+  return (
+    Math.random()
+      .toString(36)
+      .substr(2) + new Date().getTime().toString(36)
+  );
+}
+
+// DOM code
+function addTodo (e) {
+  e.preventDefault();
+  const input = document.getElementById('todo')
+  const name = input.value
+  input.value = ''
+
+  store.dispatch(
+    addTodoAction({
+      name,
+      complete: false,
+      id: generateId()
+    })
+  );
+  input.value = '';
+}
+function addGoal(e) {
+  e.preventDefault();
+  const input = document.getElementById('goal');
+  const name = input.value;
+  store.dispatch(
+    addGoalAction({
+      id: generateId(),
+      name
+    })
+  );
+  input.value = '';
+}
+```
+
+This method will extract the information from the input field, reset the input field, and then dispatch an addTodoAction Action Creator with the text that the user typed into the input field.
+
+So we're using the UI to change the state of our store, but these changes are not reflecting the new state visually in the UI. Let's do that, now.
+
+Here are some of the DOM manipulations we're using.
+
+- accessing elements with document.getElementById()
+- adding listeners with .addEventListener()
+- accessing the .value property on an element
+- creating a new element with .createElement()
+- adding new content with.appendChild()
+
+Next we add code to display to the DOM whenever an item is added.
+
+```js
+function addTodoToDOM(todo) {
+  const node = document.createElement('li');
+  const text = document.createTextNode(todo.name);
+  node.appendChild(text);
+
+  document.getElementById('todos').appendChild(node);
+}
+
+function addGoalToDOM(goal) {
+  const node = document.createElement('li');
+  const text = document.createTextNode(goal.name);
+  node.appendChild(text);
+
+  document.getElementById('goals').appendChild(node);
+}
+```
+
+We trigger these functions within our subscribe method of the store.
+
+```js
+store.subscribe(() => {
+  // console.log('The new state is: ', store.getState());
+  const { todos, goals } = store.getState();
+
+  document.getElementById('goals').innerHTML = '';
+  document.getElementById('todos').innerHTML = '';
+
+  todos.forEach(addTodoToDOM); // todos.forEach(todo => addTodoToDOM(todo));
+  goals.forEach(addGoalToDOM); // goals.forEach(goal => addGoalToDOM(goal));
+});
+```
+
+Next we update the UI with the ability to click a todo and mark it as complete.
+
+```js
+function addTodoToDOM(todo) {
+  const li = document.createElement('li');
+  const checkbox = document.createElement('input');
+  checkbox.id = todo.id;
+  checkbox.setAttribute('type', 'checkbox');
+  checkbox.addEventListener('click', () => {
+    store.dispatch(toggleTodoAction(todo.id));
+  });
+
+  const label = document.createElement('label');
+  const text = document.createTextNode(todo.name);
+  label.htmlFor = todo.id;
+  label.appendChild(text);
+  li.appendChild(checkbox);
+  li.appendChild(label);
+  if (todo.complete) {
+    label.classList.add('strike');
+    checkbox.checked = true;
+  }
+
+  document.getElementById('todos').appendChild(li);
+}
+```
+
+Here's the style we add.
+
+```html
+  <style>
+    body {
+      display: flex;
+      justify-content: space-around;
+    }
+    ul, ol {
+      padding: 0 0 0 20px;
+    }
+    input[type='checkbox'] {
+      margin-right: 10px;
+    }
+    .strike {
+      text-decoration: line-through;
+    }
+    .removeBtn {
+      margin-left: 10px;
+    }
+  </style>
+```
+
+Lastly we add the remove functionality
+
+```js
+function createRemoveButton(onClick) {
+  const removeBtn = document.createElement('button');
+  removeBtn.classList.add('removeBtn');
+  removeBtn.innerHTML = 'X';
+  removeBtn.addEventListener('click', onClick);
+  return removeBtn;
+}
+
+function addTodoToDOM(todo) {
+  // todo item code
+
+  const removeBtn = createRemoveButton(() => {
+    store.dispatch(removeTodoAction(todo.id));
+  });
+  li.appendChild(removeBtn);
+
+  document.getElementById('todos').appendChild(li);
+}
+
+function addGoalToDOM(goal) {
+  // goal item code
+
+  const removeBtn = createRemoveButton(() => {
+    store.dispatch(removeGoalAction(goal.id));
+  });
+  node.appendChild(removeBtn);
+
+  document.getElementById('goals').appendChild(node);
+}
+```
+ -->
