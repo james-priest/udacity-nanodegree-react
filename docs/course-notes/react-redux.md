@@ -1510,7 +1510,6 @@ In this section, we added some minimal UI to our application. The actually state
 
 In the next section, we'll hook up our shiny new UI to our state so that entering content via the UI will update the application's state.
 
-<!-- 
 ### 2.3 UI + State
 The changes we'll add will make is so whenever the Todo input field is submitted, it will add a Todo item to the state...and whenever the Goal input field is submitted, it will add a new Goal item to the state.
 
@@ -1574,6 +1573,7 @@ Here are some of the DOM manipulations we're using.
 - creating a new element with .createElement()
 - adding new content with.appendChild()
 
+#### 2.3.1 Display added item in UI
 Next we add code to display to the DOM whenever an item is added.
 
 ```js
@@ -1609,6 +1609,29 @@ store.subscribe(() => {
 });
 ```
 
+We add some styling to our UI.
+
+```html
+  <style>
+    body {
+      display: flex;
+      justify-content: space-around;
+    }
+    ul, ol {
+      padding: 0 0 0 20px;
+    }
+    input[type='checkbox'] {
+      margin-right: 10px;
+    }
+  </style>
+```
+
+Here's the updated UI.
+
+[![rr29](../assets/images/rr29-small.jpg)](../assets/images/rr29.jpg)<br>
+GitHub Repo: [reactnd-redux-todos-goals@12-dispatch-from-ui](https://github.com/james-priest/reactnd-redux-todos-goals/tree/12-dispatch-from-ui)
+
+#### 2.3.2 Add Toggle item to UI
 Next we update the UI with the ability to click a todo and mark it as complete.
 
 ```js
@@ -1636,30 +1659,23 @@ function addTodoToDOM(todo) {
 }
 ```
 
-Here's the style we add.
+Here's the style we added.
 
 ```html
   <style>
-    body {
-      display: flex;
-      justify-content: space-around;
-    }
-    ul, ol {
-      padding: 0 0 0 20px;
-    }
-    input[type='checkbox'] {
-      margin-right: 10px;
-    }
     .strike {
       text-decoration: line-through;
-    }
-    .removeBtn {
-      margin-left: 10px;
     }
   </style>
 ```
 
-Lastly we add the remove functionality
+Now the updated UI looks like this.
+
+[![rr30](../assets/images/rr30-small.jpg)](../assets/images/rr30.jpg)<br>
+GitHub Repo: [reactnd-redux-todos-goals@13-dispatch-toggle](https://github.com/james-priest/reactnd-redux-todos-goals/tree/13-dispatch-toggle)
+
+#### 2.3.3 Add Remove items from UI
+Lastly we add the remove functionality.
 
 ```js
 function createRemoveButton(onClick) {
@@ -1692,4 +1708,23 @@ function addGoalToDOM(goal) {
   document.getElementById('goals').appendChild(node);
 }
 ```
- -->
+
+The additional style looks like this.
+
+```html
+<style>
+  .removeBtn {
+    margin-left: 10px;
+  }
+</style>
+```
+
+Here's the updated UI.
+
+[![rr31](../assets/images/rr31-small.jpg)](../assets/images/rr31.jpg)<br>
+GitHub Repo: [reactnd-redux-todos-goals@14-dispatch-remove-items](https://github.com/james-priest/reactnd-redux-todos-goals/tree/14-dispatch-remove-items)
+
+#### 2.3.4 Summary
+In this section, we connected our functioning state application with a front-end UI. We added some form fields and buttons to our UI that can be used to add new Todo items and Goal items to the state. Updating the state will also cause the entire application to re-render so that the visual representation of the application matches that of the info stored in the state object.
+
+Now, we wrote all of this code ourselves. In the next section, we'll convert from using our custom library to using Redux.
