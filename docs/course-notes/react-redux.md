@@ -1457,7 +1457,6 @@ What we will do is host our javascript in html. We create index.html with the fo
 
 We now want make sure to copy our JavaScript into this html and delete index.js.
 
-<!-- 
 #### 2.2.2 What We're Going to Build
 Now that we have an index.html file and all of the JavaScript code has been transferred over to script tags, let's start adding in a User Interface. Since our project has two pieces of state, we'll need two areas:
 
@@ -1501,11 +1500,17 @@ What we need to do is to add some actual UI to our app, so we could hook that UI
 </body>
 ```
 
+Here's what the UI looks like right now.
+
+[![rr28](../assets/images/rr28-small.jpg)](../assets/images/rr28.jpg)<br>
+GitHub Repo: [reactnd-redux-todos-goals@11-build-ui](https://github.com/james-priest/reactnd-redux-todos-goals/tree/11-build-ui)
+
 #### 2.2.4 Summary
 In this section, we added some minimal UI to our application. The actually state of our app hasn't changed at all, though.
 
 In the next section, we'll hook up our shiny new UI to our state so that entering content via the UI will update the application's state.
 
+<!-- 
 ### 2.3 UI + State
 The changes we'll add will make is so whenever the Todo input field is submitted, it will add a Todo item to the state...and whenever the Goal input field is submitted, it will add a new Goal item to the state.
 
