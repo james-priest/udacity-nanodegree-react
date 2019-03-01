@@ -1966,6 +1966,11 @@ const rootReducer = combineReducers({
 export default rootReducer;
 ```
 
+Here is a version of the app on CodeSandbox.
+
+[![rr33](../assets/images/rr33-small.jpg)](../assets/images/rr33.jpg)<br>
+**Live Demo:** [Redux Todo Goals App](https://codesandbox.io/s/42zkzvrn14?fontsize=14) on CodeSandbox
+
 #### 2.4.4 Summary
 In this section, we replaced the code we wrote in the previous lesson with the actual Redux library code. We saw that swapping out our code with Redux's code didn't change anything with how our application functions or how our app-specific code works. Redux is just a predictable state container.
 
