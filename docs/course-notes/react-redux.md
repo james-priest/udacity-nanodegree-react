@@ -1728,3 +1728,272 @@ GitHub Repo: [reactnd-redux-todos-goals@14-dispatch-remove-items](https://github
 In this section, we connected our functioning state application with a front-end UI. We added some form fields and buttons to our UI that can be used to add new Todo items and Goal items to the state. Updating the state will also cause the entire application to re-render so that the visual representation of the application matches that of the info stored in the state object.
 
 Now, we wrote all of this code ourselves. In the next section, we'll convert from using our custom library to using Redux.
+
+### 2.4 Introducing Redux
+Up until now we haven't worked with Redux directly.  What we did was create our own  version of Redux that follows the Redux API exactly.
+
+[![rr32](../assets/images/rr32-small.jpg)](../assets/images/rr32.jpg)
+
+Just like the library we built ourselves, Redux has a state management library that has a store, actions, and reducers.
+
+Let's go ahead and replace our own implementation with the real Redux, so you can see just how similar they are.
+
+#### 2.4.1 Replacing Library code with Redux
+We're going to transition away from our custom code to using the actual Redux library.
+
+We first link to the hosted version of the Redux library with the following line.
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js">
+</script>
+```
+
+Then we remove the library code from index.html.
+
+```js
+/* Removed...
+// Library code
+function createStore(reducer) {
+  // The store should have four parts
+  // 1. The state
+  // 2. Get the state
+  // 3. Listen for changes on the state
+  // 4. Update the state
+
+  let state;
+  let listeners = [];
+
+  const getState = () => state;
+
+  const subscribe = listener => {
+    listeners.push(listener);
+    return () => {
+      listeners = listeners.filter(l => l !== listener);
+    };
+  };
+
+  const dispatch = action => {
+    state = reducer(state, action);
+    listeners.forEach(listener => listener());
+  };
+
+  return {
+    getState,
+    subscribe,
+    dispatch
+  };
+}
+*/
+```
+
+Then we remove our root reducer and custom createStore function. Those are replaced with `Redux.createStore` and `Redux.combineReducers` methods.
+
+```js
+/* Removed...
+function app(state = {}, action) {
+  return {
+    todos: todos(state.todos, action),
+    goals: goals(state.goals, action)
+  };
+}
+
+// Create the store
+const store = createStore(app);
+*/
+
+const store = Redux.createStore(
+  Redux.combineReducers({
+    todos,
+    goals
+  })
+);
+```
+
+#### 2.4.2 Reducer composition
+
+Reducer composition sounds intimidating, but it's simpler than you might think. The idea is that you can create a reducer to manage not only each section of your Redux store, but also any nested data as well.
+
+Let's say we were dealing with a state tree like had this structure.
+
+```js
+{
+  users: {},
+  setting: {},
+  tweets: {
+    btyxlj: {
+      id: 'btyxlj',
+      text: 'What is a jQuery?',
+      author: {
+        name: 'Tyler McGinnis',
+        id: 'tylermcginnis',
+        avatar: 'twt.com/tm.png'
+      }
+    }
+  }  
+}
+```
+
+We have three main properties on our state tree: *users*, *settings*, and *tweets*. Naturally, we'd create individual reducers for each and then create a single root reducer using Redux's combineReducers method.
+
+```js
+const reducer = combineReducers({
+  users,
+  settings,
+  tweets
+})
+```
+
+`combineReducers`, under the hood, is our first look at reducer composition.
+
+combineReducers is responsible for invoking all the other reducers, passing them the portion of their state that they care about. We're making one root reducer, by composing a bunch of other reducers together.
+
+With that in mind, let's take a closer look at our tweets reducer and how we can leverage reducer composition again to make it more compartmentalized. Specifically, let's look how a user might change their avatar with the way our store is currently structured. Here's the skeleton with what we'll start out with.
+
+```js
+function tweets (state = {}, action) {
+  switch(action.type){
+      case ADD_TWEET :
+        ...
+      case REMOVE_TWEET :
+        ...
+      case UPDATE_AVATAR :
+        ???
+  }
+}
+```
+
+What we're interested in is that last one, UPDATE_AVATAR. This one is interesting because we have some nested data - and remember, reducers have to be pure and can't mutate any state. Here's one approach.
+
+```js
+function tweets (state = {}, action) {
+  switch(action.type){
+      case ADD_TWEET :
+        ...
+      case REMOVE_TWEET :
+        ...
+      case UPDATE_AVATAR :
+        return {
+          ...state,
+          [action.tweetId]: {
+            ...state[action.tweetId],
+            author: {
+              ...state[action.tweetId].author,
+              avatar: action.newAvatar
+            }
+          }
+        }
+  }
+}
+```
+
+That's a lot of spread operators. The reason for that is because, for every layer, we're wanting to spread all the properties of that layer on the new objects we're creating (because, immutability). What if, just like we separated our tweets, users, and settings reducers by passing them the slice of the state tree they care about, what if we do the same thing for our tweets reducer and its nested data. Doing that, the code above would be transformed to look like this
+
+```js
+function author (state, action) {
+  switch (action.type) {
+      case : UPDATE_AVATAR
+        return {
+          ...state,
+          avatar: action.newAvatar
+        }
+      default :
+        state
+  }
+}
+
+function tweet (state, action) {
+  switch (action.type) {
+      case ADD_TWEET :
+        ...
+      case REMOVE_TWEET :
+        ...
+      case : UPDATE_AVATAR
+        return {
+          ...state,
+          author: author(state.author, action)
+        }
+      default :
+        state
+  }
+}
+
+function tweets (state = {}, action) {
+  switch(action.type){
+      case ADD_TWEET :
+        ...
+      case REMOVE_TWEET :
+        ...
+      case UPDATE_AVATAR :
+        return {
+          ...state,
+          [action.tweetId]: tweet(state[action.tweetId], action)
+        }
+      default :
+        state
+  }
+}
+```
+
+All we've done is separated out each layer of our nested tweets data into their own reducers. Then, just like we did with our root reducer, we're passing those reducers the slice of the state they care about.
+
+#### 2.4.3 Quiz Question
+What is wrong with the following root reducer?
+
+```js
+import { combineReducers } from 'redux';
+import booksReducer from './books_reducer';
+import userReducer from './user_reducer';
+
+const rootReducer = combineReducers(booksReducer, userReducer);
+
+export default rootReducer;
+```
+
+- [x] An object that maps state keys to reducers should be passed into `combineReducers()`
+
+The correct code should look like this.
+
+```js
+import { combineReducers } from 'redux';
+import booksReducer from './books_reducer';
+import userReducer from './user_reducer';
+
+const rootReducer = combineReducers({
+    books: booksReducer,
+    users: userReducer
+});
+
+export default rootReducer;
+```
+
+#### 2.4.4 Summary
+In this section, we replaced the code we wrote in the previous lesson with the actual Redux library code. We saw that swapping out our code with Redux's code didn't change anything with how our application functions or how our app-specific code works. Redux is just a predictable state container.
+
+What's key to understand is that you've already learned 90% of Redux! Everything else from here on out will be handling specific use cases (combining Redux with a React application, how to work with asynchronous data modification, etc.).
+
+We'll be adding more concepts on top of what you know now, so if you feel comfortable with your understanding of Redux, then keep going. If you're a bit hazy on how a specific part works, I definitely recommend you get the hazy bits nailed down now before proceeding on to more complicated content. Feel free to return to the first lesson to review specific Redux functionalities to iron out any confusing parts before moving on.
+
+<!-- 
+### 2.5 Articles & Challenge
+Lesson Challenge #1
+Read these articles:
+
+- [The what and why of Redux](https://blog.pusher.com/the-what-and-why-of-redux/)
+- [Leveling Up with React: Redux](https://css-tricks.com/learning-react-redux/)
+
+#### 2.5.1 Question 1 of 2
+What are the advantages of using Redux?
+
+- State is managed in one place
+- Less error prone since components don't track state separately
+- State is kept out of the DOM
+  
+#### 2.5.2 Question 2 of 2
+Describe the 3 principles Redux follows.
+
+1. Single source of truth
+   - State for the whole application is stored in an object tree within a single store.
+2. State is read-only
+   - The only way to change the state is to emit an action - an object describing what happened.
+3. Changes are made with pure function
+   - To specify how the state tree is transformed by actions, you write pure reducers. -->
