@@ -1973,9 +1973,8 @@ What's key to understand is that you've already learned 90% of Redux! Everything
 
 We'll be adding more concepts on top of what you know now, so if you feel comfortable with your understanding of Redux, then keep going. If you're a bit hazy on how a specific part works, I definitely recommend you get the hazy bits nailed down now before proceeding on to more complicated content. Feel free to return to the first lesson to review specific Redux functionalities to iron out any confusing parts before moving on.
 
-<!-- 
-### 2.5 Articles & Challenge
-Lesson Challenge #1
+### 2.5 Articles & Questions
+
 Read these articles:
 
 - [The what and why of Redux](https://blog.pusher.com/the-what-and-why-of-redux/)
@@ -1996,4 +1995,4 @@ Describe the 3 principles Redux follows.
 2. State is read-only
    - The only way to change the state is to emit an action - an object describing what happened.
 3. Changes are made with pure function
-   - To specify how the state tree is transformed by actions, you write pure reducers. -->
+   - To specify how the state tree is transformed by actions, you write pure reducers.
