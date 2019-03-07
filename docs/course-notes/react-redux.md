@@ -2063,7 +2063,6 @@ function addTodo(e) {
 
 We make this change to all instances of `store.dispatch`.
 
-<!-- 
 ### 3.2 Redux Middleware
 Normally, when we call `store.dispatch` this signals the reducer to run with the action we passed dispatch.
 
@@ -2349,6 +2348,7 @@ Here's the UI update.
 
 [![rr38](../assets/images/rr38-small.jpg)](../assets/images/rr38.jpg)
 
+<!-- 
 ### 3.3 Summary
 In this section, we looked at using middleware. According to the Redux docs:
 
