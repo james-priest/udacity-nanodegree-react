@@ -2348,7 +2348,6 @@ Here's the UI update.
 
 [![rr38](../assets/images/rr38-small.jpg)](../assets/images/rr38.jpg)
 
-<!-- 
 ### 3.3 Summary
 In this section, we looked at using middleware. According to the Redux docs:
 
@@ -2367,4 +2366,4 @@ const store = Redux.createStore(
 The following might be a bit advanced at this point, but give them a quick read through right now and definitely bookmark them to come back and read later:
 
 - [Middleware Docs](https://redux.js.org/advanced/middleware)
-- [API for Redux's Middleware](https://redux.js.org/api-reference/applymiddleware) -->
+- [API for Redux's Middleware](https://redux.js.org/api-reference/applymiddleware)
