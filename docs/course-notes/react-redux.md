@@ -2649,7 +2649,7 @@ class App extends React.Component {
 
 #### 4.2.3 `componentDidMount()`
 > componentDidMount() is invoked immediately after a component is mounted (inserted into the tree)
-> 
+>
 > If you need to load data from a remote endpoint, this is a good place to instantiate the network request. [Here are the docs](https://reactjs.org/docs/react-component.html#componentdidmount)
 
 #### 4.2.4 `forceUpdate()`
@@ -2768,3 +2768,15 @@ In this section, we converted our plain HTML application to one using React Comp
 
 We didn't implement any new features. Instead, we just improved the code's organization by breaking out separate parts into reusable chunks.
 
+### 4.3 Lesson Summary
+In this lesson, we learned about how we can add react to a Redux application by passing down the Redux Store as props.
+
+At this point, all of the data in our app is local. That isn't really realistic.
+
+In the next lesson, we'll take a look at how Redux handles asynchronous data by moving our local data to an external API.
+
+#### 4.3.1 Articles
+Read these articles.
+
+- [Component State vs Redux Store](https://medium.com/netscape/component-state-vs-redux-store-1eb0c929277)
+- [React + Redux Architecture : Separation of Concerns](https://medium.com/prod-io/react-redux-architecture-part-1-separation-of-concerns-812da3b08b46).
