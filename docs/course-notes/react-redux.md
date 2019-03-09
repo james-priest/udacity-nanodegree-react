@@ -2382,3 +2382,389 @@ Redux is UI and framework agnostic. This means that it can be hooked up to any f
 
 This lesson will focus on hooking Redux up to React.
 
+### 4.2 React as our UI
+In this lesson, we're going to move away from our application being plain HTML and convert it to being powered by React. To do that, we'll need to add a number of libraries:
+
+- [react](https://www.npmjs.com/package/react)
+- [react-dom](https://www.npmjs.com/package/react-dom)
+- [babel](https://www.npmjs.com/package/babel)
+
+Here are the packages that we add into the head section:
+
+- `<script src="https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js"></script>`
+- `<script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>`
+- `<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>`
+
+The additions to the html file are as follows.
+
+```html
+// add-in-react
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Udacity Todos Goals</title>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js'>
+    </script>
+  <script src="https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js">
+    </script>
+  <script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.develop
+    ment.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+<body>
+  <div>
+    <!-- HTML UI -->
+  </div>
+
+  <hr />
+
+  <div id='app'></div>
+
+  <script type="text/javascript">
+    // Redux code
+  </script>
+
+  <script type="text/babel">
+    const List = props => {
+      return (
+        <ul>
+          <li>List</li>
+        </ul>
+      );
+    };
+
+    class Todos extends React.Component {
+      render() {
+        return (
+          <div>
+            Todos
+            <List />
+          </div>
+        );
+      }
+    }
+
+    class Goals extends React.Component {
+      render() {
+        return (
+          <div>
+            Goals
+            <List />
+          </div>
+        );
+      }
+    }
+
+    class App extends React.Component {
+      render() {
+        return (
+          <div>
+            <Todos />
+            <Goals />
+          </div>
+        );
+      }
+    }
+
+    ReactDOM.render(<App />, document.getElementById('app'));
+  </script>
+</body>
+</html>
+```
+
+The changes we've just implemented should look pretty familiar - they were just converting parts of our app from HTML to being powered by React Components.
+
+#### 4.2.1 Combining React and Redux
+Alright, so you've learned React. You've built Redux and used it in a regular HTML application. But now we've started converting that HTML to a React application.
+
+Next we're going to start connecting the React Components to the Redux store. Pay attention to the following.
+
+- where the `store.dispatch()` code goes in a React component
+- how a React component is passed the Redux store as a prop
+
+```jsx
+// dispatch-todos-with-react
+class Todos extends React.Component {
+  addItem = e => {
+    e.preventDefault();
+    const name = this.input.value;
+    this.props.store.dispatch(
+      addTodoAction({
+        name,
+        complete: false,
+        id: generateId()
+      })
+    );
+    this.input.value = '';
+  };
+  render() {
+    return (
+      <div>
+        <h1>Todo List</h1>
+        <form onSubmit={this.addItem}>
+          <input
+            type="text"
+            placeholder="Add Todo"
+            required
+            ref={input => (this.input = input)}
+          />
+          <button>Add Todo</button>
+        </form>
+        <List />
+      </div>
+    );
+  }
+}
+
+class App extends React.Component {
+  render() {
+    return (
+      <div className="row">
+        <Todos store={this.props.store} />
+        <Goals />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<App store={store} />, document.getElementById('app'));
+```
+
+Store is passed as props from App to the Todos component. In order to save time, we used an uncontrolled component for our input field.
+
+#### 4.2.2 `ref`
+> Refs provide a way to access DOM nodes or React elements created in the render method. [Here's the documentation on Callback Refs](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs)
+
+The docs outline a few good use cases for refs:
+
+- Managing focus, text selection, or media playback.
+- Triggering imperative animations.
+- Integrating with third-party DOM libraries.
+
+Let's take a look at a similar example:
+
+```jsx
+class Color extends React.Component {
+  alertTextInput = e => {
+    e.preventDefault();
+    alert(this.colorElement.value);
+  };
+
+  render() {
+    return (
+      <div>
+        <input
+          type="text"
+          placeholder="Add Input"
+          ref={(inputElement) => this.colorElement = inputElement}
+        />
+
+        <button onClick={this.alertTextInput}>Alert Input</button>
+      </div>
+    );
+  }
+}
+```
+
+In the line `ref={(inputElement) => this.colorElement = inputElement}`, `inputElement` is a reference to the `input` DOM element.
+
+We are storing a reference to the `input` DOM element in the `colorElement` instance property of the `Color` class.
+
+Please note:
+
+> React will call the ref callback with the DOM element when the component mounts, and call it with `null` when it unmounts.
+>
+> Refs are guaranteed to be up-to-date before `componentDidMount` or `componentDidUpdate` fires.
+
+Next we'll finish the Goals component.
+
+```jsx
+// dispatch-goals-with-react
+class Goals extends React.Component {
+  addGoal = e => {
+    e.preventDefault();
+    const name = this.input.value;
+    this.props.store.dispatch(
+      addGoalAction({
+        name,
+        id: generateId()
+      })
+    );
+    this.input.value = '';
+  };
+  render() {
+    return (
+      <div>
+        <h1>Goals</h1>
+        <form onSubmit={this.addGoal}>
+          <input
+            type="text"
+            placeholder="Add Goal"
+            required
+            ref={input => (this.input = input)}
+          />
+          <button>Add Goal</button>
+        </form>
+        <List />
+      </div>
+    );
+  }
+}
+
+class App extends React.Component {
+  render() {
+    return (
+      <div className="row">
+        <Todos store={this.props.store} />
+        <Goals store={this.props.store} />
+      </div>
+    );
+  }
+}
+```
+
+Next we add the state into the App component and forceUpdate on state change.
+
+```jsx
+// force-load-app
+class App extends React.Component {
+  componentDidMount() {
+    const { store } = this.props;
+
+    store.subscribe(() => this.forceUpdate());
+  }
+  render() {
+    const { store } = this.props;
+    const { todos, goals } = store.getState();
+    return (
+      <div className="row">
+        <Todos todos={todos} store={this.props.store} />
+        <Goals goals={goals} store={this.props.store} />
+      </div>
+    );
+  }
+}
+```
+
+#### 4.2.3 `componentDidMount()`
+> componentDidMount() is invoked immediately after a component is mounted (inserted into the tree)
+> 
+> If you need to load data from a remote endpoint, this is a good place to instantiate the network request. [Here are the docs](https://reactjs.org/docs/react-component.html#componentdidmount)
+
+#### 4.2.4 `forceUpdate()`
+> By default, when your component’s state or props change, your component will re-render.
+>
+> If your render() method depends on some other data, you can tell React that the component needs re-rendering by calling forceUpdate(). [These are the docs.](https://reactjs.org/docs/react-component.html#forceupdate)
+>
+> Calling forceUpdate() will cause render() to be called on the component, skipping shouldComponentUpdate(). This will trigger the normal lifecycle methods for child components, including the shouldComponentUpdate() method of each child. React will still only update the DOM if the markup changes.
+
+```jsx
+// lists-with-react-redux
+const List = props => {
+  return (
+    <ul>
+      {props.items.map(item => (
+        <li key={item.id}>
+          <span>{item.name}</span>
+          <button onClick={() => props.remove(item)}>X</button>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+class Todos extends React.Component {
+  removeItem = todo => {
+    this.props.store.dispatch(removeTodoAction(todo.id));
+  };
+  render() {
+    return (
+      <div>
+        <List items={this.props.todos} remove={this.removeItem} />
+      </div>
+    );
+  }
+}
+
+class Goals extends React.Component {
+  removeItem = goal => {
+    this.props.store.dispatch(removeGoalAction(goal.id));
+  };
+  render() {
+    return (
+      <div>
+        <List items={this.props.goals} remove={this.removeItem} />
+      </div>
+    );
+  }
+}
+```
+
+The last part we'll add in is the toggle ability for todo items. Since this uses the same list control for both we'll use some ternary conditionals.
+
+```jsx
+const List = props => {
+  return ({% raw %}
+    <ol>
+      {props.items.map(item => (
+        <li key={item.id}>
+          {props.toggle ? (
+            <span>
+              <input
+                type="checkbox"
+                id={item.id}
+                onClick={() => props.toggle && props.toggle(item.id)}
+                checked={item.complete ? 'checked' : ''}
+              />
+              <label
+                htmlFor={item.id}
+                style={{
+                  textDecoration: item.complete ? 'line-through' : 'none'
+                }}
+              >
+                {item.name}
+              </label>
+            </span>
+          ) : (
+            <span
+              onClick={() => props.toggle && props.toggle(item.id)}
+              style={{
+                textDecoration: item.complete ? 'line-through' : 'none'
+              }}
+            >
+              {item.name}
+            </span>
+          )}
+          <button className="removeBtn" onClick={() => props.remove(item)}>
+            X
+          </button>
+        </li>
+      ))}
+    </ol>
+  );{% endraw %}
+};
+
+ class Todos extends React.Component {
+  toggleItem = id => {
+    this.props.store.dispatch(toggleTodoAction(id));
+  };
+  render() {
+    return (
+      <div>
+        <List
+          items={this.props.todos}
+          remove={this.removeItem}
+          toggle={this.toggleItem}
+        />
+      </div>
+    );
+  }
+}
+```
+
+#### 4.2.5 Summary
+In this section, we converted our plain HTML application to one using React Components.
+
+We didn't implement any new features. Instead, we just improved the code's organization by breaking out separate parts into reusable chunks.
+
