@@ -2367,3 +2367,18 @@ The following might be a bit advanced at this point, but give them a quick read 
 
 - [Middleware Docs](https://redux.js.org/advanced/middleware)
 - [API for Redux's Middleware](https://redux.js.org/api-reference/applymiddleware)
+
+## 4. Redux with React
+### 4.1 Introduction
+
+[![rr40](../assets/images/rr40-small.jpg)](../assets/images/rr40.jpg)
+
+Redux is UI and framework agnostic. This means that it can be hooked up to any front end UI including:
+
+- React apps
+- Vue apps
+- plain HTML apps
+- vanilla JavaScript apps
+
+This lesson will focus on hooking Redux up to React.
+
