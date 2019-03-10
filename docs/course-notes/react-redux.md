@@ -2804,7 +2804,6 @@ But how do we handle the case where we need to interact with an external API to 
 
 After going through this lesson, you'll be able to make asynchronous requests and work with remote data in a Redux application.
 
-<!-- 
 ### 5.2 External Data
 We're going to use a database to interact with our Todos application. We're simulating the database to keep that aspect of the project less complex. This is the HTML script tag you need to add the database to your application which we'll use in the following video:
 
@@ -3068,4 +3067,4 @@ class App extends React.Component {
 Here's a screenshot of the app so far.
 
 [![rr42](../assets/images/rr42-small.jpg)](../assets/images/rr42.jpg)<br>
-**Live Demo:** [Async Redux Todo Goals App](https://codesandbox.io/s/0pkwq6o26l?fontsize=14) on CodeSandbox -->
+**Live Demo:** [Async Redux Todo Goals App](https://codesandbox.io/s/0pkwq6o26l?fontsize=14) on CodeSandbox
