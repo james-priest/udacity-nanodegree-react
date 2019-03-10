@@ -3068,3 +3068,12 @@ Here's a screenshot of the app so far.
 
 [![rr42](../assets/images/rr42-small.jpg)](../assets/images/rr42.jpg)<br>
 **Live Demo:** [Async Redux Todo Goals App](https://codesandbox.io/s/0pkwq6o26l?fontsize=14) on CodeSandbox
+
+#### 5.2.4 Summary
+In this section, we looked at how to work with an external API. We added a new action (RECEIVE_DATA), created a new action creator, and built a new reducer...all to handle the different states our app can be in while getting our remote data:
+
+- before the app has the data
+- while the app is fetching the data
+- after the data has been received
+
+In the next section, we'll look at how to optimistically update the UI based on the API actions that are performed.
