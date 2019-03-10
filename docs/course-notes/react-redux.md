@@ -2780,3 +2780,291 @@ Read these articles.
 
 - [Component State vs Redux Store](https://medium.com/netscape/component-state-vs-redux-store-1eb0c929277)
 - [React + Redux Architecture : Separation of Concerns](https://medium.com/prod-io/react-redux-architecture-part-1-separation-of-concerns-812da3b08b46).
+
+## 5. Asynchronous Redux
+### 5.1 Introduction
+At this point our app is coming together nicely. We can add and remove different todos and goals, and that data is living inside of Redux.
+
+However, at this point, all of our data lives locally within the app itself. That isn't really realistic. In the real-world, that data would likely exist in a database and you'd interact with it through an API.
+
+[![rr41](../assets/images/rr41-small.jpg)](../assets/images/rr41.jpg)
+
+That's what we're going to do in this lesson. We'll move all of our data to an external API, then we'll see how Redux changes once our data becomes asynchronous.
+
+#### 5.1.1 Lesson Overview
+In this lesson, we're going to be working with a (simulated) remote database. We'll use a provided API to interact with this database.
+
+The important skill that you'll be learning in this lesson is how to make *asynchronous requests* in Redux. If you recall, the way Redux works right now is:
+
+- store.dispatch() calls are made
+- if the Redux store was set up with any middleware, those functions are run
+- then the reducer is invoked
+
+But how do we handle the case where we need to interact with an external API to fetch data. For example, what if our Todos app had a button that would load existing Todos from a database? If we dispatch that action, we currently do not have a way to wait for the list of remote Todo items to be returned.
+
+After going through this lesson, you'll be able to make asynchronous requests and work with remote data in a Redux application.
+
+### 5.2 External Data
+We're going to use a database to interact with our Todos application. We're simulating the database to keep that aspect of the project less complex. This is the HTML script tag you need to add the database to your application which we'll use in the following video:
+
+- `<script src="https://tylermcginnis.com/goals-todos-api/index.js"></script>`
+
+```js
+// https://tylermcginnis.com/goals-todos-api/index.js
+(function () {
+  window.API = {}
+
+  function fail () {
+    return Math.floor(Math.random()*(5-1)) === 3
+  }
+
+  function generateId () {
+    return Math.random().toString(36).substring(2);
+  }
+
+  var goals = [
+    {
+      id: generateId(),
+      name: 'Learn Redux',
+    },
+    {
+      id: generateId(),
+      name: 'Read 50 books this year',
+    },
+  ];
+  var todos = [
+    {
+      id: generateId(),
+      name: 'Walk the dog',
+      complete: false,
+    },
+    {
+      id: generateId(),
+      name: 'Wash the car',
+      complete: false,
+    },
+    {
+      id: generateId(),
+      name: 'Go to the gym',
+      complete: true,
+    }
+  ];
+
+  API.fetchGoals = function () {
+    return new Promise((res, rej) => {
+      setTimeout(function () {
+        res(goals)
+      }, 2000)
+    })
+  }
+
+  API.fetchTodos = function () {
+    return new Promise((res, rej) => {
+      setTimeout(function () {
+        res(todos)
+      }, 2000)
+    })
+  }
+
+  API.saveTodo = function (name) {
+    return new Promise((res, rej) => {
+      setTimeout(() => {
+        const todo = {
+          id: generateId(),
+          name: name,
+          complete: false,
+        }
+        todos = todos.concat([todo]);
+        fail() ? rej(todo) : res(todo);
+      }, 300)
+    })
+  }
+
+  API.saveGoal = function (name) {
+    return new Promise((res, rej) => {
+      setTimeout(() => {
+        const goal = {
+          id: generateId(),
+          name: name,
+        }
+        goals = goals.concat([goal]);
+        fail() ? rej(goal) : res(goal);
+      }, 300)
+    })
+  }
+
+  API.deleteGoal = function (id) {
+    return new Promise((res, rej) => {
+      setTimeout(() => {
+        goals = goals.filter((goal) => goal.id !== id);
+        fail() ? rej(): res(goals);
+      }, 300)
+    });
+  }
+
+  API.deleteTodo = function (id) {
+    return new Promise((res, rej) => {
+      setTimeout(() => {
+        todos = todos.filter((todo) => todo.id !== id);
+        fail() ? rej(): res(todos);
+      }, 300)
+    });
+  }
+
+  API.saveTodoToggle = function (id) {
+    return new Promise((res, rej) => {
+      setTimeout(() => {
+        todos = todos.map((todo) => todo.id !== id ? todo :
+          Object.assign({}, todo, {complete: !todo.complete})
+        );
+
+        fail() ? rej(): res(todos);
+      }, 300)
+    });
+  }
+})()
+```
+
+#### 5.2.1 🔨Task
+Add the following behavior to the project:
+
+- When the app loads, `console.log` all of the todos and all of the goals that reside in our fake database.
+
+```js
+class App extends React.Component {
+  componentDidMount() {
+    const { store } = this.props;
+  Promise.all([API.fetchTodos(), API.fetchGoals()])
+    .then(([todos, goals]) => {
+      console.log('Todos:', todos);
+      console.log('Goals:', goals);
+    })
+    .catch(err => console.log(err));
+  }
+```
+
+#### 5.2.2 Promise-Based API
+The methods in the provided API are all Promise-based. Let's take a look at the `.fetchTodos()` method:
+
+```js
+API.fetchTodos = function () {
+  return new Promise((res, rej) => {
+    setTimeout(function () {
+      res(todos);
+    }, 2000);
+  });
+};
+```
+
+See how we're creating and returning a new `Promise()` object?
+
+In the task above, you could've just fetched all of our todos and then all of our Goals, but that's serial and is just making the user wait an unnecessarily long amount of time. Since the API is Promise-based, we can use `Promise.all()` to wait until all Promises have resolved before displaying the content to the user.
+
+Promises are asynchronous, and this lesson is all about working with asynchronous data and asynchronous requests. If you're feeling a little unsure about Promises, check out [the Promise documentation on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) or check out our [JavaScript Promises course](https://www.udacity.com/course/javascript-promises--ud898).
+
+#### 5.2.2 Handle remote API data
+The next additions we make are to add in handling for remote api data
+
+```js
+// Constants
+const RECEIVE_DATA = 'RECEIVE_DATA';
+
+// Action creators
+function receiveDataAction(todos, goals) {
+  return {
+    type: RECEIVE_DATA,
+    todos,
+    goals
+  };
+}
+// Reducers
+function todos(state = [], action) {
+  switch (action.type) {
+    //...
+    case RECEIVE_DATA:
+      return action.todos;
+    default:
+      return state;
+  }
+}
+function goals(state = [], action) {
+  switch (action.type) {
+    // ...
+    case RECEIVE_DATA:
+      return action.goals;
+    default:
+      return state;
+  }
+}
+
+// App
+class App extends React.Component {
+  componentDidMount() {
+    const { store } = this.props;
+
+    store.subscribe(() => this.forceUpdate());
+
+    Promise.all([API.fetchTodos(), API.fetchGoals()])
+      .then(([todos, goals]) => {
+        // console.log('Todos:', todos);
+        // console.log('Goals:', goals);
+        store.dispatch(receiveDataAction(todos, goals));
+      })
+      .catch(err => console.log(err));
+  }
+  render() {
+    // ...
+  }
+}
+```
+
+#### 5.2.3 Loading state with Redux
+Here we add in ability to display loading message until data is available.
+
+```jsx
+// Reducers
+function loading(state = true, action) {
+  switch (action.type) {
+    case RECEIVE_DATA:
+      return false;
+    default:
+      return state;
+  }
+}
+
+// Create the store
+const store = Redux.createStore(
+  Redux.combineReducers({
+    todos,
+    goals,
+    loading
+  }),
+  Redux.applyMiddleware(checker, logger)
+);
+
+// App
+class App extends React.Component {
+  componentDidMount() {
+    // ...
+  }
+  render() {
+    const { store } = this.props;
+    const { todos, goals, loading } = store.getState();
+
+    if (loading === true) {
+      return <h3>Loading...</h3>;
+    }
+    return (
+      <div className="row">
+        <Todos todos={todos} store={this.props.store} />
+        <Goals goals={goals} store={this.props.store} />
+      </div>
+    );
+  }
+}
+```
+
+Here's a screenshot of the app so far.
+
+[![rr42](../assets/images/rr42-small.jpg)](../assets/images/rr42.jpg)<br>
+**Live Demo:** [Async Redux Todo Goals App](https://codesandbox.io/s/0pkwq6o26l?fontsize=14) on CodeSandbox
