@@ -2715,6 +2715,7 @@ const List = props => {
                 type="checkbox"
                 id={item.id}
                 onClick={() => props.toggle && props.toggle(item.id)}
+                readOnly // required for uncontrolled component
                 checked={item.complete ? 'checked' : ''}
               />
               <label
@@ -3077,3 +3078,105 @@ In this section, we looked at how to work with an external API. We added a new a
 - after the data has been received
 
 In the next section, we'll look at how to optimistically update the UI based on the API actions that are performed.
+
+### 5.3 Optimistic Updates
+When dealing with asynchronous requests, there will always be some delay involved. If not taken into consideration, this could cause some weird UI issues.
+
+For example, when a user wants to delete a todo item, the process from when the user clicks “delete” to when that item is removed from the database takes two seconds.
+
+If you designed the UI to wait for the confirmation from the server to remove the item from the list on the client, your user would click “delete” and then would have to wait for two seconds to see that update in the UI. That’s not the best experience.
+
+Instead what you can do is a technique called **optimistic updates**. Instead of waiting for confirmation from the server, just remove the todo from the UI immediately when the user clicks “delete”, then, if the server responds back with an error that the todo wasn’t actually deleted, you can add the information back in. This way your user gets that instant feedback from the UI, but, under the hood, the request is still asynchronous.
+
+Here is that technique in action.
+
+```jsx
+// optimistic-updates
+const connectionAlert = () => {
+  alert('Connection error occurred. Please try again.');
+};
+class Todos extends React.Component {
+  removeItem = todo => {
+    this.props.store.dispatch(removeTodoAction(todo.id));
+
+    return API.deleteTodo(todo.id).catch(() => {
+      connectionAlert();
+      this.props.store.dispatch(addTodoAction(todo));
+    });
+  };
+```
+
+We immediately remove the item from the store and then if the API call fails then an alert is triggered and the item is added back into the store.
+
+We do the same for goals.
+
+```jsx
+// optimistic-updates
+class Goals extends React.Component {
+  removeItem = goal => {
+    this.props.store.dispatch(removeGoalAction(goal.id));
+
+    return API.deleteGoal(goal.id).catch(() => {
+      connectionAlert();
+      this.props.store.dispatch(addGoalAction(goal));
+    });
+  };
+```
+
+Next we'll use this optimistic update pattern for todo toggle item.
+
+```jsx
+// optimistic-updates
+class Todos extends React.Component {
+  toggleItem = id => {
+    this.props.store.dispatch(toggleTodoAction(id));
+
+    return API.saveTodoToggle(id).catch(() => {
+      connectionAlert();
+      this.props.store.dispatch(toggleTodoAction(id));
+    });
+```
+
+Next we make API calls for both saving todo and goal items. In this case we will NOT do optimistic updates because the id and other record fields are being generated on the server.
+
+In this case we will want to wait until the server returns the updated record which we'll use to update the store.
+
+```jsx
+// optimistic-updates
+class Todos extends React.Component {
+  addItem = e => {
+    e.preventDefault();
+
+    return API.saveTodo(this.input.value)
+      .then(todo => {
+        this.props.store.dispatch(addTodoAction(todo));
+        this.input.value = '';
+      })
+      .catch(() => {
+        connectionAlert();
+      });
+  };
+
+class Goals extends React.Component {
+  addGoal = e => {
+    e.preventDefault();
+
+    return API.saveGoal(this.input.value)
+      .then(goal => {
+        this.props.store.dispatch(addGoalAction(goal));
+        this.input.value = '';
+      })
+      .catch(() => {
+        showConnectionError();
+      });
+  };
+```
+
+#### 5.3.1 Summary
+In this section, swapped more functionality over to using the API. We now use the database to:
+
+- remove Todos and Goals
+- toggle the state of a Todos
+- save a new Todo or Goal
+
+What's important is that for the removing and toggling, we're doing these actions optimistically. So we're assuming the change will succeed correctly on the server, so we update the UI immediately, and then only roll back to the original state if the API returns an error. Doing optimistic updates is better because it provides a more realistic and dynamic experience to the user.
