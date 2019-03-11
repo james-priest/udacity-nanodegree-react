@@ -3180,3 +3180,6 @@ In this section, swapped more functionality over to using the API. We now use th
 - save a new Todo or Goal
 
 What's important is that for the removing and toggling, we're doing these actions optimistically. So we're assuming the change will succeed correctly on the server, so we update the UI immediately, and then only roll back to the original state if the API returns an error. Doing optimistic updates is better because it provides a more realistic and dynamic experience to the user.
+
+[![rr43](../assets/images/rr43-small.jpg)](../assets/images/rr43.jpg)<br>
+**Live Demo:** [Async Redux Todo Goals App](https://codesandbox.io/s/0pkwq6o26l?fontsize=14) on CodeSandbox
