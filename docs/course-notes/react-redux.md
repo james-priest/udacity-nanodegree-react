@@ -3183,3 +3183,371 @@ What's important is that for the removing and toggling, we're doing these action
 
 [![rr43](../assets/images/rr43-small.jpg)](../assets/images/rr43.jpg)<br>
 **Live Demo:** [Async Redux Todo Goals App](https://codesandbox.io/s/0pkwq6o26l?fontsize=14) on CodeSandbox
+
+### 5.4 Thunk
+Right now our app is working fine. It's been updated to work with asynchronous data coming from an external API.
+
+However, the way the code is organized, we've mixed all of our data fetching logic with our component UI logic.
+
+[![rr44](../assets/images/rr44-small.jpg)](../assets/images/rr44.jpg)
+
+Right now the component that should be focused just on how the UI looks is also responsible for fetching data. It would be nice if we could keep those separate.
+
+Instead of calling our API and then passing that data to our action creator, what if we move the data fetching logic from the component to our action creator?
+
+By calling our API in an action creator, we make the action creator responsible for fetching the data it needs to create the actual action.
+
+[![rr45](../assets/images/rr45-small.jpg)](../assets/images/rr45.jpg)
+
+Moving the data fetching code here, we'll build a cleaner separation between our UI logic and our data fetching logic. Let's see what this actually looks like.
+
+Currently, our code for removing a todo item looks like this:
+
+```jsx
+removeItem(item) {
+  const { dispatch } = this.props.store
+
+  dispatch(removeTodoAction(item.id))
+
+  return API.deleteTodo(item.id)
+    .catch(() => {
+      dispatch(addTodoAction(item))
+      alert('An error occurred. Try again.')
+    })
+  }
+}
+```
+
+Do you see how we are mixing our component-specific code with the API-specific code? If we move the data-fetching logic from our component to the action creator, our final `removeItem()` method might look like this:
+
+```jsx
+removeItem(item) {
+  const { dispatch } = this.props.store
+
+  return dispatch(handleDeleteTodo(item))
+}
+```
+
+This is much better! The `removeItem()` function only has one task; dispatching that a specific item needs to be deleted.
+
+However, we need to make it so our `handleDeleteTodo` action creator makes an asynchronous request before it returns the action. What if we just return a promise from `handleDeleteTodo` that resolves with the action once we get the data? Well, that won't quite work; as of right now, every action creator needs to return an object, not a promise:
+
+```jsx
+function asyncActionCreator (id) {
+  return {
+    type: ADD_USER,
+    user: ??
+  };
+}
+```
+
+What if we used our knowledge of functional programming along with our knowledge of Redux middleware to solve this? Remember that middleware sits *between* the dispatching of an action, and the running of the reducer. The reducer expects to receive an action object, but what if, instead of returning an object, we have our action creator return a function?
+
+We could use some middleware to check if the returned action is either a function or an object. If the action is an object, then things will work as normal - it will call the reducer passing it the action. However, if the action is a function, it can invoke the function and pass it whatever information it needs (e.g. a reference to the `dispatch()` method). This function could do anything it needs to do, like making asynchronous network requests, and can then dispatch a *different* action (that returns a regular object) when its finished.
+
+An action creator that returns a function might look something like this:
+
+```jsx
+function asyncActionCreator (id) {
+  return (dispatch) => {
+    return API.fetchUser(id)
+    .then((user) => {
+      dispatch(addUser(user));
+    });
+  };
+}
+```
+
+Notice that we’re no longer returning the action itself! Instead, we’re returning a function that is being passed dispatch. We then call this function when we have the data.
+
+Now, this won’t work out of the box, but there's some good news: we can add some middleware to our app to support it! Let’s go ahead and see what that actually looks like.
+
+#### 5.4.1 Adding Thunk
+First we create a new action that returns a function rather than an object. Our action creators up until this point have returned objects only.
+
+This allows us to move the logic from our component to the action creator.
+
+```jsx
+// New action creator
+function handleDeleteTodo(todo) {
+  return dispatch => {
+    // API logic goes here.
+  };
+}
+```
+
+Our `removeItem` method in the Todos component should now just have a single dispatch to our new `handleDeleteTodo` action creator.
+
+```jsx
+class Todos extends React.Component {
+  removeItem = todo => {
+    // this.props.store.dispatch(removeTodoAction(todo.id));
+
+    // return API.deleteTodo(todo.id).catch(() => {
+    //   showConnectionError();
+    //   this.props.store.dispatch(addTodoAction(todo));
+    // });
+    this.props.store.dispatch(handleDeleteTodo(todo));
+  };
+```
+
+We take the API logic that was commented out above and drop it into our `handleDeleteTodo` action creator.
+
+```js
+function handleDeleteTodo(todo) {
+  return dispatch => {
+    dispatch(removeTodoAction(todo.id));
+
+    return API.deleteTodo(todo.id).catch(() => {
+      showConnectionError();
+      this.props.store.dispatch(addTodoAction(todo));
+    });
+  };
+}
+```
+
+Lastly, in order for this to work properly, we need to introduce some middleware code and add it to our `createStore` method.
+
+Here's a custom thunk middleware example.
+
+```js
+// custom thunk middleware...
+const thunk = store => next => action => {
+  if (typeof action === 'function') {
+    return action(store.dispatch)
+  }
+  return next(action)
+}
+```
+
+Here's the addition to `createStore`.
+
+```jsx
+// Create the store
+const store = Redux.createStore(
+  Redux.combineReducers({
+    todos,
+    goals,
+    loading
+  }),
+  Redux.applyMiddleware(thunk, checker, logger)
+);
+```
+
+Without this we will get the following error message.
+
+> Uncaught Error: Actions must be plain objects. Use custom middleware for async actions.
+
+#### Adding in redux-thunk
+Fortunately, we don't need to write custom thunk middleware code because we can just import this ourselves.
+
+We'll be adding the [redux-thunk](https://github.com/gaearon/redux-thunk) library so you'll need this:
+
+- `<script src="https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js"></script>`
+
+Now we make one additional change to `createStore` for this to work.
+
+```jsx
+// Create the store
+const store = Redux.createStore(
+  Redux.combineReducers({
+    todos,
+    goals,
+    loading
+  }),
+  Redux.applyMiddleware(ReduxThunk.default, checker, logger)
+);
+```
+
+💫Remember middleware executes in the order it is listed in the applyMiddleware() function.
+
+#### 5.4.2 Benefits of Thunks
+Out of the box, the Redux store can only support the *synchronous* flow of data. Middleware like thunk helps support asynchronicity in a Redux application.
+
+You can think of thunk as a wrapper for the store’s `dispatch()` method; rather than returning action objects, we can use thunk action creators to dispatch functions (or even or Promises).
+
+Without thunks, synchronous dispatches are the default. We could still make API calls from React components (e.g., using the componentDidMount() lifecycle method to make these requests) -- but using thunk middleware gives us a cleaner separation of concerns.
+
+Components don't need to handle what happens after an asynchronous call, since API logic is moved away from components to action creators. This also lends itself to greater predictability, since **action creators will become the source of every change in state**.
+
+With thunks, we can dispatch an action only when the server request is resolved!
+
+#### 5.4.3 Question 1 of 2
+What are the benefits of using thunk middleware?
+
+- [x] Asynchronicity
+- [ ] UI logic and data-fetching logic are together in one place
+- [ ] API logic remains in components
+- [x] Components don't need to handle what happens after asynchronous calls
+
+Thunk middleware can then be used to delay an action dispatch, or to dispatch only if a certain condition is met (e.g., a request is resolved). This logic lives inside action creators rather than inside components.
+
+#### 5.4.4 Question 2 of 2
+Take a look at this example:
+
+```js
+export const fetchTodos = () => dispatch => (
+  TodoAPIUtil
+    .fetchTodos()
+    .then(todos => dispatch(receiveTodos(todos)))
+);
+```
+
+Please place the following events in order of execution:
+
+| Order | Event |
+| --- | --- |
+| 1 | API request occurs |
+| 2 | API request is resolved |
+| 3 | Thunk middleware invokes the function with `dispatch` |
+| 4 | The action returned by `receiveTodos` is dispatched |
+
+We expect the API request to occur first. TodoAPIUtil.fetchTodos() needs to be resolved before anything else can be done. Once the request is resolved, thunk middleware then invokes the function with dispatch(). Keep in mind: the action is only ever dispatched after the API request is resolved.
+
+#### 5.4.5 Summary
+If a web application requires interaction with a server, applying middleware such as **thunk** helps solve the issue of asynchronous data flow. Thunk middleware allows us to write action creators that return functions rather than objects.
+
+By calling our API in an action creator, we make the *action creator* responsible for fetching the data it needs to create the action. Since we move the data-fetching code to action creators, we build a cleaner separation between our UI logic and our data-fetching logic. As a result, thunks can then be used to delay an action dispatch, or to dispatch only if a certain condition is met (e.g., a request is resolved).
+
+##### 5.4.5 Further Research
+
+- [Redux Thunk on GitHub](https://github.com/gaearon/redux-thunk)
+- [Async Flow from the Redux docs](http://redux.js.org/docs/advanced/AsyncFlow.html)
+- [Dan Abramov's Stack Overflow on Asynchronicity in Redux](http://stackoverflow.com/questions/35411423/how-to-dispatch-a-redux-action-with-a-timeout/35415559#35415559)
+
+<!-- 
+### 5.5 Thunks in our App
+The next set of changes will be to our goals fetch requests. We'll move the goals fetch code to a new set of action creators that can be dispatched from our UI.
+
+```jsx
+// Action Creators in ES6
+const handleAddGoal = (name, callback) => dispatch => {
+  return API.saveGoal(name)
+    .then(goal => {
+      dispatch(addGoalAction(goal));
+      callback();
+    })
+    .catch(() => showConnectionError());
+};
+const handleDeleteGoal = goal => dispatch => {
+  dispatch(removeGoalAction(goal.id));
+
+  return API.deleteGoal(goal.id).catch(() => {
+    showConnectionError();
+    dispatch(addGoalAction(goal));
+  });
+};
+
+// Component UI
+class Goals extends React.Component {
+  addItem = e => {
+    e.preventDefault();
+
+    return this.props.store.dispatch(
+      handleAddGoal(this.input.value, () => (this.input.value = ''))
+    );
+  };
+  removeItem = goal => {
+    this.props.store.dispatch(handleDeleteGoal(goal));
+  };
+```
+
+When we dispatch our actions we call our action creators and in the case of `handleAddGoal` we pass in a function callback.
+
+Next we handle the todo API requests.
+
+```jsx
+// Action Creators using es5/6 syntax
+function handleAddTodo(name, callback) {
+  return dispatch => {
+    return API.saveTodo(name)
+      .then(todo => {
+        dispatch(addTodoAction(todo));
+        callback();
+      })
+      .catch(() => {
+        showConnectionError();
+      });
+  };
+}
+function handleToggleTodo(id) {
+  return dispatch => {
+    dispatch(toggleTodoAction(id));
+
+    return API.saveTodoToggle(id).catch(() => {
+      showConnectionError();
+      dispatch(toggleTodoAction(id));
+    });
+  };
+}
+
+// Component UI
+class Todos extends React.Component {
+  addItem = e => {
+    e.preventDefault();
+    this.props.store.dispatch(
+      handleAddTodo(this.input.value, () => (this.input.value = ''))
+    );
+  };
+  removeItem = todo => {
+    this.props.store.dispatch(handleDeleteTodo(todo));
+  };
+  toggleItem = id => {
+    this.props.store.dispatch(handleToggleTodo(id));
+  };
+```
+
+Lastly we move our initial fetch of data out of our App UI's `componentDidMount` method.
+
+```js
+// Action Creators in ES5
+function handleInitialData() {
+  return dispatch => {
+    return Promise.all([API.fetchTodos(), API.fetchGoals()])
+      .then(([todos, goals]) => {
+        dispatch(receiveDataAction(todos, goals));
+      })
+      .catch(err => console.log(err));
+  };
+}
+
+// Component UI
+class App extends React.Component {
+  componentDidMount() {
+    const { store } = this.props;
+
+    store.dispatch(handleInitialData());
+
+    store.subscribe(() => this.forceUpdate());
+  }
+```
+
+Converting to thunks improves the responsibilities of the code and better separates concerns.
+
+#### 5.5.1 More Asynchronous Options
+The most common requests I get for this course are around more advanced data-fetching topics with Redux. I've resisted because typically they bring in *a lot* of complexity, while the benefits aren't seen until your data-fetching needs become large enough.
+
+With that said, now that you have a solid foundation on Redux and specifically, asynchronous Redux, you'll be in a good position to read up on the different options to decide if any would work best for the type of application you're working on. I encourage to read up on both of the other (popular) options.
+
+- [Redux Promise](https://github.com/redux-utilities/redux-promise) - FSA-compliant promise middleware for Redux.
+- [Redux Saga](https://github.com/redux-saga/redux-saga) - An alternative side effect model for Redux apps
+
+#### 5.5.2 Summary
+In this section, we used the thunk library that we installed in the previous section to make our code more singularly-focused and maintainable. We converted the:
+
+- Goals code to use thunks
+- Todos code to use thunks
+- Initial data fetching to use thunks
+
+### 5.6 Lesson Summary
+Read the following articles:
+
+- [Redux Thunk](https://blog.nojaf.com/2015/12/06/redux-thunk/)
+- [Why do we need middleware for async flow in Redux?](https://stackoverflow.com/questions/34570758/why-do-we-need-middleware-for-async-flow-in-redux)
+- [Understanding how redux-thunk works](https://medium.com/@gethylgeorge/understanding-how-redux-thunk-works-72de3bdebc50)
+
+Answer the following questions and share your answers with your classmates:
+
+1) Why do we use middleware to perform asynchronous tasks in Redux apps?
+
+2) How do we use `redux-thunk` to make API requests in Redux apps? -->
