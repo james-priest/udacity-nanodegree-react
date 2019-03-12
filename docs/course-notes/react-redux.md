@@ -3415,7 +3415,7 @@ By calling our API in an action creator, we make the *action creator* responsibl
 - [Async Flow from the Redux docs](http://redux.js.org/docs/advanced/AsyncFlow.html)
 - [Dan Abramov's Stack Overflow on Asynchronicity in Redux](http://stackoverflow.com/questions/35411423/how-to-dispatch-a-redux-action-with-a-timeout/35415559#35415559)
 
-<!-- 
+
 ### 5.5 Thunks in our App
 The next set of changes will be to our goals fetch requests. We'll move the goals fetch code to a new set of action creators that can be dispatched from our UI.
 
@@ -3539,6 +3539,7 @@ In this section, we used the thunk library that we installed in the previous sec
 - Todos code to use thunks
 - Initial data fetching to use thunks
 
+<!-- 
 ### 5.6 Lesson Summary
 Read the following articles:
 
