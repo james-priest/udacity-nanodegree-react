@@ -3539,7 +3539,6 @@ In this section, we used the thunk library that we installed in the previous sec
 - Todos code to use thunks
 - Initial data fetching to use thunks
 
-<!-- 
 ### 5.6 Lesson Summary
 Read the following articles:
 
@@ -3551,4 +3550,4 @@ Answer the following questions and share your answers with your classmates:
 
 1) Why do we use middleware to perform asynchronous tasks in Redux apps?
 
-2) How do we use `redux-thunk` to make API requests in Redux apps? -->
+2) How do we use `redux-thunk` to make API requests in Redux apps?
