@@ -3808,6 +3808,9 @@ Now, let's go ahead and utilize Context in our todos app.
 >
 > See [React.createContext API docs](https://reactjs.org/docs/context.html#reactcreatecontext)
 
+[![rr48](../assets/images/rr48-small.jpg)](../assets/images/rr48.jpg)<br>
+**Live Demo:** [Context API Todo Goals App](https://codesandbox.io/s/l5m5n58rx7?fontsize=14) on CodeSandbox
+
 <!-- 
 ### 6.3 Add Context to Todos
 
