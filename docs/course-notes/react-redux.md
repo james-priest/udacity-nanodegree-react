@@ -3241,7 +3241,7 @@ function asyncActionCreator (id) {
 }
 ```
 
-What if we used our knowledge of functional programming along with our knowledge of Redux middleware to solve this? Remember that middleware sits *between* the dispatching of an action, and the running of the reducer. The reducer expects to receive an action object, but what if, instead of returning an object, we have our action creator return a function?
+What if we used our knowledge of functional programming along with our knowledge of Redux middleware to solve this? **Remember that middleware sits *between* the dispatching of an action, and the running of the reducer.** The reducer expects to receive an action object, but what if, instead of returning an object, we have our action creator return a function?
 
 We could use some middleware to check if the returned action is either a function or an object. If the action is an object, then things will work as normal - it will call the reducer passing it the action. However, if the action is a function, it can invoke the function and pass it whatever information it needs (e.g. a reference to the `dispatch()` method). This function could do anything it needs to do, like making asynchronous network requests, and can then dispatch a *different* action (that returns a regular object) when its finished.
 
@@ -3551,3 +3551,487 @@ Answer the following questions and share your answers with your classmates:
 1) Why do we use middleware to perform asynchronous tasks in Redux apps?
 
 2) How do we use `redux-thunk` to make API requests in Redux apps?
+
+## 6. Using react-redux
+### 6.1 Introduction
+At this point, it's hopefully pretty clear that Redux is not coupled to React at all.
+
+You can build a fully-fledged app using Redux at any Vue, Angular, or straight JavaScript library. With that said, Redux was built with React in mind, and there are some steps we can take in our app to make the experience between the two technologies a little more seamless.
+
+### 6.2 React's Context API
+As you've seen, Redux has no relation to React. React just like any other UI library, can leverage Redux for more predictable state management.
+
+Looking at our own implementation of React and Redux together, the real key is that we're passing down our store as a prop, and utilizing it to get **state**, **dispatch**, or **subscribe** whenever we need to.
+
+If you were tasked with building a library to extract some of the rough patches in our implementation between React and Redux, how might you do it?
+
+When we wrote the createStore function, our store was responsible for three things.
+
+- getting state
+- updating state
+- listening for changes
+
+The whole goal of our abstraction should be making
+these three things work as seamlessly with react as possible.
+
+#### 6.2.1 Getting the Store to Each Component
+The first thing we want to do is improve how each component gets access to the store. If it's tough for a component to access the store, whether it's to get the state, listen to the state, or update the state, nothing else we do will matter.
+
+Right now we’re just passing the store down as a prop. It works fine enough in our small app, but what if we had a larger app with more layers to it? Passing the store down ten components deep wouldn't scale very well. One of the main points of having a store is to avoid passing props down through a bunch of components.
+
+One reason React (talking about React for a moment, not Redux) is so popular is because it's very efficient. It's efficient in keeping state localized to a component, it's efficient in keeping UI confined to a component, and it's efficient in knowing when something has changed and re-rendering just that component.
+
+So the second thing we need need to figure out is how to re-render components only if the data they depend on (from the store) changes. Right now, we're solving this by calling `getState` at the root of our application and then passing the data down. Again, this won't scale well as our app grows.
+
+If we can find a nice abstraction for getting the store to any component that needs it and only re-rendering components when the exact data they need change, we'll improve every aspect of our current codebase.
+
+#### 6.2.2 React's Context API
+We have our App component. Our app has some data; specifically a name constant.
+
+We render the Parent component. Parent then renders Child, Child renders Grandchild, and Grandchild renders the `name` prop.
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+function Parent({ name }) {
+  return (
+    <div>
+      <h1>Parent</h1>
+      <Child name={name} />
+    </div>
+  );
+}
+
+function Child({ name }) {
+  return (
+    <div>
+      <h1>Child</h1>
+      <Grandchild name={name} />
+    </div>
+  );
+}
+
+function Grandchild({ name }) {
+  return (
+    <div>
+      <h1>Grandchild</h1>
+      <h3>Name: {name}</h3>
+    </div>
+  );
+}
+
+class App extends React.Component {
+  render() {
+    const name = 'James';
+    return <Parent name={name} />;
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+So the whole idea of this kind of contrived example is that we want to get `name` all the way down to our Grandchild function or our Grandchild component.
+
+Typically how we would do this is to pass the `name` variable as props through the hierarchy.
+
+- App -> Parent -> Child -> Grandchild
+
+If you're familiar with React then this is a use-case you've probably seen before.
+
+We have data living in one part of our application, we want to get it to some Child component, but in order to get it there, we have to parse it through a few other components.
+
+Well, this is the exact problem that `Context` in React solves.
+
+So, I'm going to go back to what we initially had. And now using Context, I'm going to get the `name` variable down to Grandchild without actually having to parse it through the Parent and Child components.
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+const Context = React.createContext();
+
+function Parent() {
+  return (
+    <div>
+      <h1>Parent</h1>
+      <Child />
+    </div>
+  );
+}
+
+function Child() {
+  return (
+    <div>
+      <h1>Child</h1>
+      <Grandchild />
+    </div>
+  );
+}
+
+function Grandchild() {
+  return (
+    <Context.Consumer>
+      {({ name }) => (
+        <div>
+          <h1>Grandchild</h1>
+          <h3>Name: {name}</h3>
+        </div>
+      )}
+    </Context.Consumer>
+  );
+}
+
+class App extends React.Component {
+  render() {
+    const name = 'James';
+    return (
+      <Context.Provider value={name}>
+        <Parent />
+      </Context.Provider>
+    );
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+That's why Context exists because it allows us to get data to our Child component without having to plum it through all of the other components above that component.
+
+So now that we've seen how Context works, what we're going to do is we're going to use it in our abstraction that we're creating over React and Redux in order to get our redux store (as well as any data that the components need) down to those components without having to pass our store all the way down the component tree.
+
+#### 6.2.3 Context
+Before we add the Context API into our app, let's make sure we're on the same page as to how it all works.
+
+Recall that in one of the previous screencasts, passing data from one component to another component was a bit cumbersome. We had to pass data from component to component:
+
+```jsx
+import React from 'react';
+import { render } from 'react-dom';
+
+function Parent ({ name }) {
+  return (
+    <div>
+      <h1>Parent</h1>
+      <Child name={name}/>
+    </div>
+  );
+}
+
+function Child ({ name }) {
+  return (
+    <div>
+      <h1>Child</h1>
+      <Grandchild name={name}/>
+    </div>
+  );
+}
+
+function Grandchild ({ name }) {
+  return (
+    <div>
+      <h1>Grandchild</h1>
+      <h3>Name: {name}</h3>
+    </div>
+  );
+}
+
+class App extends React.Component {
+  render() {
+    const name = 'Tyler';
+
+    return (
+      <Parent />
+    );
+  }
+}
+
+render(<App />, document.getElementById('root'));
+```
+
+The `App` component renders `Parent`, which renders `Child`, which renders `Grandchild`. However, what's important to notice here is that the Grandchild component wants to render `name` -- but the data for name lives inside the `App` component.
+
+Because Grandchild is so deeply nested, we have to pass the `name` prop one-by-one from App through all the components until it reaches Grandchild. What's more: we must do this even if any of the components along the way (Parent and Child) aren't even concerned with the name data!
+
+This process of "threading props" to send data to a child component can be tiresome, and perhaps even error-prone. Luckily, we can avoid it with React's Context API. To begin, we'll use React's `createContext()` function to return an object with a Provider as well as a Consumer.
+
+```jsx
+const Context = React.createContext();
+```
+
+Let's now check out how `Context.Provider` and `Context.Consumer` make these interactions between components possible.
+
+#### 6.2.4 Context.Provider
+The `Provider` component is used in the upper level of the component tree; that is, the component from which the data to be passed is held. In our case, this was the `App` component. We passed the `name` data as the value of `Provider`'s `value` prop:
+
+```jsx
+class App extends React.Component {
+  render() {
+  const name = 'Tyler';
+
+  return (
+    <Context.Provider value={name}>
+      <Parent />
+    </Context.Provider>
+    );
+  }
+}
+```
+
+Note that the `Provider` component simply wraps around the entire component to be rendered!
+
+#### 6.2.5 Context.Consumer
+On the receiving end (i.e., a component "under" the `Provider` in the component hierarchy), we use the `Consumer` component. In our example, we passed `Consumer` a function as a child. This function accepts a value and returns some JSX:
+
+```jsx
+function Grandchild ({ name }) {
+  return (
+    <Context.Consumer>
+      {(name) => (
+        <div>
+          <h1>Grandchild</h1>
+          <h3>Name: {name}</h3>
+        </div>
+      )}
+    </Context.Consumer>
+  );
+}
+```
+
+As a result, we were able to render the Grandchild component with the correct name data without ever having to pass that data down the entire component thread!
+
+That's a lot less code than the previous way we had to do it. So React's `Context` API provides a terse, approachable way to easily communicate information from one component to another.
+
+Now, let's go ahead and utilize Context in our todos app.
+
+> *Context provides a way to pass data through the component tree without having to pass props down manually at every level.*
+>
+> See [React.createContext API docs](https://reactjs.org/docs/context.html#reactcreatecontext)
+
+<!-- 
+### 6.3 Add Context to Todos
+
+Next we add Context API to our App. We instantiate the `Context` variable and create an abstraction called `Provider` that will wrap `Context.Provider`.
+
+```jsx
+const Context = React.createContext();
+
+class Provider extends React.Component {
+  render() {
+    return (
+      <Context.Provider value={this.props.store}>
+        {this.props.children}
+      </Context.Provider>
+    )
+  }
+}
+```
+
+Now we are going to create a Connected or Container component to wrap any component that needs to access the `store` as props.
+
+[![rr46](../assets/images/rr46-small.jpg)](../assets/images/rr46.jpg)
+
+```jsx
+class ConnectedApp extends React.Component {
+  render() {
+    return (
+      <Context.Consumer>{store => <App store={store} />}</Context.Consumer>
+    );
+  }
+}
+```
+
+Lastly, we update our `ReactDOM.render` method to use `Provider` and reference `ConnectedApp` instead of `App`.
+
+```jsx
+ReactDOM.render(
+  <Provider store={store}>
+    <ConnectedApp />
+  </Provider>,
+  document.getElementById('app')
+);
+```
+
+#### 6.3.1 Container Components
+*Connected Component* and *Container Component* are different names that really mean the same thing - a component that is connected to the store. This is in contrast to a component that is just responsible for rendering UI content. We call those *Presentation Components*.
+
+The point of these names are to help explain what the purpose of the component is for:
+
+- A connected component is connected to the Redux store and is responsible for getting data from the store.
+- A presentational component should not access the store. It should receive any information it needs as props and then just render a UI.
+
+Dan Abramov (the creator of Redux!) wrote a post about this very thing. Check it out if to get his take on these concepts: [Presentational and Container Components](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0)
+
+[![rr47](../assets/images/rr47-small.jpg)](../assets/images/rr47.jpg)
+
+#### 6.3.2 Connected Goals & Todos
+Next we create a ConnectedGoals component that uses `Context.Consumer` which then gives us access to the store component.
+
+```jsx
+class ConnectedGoals extends React.Component {
+  render() {
+    return (
+      <Context.Consumer>
+        {store => {
+          const { goals } = store.getState();
+          return <Goals goals={goals} dispatch={store.dispatch} />;
+        }}
+      </Context.Consumer>
+    );
+  }
+}
+```
+
+Here we do the same for `ConnectedTodos`.
+
+```jsx
+class ConnectedTodos extends React.Component {
+  render() {
+    return (
+      <Context.Consumer>
+        {store => {
+          const { todos } = store.getState();
+          return <Todos todos={todos} dispatch={store.dispatch} />;
+        }}
+      </Context.Consumer>
+    );
+  }
+}
+```
+
+Next, we update the App component to use the new Connected components.
+
+```jsx
+class App extends React.Component {
+  componentDidMount() {
+    const { store } = this.props;
+
+    store.dispatch(handleInitialData());
+    store.subscribe(() => this.forceUpdate());
+  }
+  render() {
+    const { store } = this.props;
+    const { loading } = store.getState();
+
+    if (loading === true) {
+      return <h3>Loading...</h3>;
+    }
+    return (
+      <div className="row">
+        <ConnectedTodos />
+        <ConnectedGoals />
+      </div>
+    );
+  }
+}
+```
+
+Lastly, we need to change our references to dispatch in `Todos` and `Goals` from `this.props.store.dispatch` to `this.props.dispatch`.
+
+#### 6.3.3 Quiz Question
+Please check all statements that are true.
+
+- [x] `Context` function connects components to the store
+- [x] `Provider` provides the store globally to all subcomponents
+- [ ] `Provider` provides action creators to the store
+- [x] `Provider` is a React component that wraps the application
+
+`Provider` is really just a React component that we use to wrap the entire application. It takes in the store as a prop, then sets the store context, passing it down to all its subcomponents.
+
+All components wrapped by Provider will receive the store context.
+
+What differentiates containers from presentational components?
+
+### 6.4 Build Custom connect()
+We will now build out a customized connect() function that allows us to pass in state context through currying. 
+
+```jsx
+const Context = React.createContext();
+
+function connect(mapStateToProps) {
+  return Component => {
+    class Receiver extends React.Component {
+      componentDidMount() {
+        const { subscribe } = this.props.store;
+        this.unsubscribe = subscribe(() => {
+          this.forceUpdate();
+        });
+      }
+      componentWillUnmount() {
+        this.unsubscribe();
+      }
+      render() {
+        const { dispatch, getState } = this.props.store;
+        const state = getState();
+        const stateNeeded = mapStateToProps(state);
+        return <Component {...stateNeeded} dispatch={dispatch} />;
+      }
+    }
+    class ConnectedComponent extends React.Component {
+      render() {
+        return (
+          <Context.Consumer>
+            {store => <Receiver store={store} />}
+          </Context.Consumer>
+        );
+      }
+    }
+    return ConnectedComponent;
+  };
+}
+```
+
+Next we remove unnecessary store and subscribe references from `App` which leaves us with the following.
+
+```jsx
+class App extends React.Component {
+  componentDidMount() {
+    const { dispatch } = this.props;
+
+    dispatch(handleInitialData());
+  }
+  render() {
+    if (this.props.loading === true) {
+      return <h3>Loading...</h3>;
+    }
+    return (
+      <div className="row">
+        <ConnectedTodos />
+        <ConnectedGoals />
+      </div>
+    );
+  }
+}
+```
+
+Now we update our `ConnectedApp` component to use our new `connect()` function.
+
+```jsx
+const ConnectedApp = connect(store => ({
+  loading: store.loading
+}))(App);
+```
+
+We do the same for `ConnectedGoals` and `ConnectedTodos`.
+
+```jsx
+const ConnectedGoals = connect(state => ({
+  goals: state.goals
+}))(Goals);
+
+const ConnectedTodos = connect(state => ({
+  todos: state.todos
+}))(Todos);
+```
+
+### 6.5 The react-redux Bindings
+Let's take a moment to recap the changes we've made to our app in this Lesson, because we've updated quite a bit!
+
+Previously, we leveraged the standard `redux` library to build our app. This allowed us to create a Redux store with the `createStore()` function, giving us an API to listen (`subscribe()`), get updates (`getState()`), and make updates (`dispatch()`) to state.
+
+We then created our own `Provider` component to efficiently pass the store to components that needed it, as well as our own `connect()` function so that our components can access "slices" of state as props.
+
+We can build a fully-functional React and Redux app without Provider or connect(), but since they greatly simplify how React components interact with the Redux store, the creators of redux have included them in the `react-redux` package!
+
+#### 6.5.1 Provider
+With `react-redux`, rather than creating and using our own Provider which looks like this: -->
