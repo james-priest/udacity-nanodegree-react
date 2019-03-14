@@ -3811,7 +3811,6 @@ Now, let's go ahead and utilize Context in our todos app.
 [![rr48](../assets/images/rr48-small.jpg)](../assets/images/rr48.jpg)<br>
 **Live Demo:** [Context API Todo Goals App](https://codesandbox.io/s/l5m5n58rx7?fontsize=14) on CodeSandbox
 
-<!-- 
 ### 6.3 Add Context to Todos
 
 Next we add Context API to our App. We instantiate the `Context` variable and create an abstraction called `Provider` that will wrap `Context.Provider`.
@@ -4027,6 +4026,10 @@ const ConnectedTodos = connect(state => ({
 }))(Todos);
 ```
 
+[![rr48](../assets/images/rr48-small.jpg)](../assets/images/rr48.jpg)<br>
+**Live Demo:** [Context API Todo Goals App](https://codesandbox.io/s/l5m5n58rx7?fontsize=14) on CodeSandbox
+
+<!--
 ### 6.5 The react-redux Bindings
 Let's take a moment to recap the changes we've made to our app in this Lesson, because we've updated quite a bit!
 
