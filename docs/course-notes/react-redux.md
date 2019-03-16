@@ -4135,7 +4135,6 @@ React often leverages Redux for more predictable state management via the `react
 
 `connect()` connects a React component to the Redux store. The `mapStateToProps()` function allows us to specify which state from the store you want passed to your React component, while the `mapDispatchToProps()` function allows us to bind dispatch to action creators before they ever hit the component.
 
-<!-- 
 ### 6.6 Folder Structure
 Right now, all of our app's code is located in a single file. It's an unwieldy and unrealistic way to build an app, though.
 
@@ -4808,4 +4807,4 @@ Ultimately, the choice is yours. Whichever way you choose to organize your direc
 #### 6.6.8 Summary
 This section didn't accomplish anything with React or Redux. All we did here was improve the structure and organization of our app by moving each portion of the app to a specific folder structure.
 
-To say it one more time, there's no "right" way to build out the folder structure for you app. However, doing it this way is handy because we're using the structure provided by Create React App. Using this structure, it's easy to convert a plain React application over to one that includes Redux. Another benefit is that other React developers will already be comfortable with this file/folder organization. -->
+To say it one more time, there's no "right" way to build out the folder structure for you app. However, doing it this way is handy because we're using the structure provided by Create React App. Using this structure, it's easy to convert a plain React application over to one that includes Redux. Another benefit is that other React developers will already be comfortable with this file/folder organization.
