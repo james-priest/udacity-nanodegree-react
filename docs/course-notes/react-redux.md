@@ -4064,10 +4064,12 @@ ReactDOM.render(
 ...we can simply use the `Provider` component defined by the `react-redux` package! This allows us to wrap our entire app with `Provider`, effectively passing the store to even the most deeply nested components.
 
 ```jsx
+import { Provider } from 'react-redux';
+
 ReactDOM.render(
-  <ReactRedux.Provider store={store}>
+  <Provider store={store}>
     <ConnectedApp />
-  </ReactRedux.Provider>,
+  </Provider>,
   document.getElementById('app')
 );
 ```
@@ -4076,20 +4078,21 @@ ReactDOM.render(
 Similarly, we can also leverage `react-redux`'s `connect()` function right out of the box. `connect()` is a higher-order function that takes in two arguments (as well as a few [optional arguments](https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options)) and *returns a function*. Check out its signature below:
 
 ```js
+import { connect } from 'react-redux';
+
 const buildConnectedComponent = connect(mapStateToProps, mapDispatchToProps);
+const ConnectedComponent = buildConnectedComponent(MyComponent);
 ```
 
 What's vital to understand is that `buildConnectedComponent` is a function. `buildConnectedComponent` will take a regular (presentational) React component and return a new, "connected" component.
-
-```js
-const ConnectedComponent = buildConnectedComponent(MyComponent);
-```
 
 `ConnectedComponent` renders `MyComponent`, passing it the `props` as defined by `mapStateToProps` and `mapDispatchToPros`.
 
 We can avoid having the intermediary `buildConnectedComponent` variable and just call the functions back-to-back:
 
 ```js
+import { connect } from 'react-redux';
+
 const ConnectedComponent = connect(mapStateToProps,
   mapDispatchToProps)(MyComponent)
 ```
