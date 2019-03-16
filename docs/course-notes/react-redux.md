@@ -3415,7 +3415,6 @@ By calling our API in an action creator, we make the *action creator* responsibl
 - [Async Flow from the Redux docs](http://redux.js.org/docs/advanced/AsyncFlow.html)
 - [Dan Abramov's Stack Overflow on Asynchronicity in Redux](http://stackoverflow.com/questions/35411423/how-to-dispatch-a-redux-action-with-a-timeout/35415559#35415559)
 
-
 ### 5.5 Thunks in our App
 The next set of changes will be to our goals fetch requests. We'll move the goals fetch code to a new set of action creators that can be dispatched from our UI.
 
@@ -3945,7 +3944,7 @@ All components wrapped by Provider will receive the store context.
 What differentiates containers from presentational components?
 
 ### 6.4 Build Custom connect()
-We will now build out a customized connect() function that allows us to pass in state context through currying. 
+We will now build out a customized connect() function that allows us to pass in state context through currying.
 
 ```jsx
 const Context = React.createContext();
@@ -4029,8 +4028,7 @@ const ConnectedTodos = connect(state => ({
 [![rr48](../assets/images/rr48-small.jpg)](../assets/images/rr48.jpg)<br>
 **Live Demo:** [Context API Todo Goals App](https://codesandbox.io/s/l5m5n58rx7?fontsize=14) on CodeSandbox
 
-<!--
-### 6.5 The react-redux Bindings
+### 6.5 react-redux Bindings
 Let's take a moment to recap the changes we've made to our app in this Lesson, because we've updated quite a bit!
 
 Previously, we leveraged the standard `redux` library to build our app. This allowed us to create a Redux store with the `createStore()` function, giving us an API to listen (`subscribe()`), get updates (`getState()`), and make updates (`dispatch()`) to state.
@@ -4040,4 +4038,774 @@ We then created our own `Provider` component to efficiently pass the store to co
 We can build a fully-functional React and Redux app without Provider or connect(), but since they greatly simplify how React components interact with the Redux store, the creators of redux have included them in the `react-redux` package!
 
 #### 6.5.1 Provider
-With `react-redux`, rather than creating and using our own Provider which looks like this: -->
+With `react-redux`, rather than creating and using our own `Provider` which looks like this:
+
+```jsx
+const Context = React.createContext()
+
+class Provider extends React.Component {
+  render () {
+  return (
+    <Context.Provider value={this.props.store}>
+      {this.props.children}
+    </Context.Provider>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Provider store={store}>
+    <ConnectedApp />
+  </Provider>,
+  document.getElementById('app')
+);
+```
+
+...we can simply use the `Provider` component defined by the `react-redux` package! This allows us to wrap our entire app with `Provider`, effectively passing the store to even the most deeply nested components.
+
+```jsx
+ReactDOM.render(
+  <ReactRedux.Provider store={store}>
+    <ConnectedApp />
+  </ReactRedux.Provider>,
+  document.getElementById('app')
+);
+```
+
+#### 6.5.2 connect()
+Similarly, we can also leverage `react-redux`'s `connect()` function right out of the box. `connect()` is a higher-order function that takes in two arguments (as well as a few [optional arguments](https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options)) and *returns a function*. Check out its signature below:
+
+```js
+const buildConnectedComponent = connect(mapStateToProps, mapDispatchToProps);
+```
+
+What's vital to understand is that `buildConnectedComponent` is a function. `buildConnectedComponent` will take a regular (presentational) React component and return a new, "connected" component.
+
+```js
+const ConnectedComponent = buildConnectedComponent(MyComponent);
+```
+
+`ConnectedComponent` renders `MyComponent`, passing it the `props` as defined by `mapStateToProps` and `mapDispatchToPros`.
+
+We can avoid having the intermediary `buildConnectedComponent` variable and just call the functions back-to-back:
+
+```js
+const ConnectedComponent = connect(mapStateToProps,
+  mapDispatchToProps)(MyComponent)
+```
+
+Notice the double set of parentheses!
+
+#### 6.5.3 Question 1 of 2
+`connect()` connects which two items?
+
+- [ ] Action
+- [ ] Action creator
+- [x] Store
+- [ ] Reducer
+- [ ] API util
+- [x] Component
+
+Using `connect()`, we can conveniently access the `store` context set by `Provider`. We pass in parts of the state as well as action-dispatches to the components as `props`.
+
+#### 6.5.4 Question 2 of 2
+Assume that `MyComponent` is a simple React component. How can `MyComponent` access state?
+
+- [ ] The entire store is passed in to connect(), which is curried along with MyComponent
+- [ ] The only way is to pass the store down from parent to child component until it reaches MyComponent
+- [x] A container component connects the store to MyComponent, giving MyComponent slices of state accessible via props
+  ```js
+  const ConnectedComponent = connect(mapStateToProps,
+    mapDispatchToProps)(MyComponent);
+  ```
+- [ ] MyComponent can access state via `this.state`, since all state should always be stored in the component itself in Redux apps.
+
+`mapStateToProps` is a function that lets `connect()` know how to map `state` into the component’s list of `props`.
+
+Here is the signature of the `connect()` function:
+
+```js
+connect([mapStateToProps], [mapDispatchToProps], [mergeProps], [options])
+```
+
+#### 6.5.5 Summary
+React often leverages Redux for more predictable state management via the `react-redux` bindings. These bindings give us an API that simplifies the most common interactions between React and Redux.
+
+`Provider` makes it possible for Redux to pass data from the store to any React components that need it. It uses React's [context](https://facebook.github.io/react/docs/context.html) feature to make this work.
+
+`connect()` connects a React component to the Redux store. The `mapStateToProps()` function allows us to specify which state from the store you want passed to your React component, while the `mapDispatchToProps()` function allows us to bind dispatch to action creators before they ever hit the component.
+
+<!-- 
+### 6.6 Folder Structure
+Right now, all of our app's code is located in a single file. It's an unwieldy and unrealistic way to build an app, though.
+
+To fix this, we're going to use Create React App to scaffold out a React app for us.
+
+We will then structure the code according to the [Rails-style pattern](https://redux.js.org/faq/code-structure) which defines the following folder structure within `src/`.
+
+- `actions`
+- `constants`
+- `reducers`
+- `containers`
+- `components`
+
+We start by issuing the following command.
+
+```bash
+npx create-react-app reactnd-redux-todos-goals
+```
+
+Once complete we can start the development server.
+
+```bash
+npm start
+```
+
+This will launch the app on the following URL.
+
+- [http://localhost:3000](http://localhost:3000)
+
+Next we install each of the dependency libraries.
+
+```bash
+npm install --save goals-todos-api react-redux redux redux-thunk
+```
+
+Then we delete unnecessary files in `src/`.
+
+- App.css
+- App.js
+- App.test.js
+- logo.svg
+- serviceWorker.js
+
+In `src/index.js` we remove service worker code and update the file to look like this.
+
+```jsx
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './components/App';
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+Then we create a `src/components/App.js`.
+
+```jsx
+// App.js
+import React, { Component } from 'react';
+
+class App extends Component {
+  render() {
+    return <div>Hello World</div>;
+  }
+}
+
+export default App;
+```
+
+The next we'll do is split up our code according to the folder structure specified above.
+
+#### 6.6.1 Actions
+Next we create the following files in `src/actions/`.
+
+- `goals.js`
+- `shared.js`
+- `todos.js`
+
+##### 6.6.1 goals.js
+
+```js
+// goals.js
+import API from 'goals-todos-api';
+
+// constants
+export const ADD_GOAL = 'ADD_GOAL';
+export const REMOVE_GOAL = 'REMOVE_GOAL';
+
+const showConnectionError = () => {
+  alert('Connection error occurred. Please try again.');
+};
+
+// action creators
+function addGoal(goal) {
+  return {
+    type: ADD_GOAL,
+    goal
+  };
+}
+function removeGoal(id) {
+  return {
+    type: REMOVE_GOAL,
+    id
+  };
+}
+
+// Thunk action creators
+export const handleAddGoal = (name, callback) => dispatch => {
+  return API.saveGoal(name)
+    .then(goal => {
+      dispatch(addGoal(goal));
+      callback();
+    })
+    .catch(() => showConnectionError());
+};
+export const handleDeleteGoal = goal => dispatch => {
+  dispatch(removeGoal(goal.id));
+
+  return API.deleteGoal(goal.id).catch(() => {
+    showConnectionError();
+    dispatch(addGoal(goal));
+  });
+};
+```
+
+##### 6.6.1 shared.js
+
+```js
+// shared.js
+import API from 'goals-todos-api';
+
+// constants
+export const RECEIVE_DATA = 'RECEIVE_DATA';
+
+// action creators
+function receiveData(todos, goals) {
+  return {
+    type: RECEIVE_DATA,
+    todos,
+    goals
+  };
+}
+
+// Thunk action creators
+export function handleInitialData() {
+  return dispatch => {
+    return Promise.all([API.fetchTodos(), API.fetchGoals()])
+      .then(([todos, goals]) => {
+        dispatch(receiveData(todos, goals));
+      })
+      .catch(err => console.log(err));
+  };
+}
+
+```
+
+##### 6.6.1 todos.js
+
+```js
+// todos.js
+import API from 'goals-todos-api';
+
+// constants
+export const ADD_TODO = 'ADD_TODO';
+export const REMOVE_TODO = 'REMOVE_TODO';
+export const TOGGLE_TODO = 'TOGGLE_TODO';
+
+const showConnectionError = () => {
+  alert('Connection error occurred. Please try again.');
+};
+
+// action creators
+function addTodo(todo) {
+  return {
+    type: ADD_TODO,
+    todo
+  };
+}
+function removeTodo(id) {
+  return {
+    type: REMOVE_TODO,
+    id
+  };
+}
+function toggleTodo(id) {
+  return {
+    type: TOGGLE_TODO,
+    id
+  };
+}
+
+// Thunk action creators
+export function handleAddTodo(name, callback) {
+  return dispatch => {
+    return API.saveTodo(name)
+      .then(todo => {
+        dispatch(addTodo(todo));
+        callback();
+      })
+      .catch(() => {
+        showConnectionError();
+      });
+  };
+}
+export function handleDeleteTodo(todo) {
+  return dispatch => {
+    dispatch(removeTodo(todo.id));
+
+    return API.deleteTodo(todo.id).catch(() => {
+      showConnectionError();
+      dispatch(addTodo(todo));
+    });
+  };
+}
+export function handleToggleTodo(id) {
+  return dispatch => {
+    dispatch(toggleTodo(id));
+
+    return API.saveTodoToggle(id).catch(() => {
+      showConnectionError();
+      dispatch(toggleTodo(id));
+    });
+  };
+}
+```
+
+#### 6.6.2 Reducers
+Next we create the following files in `src/reducers/`.
+
+- `goals.js`
+- `loading.js`
+- `todos.js`
+- `index.js`
+
+##### 6.6.2 goals.js
+
+```js
+// goals.js
+import { ADD_GOAL, REMOVE_GOAL } from '../actions/goals';
+import { RECEIVE_DATA } from '../actions/shared';
+
+export default function goals(state = [], action) {
+  switch (action.type) {
+    case ADD_GOAL:
+      return state.concat([action.goal]);
+    case REMOVE_GOAL:
+      return state.filter(goal => goal.id !== action.id);
+    case RECEIVE_DATA:
+      return action.goals;
+    default:
+      return state;
+  }
+}
+```
+
+##### 6.6.2 loading.js
+
+```js
+// loading.js
+import { RECEIVE_DATA } from '../actions/shared';
+
+export default function loading(state = true, action) {
+  switch (action.type) {
+    case RECEIVE_DATA:
+      return false;
+    default:
+      return state;
+  }
+}
+```
+
+##### 6.6.2 todos.js
+
+```js
+// todos.js
+import { ADD_TODO, REMOVE_TODO, TOGGLE_TODO } from '../actions/todos';
+import { RECEIVE_DATA } from '../actions/shared';
+
+export default function todos(state = [], action) {
+  switch (action.type) {
+    case ADD_TODO:
+      return state.concat([action.todo]);
+    case REMOVE_TODO:
+      return state.filter(todo => todo.id !== action.id);
+    case TOGGLE_TODO:
+      return state.map(todo =>
+        todo.id !== action.id
+          ? todo
+          : Object.assign({}, todo, { complete: !todo.complete })
+      );
+    case RECEIVE_DATA:
+      return action.todos;
+    default:
+      return state;
+  }
+}
+```
+
+##### 6.6.2 index.js
+
+```js
+// index.js
+import { combineReducers } from 'redux';
+
+import todos from './todos';
+import loading from './loading';
+import goals from './goals';
+
+export default combineReducers({
+  todos,
+  loading,
+  goals
+});
+```
+
+#### 6.6.3 Middleware
+Next we create the following files in `src/middleware/`.
+
+- `checker.js`
+- `logger.js`
+- `index.js`
+
+##### 6.6.3 checker.js
+
+```js
+// checker.js
+import { ADD_TODO } from '../actions/todos';
+import { ADD_GOAL } from '../actions/goals';
+
+const checker = store => next => action => {
+  // do work
+  if (
+    action.type === ADD_TODO &&
+    action.todo.name.toLowerCase().includes('bitcoin')
+  ) {
+    return alert("Nope, that's a bad idea.");
+  }
+
+  if (
+    action.type === ADD_GOAL &&
+    action.goal.name.toLowerCase().includes('bitcoin')
+  ) {
+    return alert("Nope, that's a bad idea.");
+  }
+  return next(action);
+};
+
+export default checker;
+```
+
+##### 6.6.3 logger.js
+
+```js
+// logger.js
+const logger = store => next => action => {
+  console.group(action.type);
+  console.log('The action:', action);
+  const result = next(action);
+  console.log('The new state:', store.getState());
+  console.groupEnd();
+  return result;
+};
+
+export default logger;
+```
+
+##### 6.6.3 index.js
+
+```js
+// index.js
+import checker from './checker';
+import logger from './logger';
+import thunk from 'redux-thunk';
+import { applyMiddleware } from 'redux';
+
+export default applyMiddleware(thunk, checker, logger);
+```
+
+#### 6.6.4 Components
+Next we create the following files in `src/components`.
+
+- `List.js`
+- `Todos.js`
+- `Goals.js`
+- `App.js`
+
+##### 6.6.4 List.js
+
+```jsx
+// List.js
+import React from 'react';
+
+export default function List(props) {
+  return (
+    <ol>
+      {props.items.map(item => (
+        <li key={item.id}>
+          {props.toggle ? (
+            <span>
+              <input
+                type="checkbox"
+                id={item.id}
+                onClick={() => props.toggle && props.toggle(item.id)}
+                readOnly // required for uncontrolled component
+                checked={item.complete ? 'checked' : ''}
+              />
+              <label
+                htmlFor={item.id}{% raw %}
+                style={{
+                  textDecoration: item.complete ? 'line-through' : 'none'
+                }}{% endraw %}
+              >
+                {item.name}
+              </label>
+            </span>
+          ) : (
+            <span
+              onClick={() => props.toggle && props.toggle(item.id)}{% raw %}
+              style={{
+                textDecoration: item.complete ? 'line-through' : 'none'
+              }}{% endraw %}
+            >
+              {item.name}
+            </span>
+          )}
+          <button className="removeBtn" onClick={() => props.remove(item)}>
+            X
+          </button>
+        </li>
+      ))}
+    </ol>
+  );
+}
+```
+
+##### 6.6.4 Todos.js
+
+```jsx
+// Todos.js
+import React from 'react';
+import { connect } from 'react-redux';
+import List from './List';
+import {
+  handleAddTodo,
+  handleDeleteTodo,
+  handleToggleTodo
+} from '../actions/todos';
+
+class Todos extends React.Component {
+  addItem = e => {
+    e.preventDefault();
+    this.props.dispatch(
+      handleAddTodo(this.input.value, () => (this.input.value = ''))
+    );
+  };
+  removeItem = todo => {
+    this.props.dispatch(handleDeleteTodo(todo));
+  };
+  toggleItem = id => {
+    this.props.dispatch(handleToggleTodo(id));
+  };
+  render() {
+    return (
+      <div>
+        <h1>Todo List</h1>
+        <form onSubmit={this.addItem}>
+          <input
+            id="todo"
+            type="text"
+            placeholder="Add Todo"
+            required
+            ref={input => (this.input = input)}
+          />
+          <button>Add Todo</button>
+        </form>
+        <List
+          items={this.props.todos}
+          remove={this.removeItem}
+          toggle={this.toggleItem}
+        />
+      </div>
+    );
+  }
+}
+
+export default connect(state => ({
+  todos: state.todos
+}))(Todos);
+```
+
+##### 6.6.4 Goals
+
+```jsx
+// Goals.js
+import React from 'react';
+import { connect } from 'react-redux';
+import List from './List';
+import { handleAddGoal, handleDeleteGoal } from '../actions/goals';
+
+class Goals extends React.Component {
+  addItem = e => {
+    e.preventDefault();
+
+    return this.props.dispatch(
+      handleAddGoal(this.input.value, () => (this.input.value = ''))
+    );
+  };
+  removeItem = goal => {
+    this.props.dispatch(handleDeleteGoal(goal));
+  };
+  render() {
+    return (
+      <div>
+        <h1>Goals</h1>
+        <form onSubmit={this.addItem}>
+          <input
+            id="goal"
+            type="text"
+            placeholder="Add Goal"
+            required
+            ref={input => (this.input = input)}
+          />
+          <button>Add Goal</button>
+        </form>
+        <List items={this.props.goals} remove={this.removeItem} />
+      </div>
+    );
+  }
+}
+
+export default connect(state => ({
+  goals: state.goals
+}))(Goals);
+```
+
+##### App.js
+
+```jsx
+// App.js
+import React, { Component } from 'react';
+import ConnectedTodos from './Todos';
+import ConnectedGoals from './Goals';
+import { connect } from 'react-redux';
+import { handleInitialData } from '../actions/shared';
+
+class App extends Component {
+  componentDidMount() {
+    const { dispatch } = this.props;
+
+    dispatch(handleInitialData());
+  }
+  render() {
+    if (this.props.loading === true) {
+      return <h3>Loading...</h3>;
+    }
+    return (
+      <div className="row">
+        <ConnectedTodos />
+        <ConnectedGoals />
+      </div>
+    );
+  }
+}
+
+export default connect(store => ({
+  loading: store.loading
+}))(App);
+```
+
+#### 6.6.5 The Store
+The last piece of the puzzle is to move over the `createStore()` invocation as well as provide the store to our Provider component.
+
+We do that inside of our main `src/index.js` file.
+
+##### index.js
+
+```jsx
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './components/App';
+import reducer from './reducers';
+import middleware from './middleware';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+
+const store = createStore(reducer, middleware);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
+```
+
+Lastly, we update `src/index.css`.
+
+```css
+/* index.css */
+body {
+  font-family: sans-serif;
+}
+ul, ol {
+  padding: 0 0 0 20px;
+}
+input[type='checkbox'] {
+  margin-right: 10px;
+}
+.row {
+  display: flex;
+  justify-content: space-around;
+}
+.strike {
+  text-decoration: line-through;
+}
+.removeBtn {
+  margin-left: 10px;
+}
+
+@media screen and (max-width: 400px) {
+  .row {
+    display: block;
+  }
+}
+```
+
+#### 6.6.6 "Rails-style" Organization
+To recap, we've organized the individual elements of our app with a ["Rails-style" approach](https://redux.js.org/faq/code-structure). That means assets are grouped by "type" or "capability": any action will be found in the *Actions* folder, any reducer will be found in *Reducers*, and so on.
+
+In fact, the “real world” example from [Redux on GitHub](https://github.com/reactjs/redux/tree/master/examples/real-world) structures the app this very way. Under this directory structure, if we wanted to import all actions into a component, we can get them all in a single import!
+
+```bash
+Frontend
+   - Components
+      - component1.js
+      - component2.js
+      - component3.js
+   - Actions
+      - action1.js
+      - action2.js
+   - Reducers
+      - reducer1.js
+   - Util
+   - Store
+```
+
+#### 6.6.7 Other Patterns
+Along with the "Rails style" of organizing your folder structure, you may find other approaches that developers use to build their directory more to your liking. An alternative way to structure the same application, then, is by feature:
+
+```bash
+├── dashboard
+│ ├── actions.js
+│ ├── index.js
+│ └── reducer.js
+└── nav
+ ├── actions.js
+ ├── index.js
+ └── reducer.js
+```
+
+This form of organization groups assets by their common feature or “concept.” That is, all assets related to a navigation component are all together in a single, modular folder. It’s a great way to visually express what the application is all about. However, if the app contains several hundred components, it can become more difficult to navigate through.
+
+What's more: you might even see that some developers prefer a ["duck" style](https://medium.freecodecamp.org/scaling-your-redux-app-with-ducks-6115955638be) approach, where Redux and state management files are completely separated from files that render UI.
+
+Ultimately, the choice is yours. Whichever way you choose to organize your directory structure, just be sure that it’s something that makes sense for your app, and it’s something you’re comfortable with!
+
+#### 6.6.8 Summary
+This section didn't accomplish anything with React or Redux. All we did here was improve the structure and organization of our app by moving each portion of the app to a specific folder structure.
+
+To say it one more time, there's no "right" way to build out the folder structure for you app. However, doing it this way is handy because we're using the structure provided by Create React App. Using this structure, it's easy to convert a plain React application over to one that includes Redux. Another benefit is that other React developers will already be comfortable with this file/folder organization. -->
