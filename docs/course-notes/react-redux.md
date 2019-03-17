@@ -4821,10 +4821,25 @@ These best-practices are geared toward scalability, clarity, & maintainability.
 - Redux Docs - [Normalizing State Shape](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape)
 - Medium - [Redux for state management in large web apps](https://blog.mapbox.com/redux-for-state-management-in-large-web-apps-c7f3fab3ce9b) - Sub-stores, slice reducers, data structures with [Immutable-js library](https://facebook.github.io/immutable-js/), and selector functions
 - Medium - [Five Tips for Working with Redux in Large Applications](https://techblog.appnexus.com/five-tips-for-working-with-redux-in-large-applications-89452af4fdcb) - Data indexes, separate canonical and UI state, and selectors functions.
-- egghead.io - [Collocating Selectors with Reducers, Normalizing State Shape](https://egghead.io/lessons/javascript-redux-colocating-selectors-with-reducers) - Dan Abramov's EXCELLENT video tutorial series.
+- egghead.io - [Building React Applications with Idiomatic Redux](https://egghead.io/courses/building-react-applications-with-idiomatic-redux) - Dan Abramov's EXCELLENT video tutorial series.
 
 Answer these questions.
 
 1. How should state be organized in Redux applications?
 2. Where is the concept of data immutability applicable in React?
 3. What does state normalization mean?
+
+<!-- 
+## 7. Real World Redux
+### 7.1 Introduction
+Up until this point, we've covered all of the features of Redux by building out a simple To-do's App.
+
+This project was great for learning purposes, but it's somewhat rudimentary and isn't representative of the complexities of a real-world project.
+
+So, using all of the topics we learned so far
+
+- Redux-React
+- React-Redux bindings
+- Middleware
+
+we'll build a more complex real-world application. -->
