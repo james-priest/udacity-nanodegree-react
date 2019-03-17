@@ -4815,11 +4815,11 @@ To say it one more time, there's no "right" way to build out the folder structur
 ### 6.7 Lesson Summary
 Read these articles.
 
-- [Organizing State](https://redux.js.org/faq/organizing-state) - Redux Docs
-- [Normalizing State Shape](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape) - Redux Docs
-- [Redux for state management in large web apps](https://blog.mapbox.com/redux-for-state-management-in-large-web-apps-c7f3fab3ce9b) - Medium: Sub-stores & slice reducers, Immutable data structures, selector functions
-- [Five Tips for Working with Redux in Large Applications](https://techblog.appnexus.com/five-tips-for-working-with-redux-in-large-applications-89452af4fdcb) - Medium: data indexes, separate canonical & UI state, selectors.
-- [Collocating Selectors with Reducers, Normalizing State Shape](https://egghead.io/lessons/javascript-redux-colocating-selectors-with-reducers) - Dan Abramov EXCELLENT video series on egghead.io.
+- Redux Docs - [Organizing State](https://redux.js.org/faq/organizing-state)
+- Redux Docs - [Normalizing State Shape](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape)
+- Medium - [Redux for state management in large web apps](https://blog.mapbox.com/redux-for-state-management-in-large-web-apps-c7f3fab3ce9b) - Sub-stores, slice reducers, data structures with [Immutable-js library](https://facebook.github.io/immutable-js/), and selector functions
+- Medium - [Five Tips for Working with Redux in Large Applications](https://techblog.appnexus.com/five-tips-for-working-with-redux-in-large-applications-89452af4fdcb) - Data indexes, separate canonical and UI state, and selectors functions.
+- egghead.io - [Collocating Selectors with Reducers, Normalizing State Shape](https://egghead.io/lessons/javascript-redux-colocating-selectors-with-reducers) - Dan Abramov's EXCELLENT video tutorial series.
 
 Answer these questions.
 
