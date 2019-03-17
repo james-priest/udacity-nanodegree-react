@@ -4811,3 +4811,18 @@ Ultimately, the choice is yours. Whichever way you choose to organize your direc
 This section didn't accomplish anything with React or Redux. All we did here was improve the structure and organization of our app by moving each portion of the app to a specific folder structure.
 
 To say it one more time, there's no "right" way to build out the folder structure for you app. However, doing it this way is handy because we're using the structure provided by Create React App. Using this structure, it's easy to convert a plain React application over to one that includes Redux. Another benefit is that other React developers will already be comfortable with this file/folder organization.
+
+### 6.7 Lesson Summary
+Read these articles.
+
+- [Organizing State](https://redux.js.org/faq/organizing-state) - Redux Docs
+- [Normalizing State Shape](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape) - Redux Docs
+- [Redux for state management in large web apps](https://blog.mapbox.com/redux-for-state-management-in-large-web-apps-c7f3fab3ce9b) - Medium: Sub-stores & slice reducers, Immutable data structures, selector functions
+- [Five Tips for Working with Redux in Large Applications](https://techblog.appnexus.com/five-tips-for-working-with-redux-in-large-applications-89452af4fdcb) - Medium: data indexes, separate canonical & UI state, selectors.
+- [Collocating Selectors with Reducers, Normalizing State Shape](https://egghead.io/lessons/javascript-redux-colocating-selectors-with-reducers) - Dan Abramov EXCELLENT video series on egghead.io.
+
+Answer these questions.
+
+1. How should state be organized in Redux applications?
+2. Where is the concept of data immutability applicable in React?
+3. What does state normalization mean?
