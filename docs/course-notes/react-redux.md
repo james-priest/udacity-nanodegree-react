@@ -4812,8 +4812,10 @@ This section didn't accomplish anything with React or Redux. All we did here was
 
 To say it one more time, there's no "right" way to build out the folder structure for you app. However, doing it this way is handy because we're using the structure provided by Create React App. Using this structure, it's easy to convert a plain React application over to one that includes Redux. Another benefit is that other React developers will already be comfortable with this file/folder organization.
 
-### 6.7 Lesson Summary
-Read these articles.
+### 6.7 Redux Architecture
+The following links and articles describe how to structure and organize Redux code around large-scale implementations.
+
+These best-practices are geared toward scalability, clarity, & maintainability.
 
 - Redux Docs - [Organizing State](https://redux.js.org/faq/organizing-state)
 - Redux Docs - [Normalizing State Shape](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape)
