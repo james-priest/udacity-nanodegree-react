@@ -4978,7 +4978,7 @@ I broke this view into the following React Components:
 
 #### 7.3.9 Components for the Tweet View
 
-[![rr53](../assets/images/rr53-small.jpg)](../assets/images/rr53.jpg)<br>
+[![rr54](../assets/images/rr54-small.jpg)](../assets/images/rr54.jpg)<br>
 <div class="center">Tweet view broken up into components.</div>
 
 I broke this view into the following React Components:
@@ -4991,7 +4991,7 @@ I broke this view into the following React Components:
 
 #### 7.3.10 Components for the New Tweet View
 
-[![rr54](../assets/images/rr54-small.jpg)](../assets/images/rr54.jpg)<br>
+[![rr55](../assets/images/rr55-small.jpg)](../assets/images/rr55.jpg)<br>
 <div class="center">New Tweet view broken up into components.</div>
 
 I broke this view into the following React Components:
