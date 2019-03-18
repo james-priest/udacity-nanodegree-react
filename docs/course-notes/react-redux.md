@@ -4843,3 +4843,8 @@ So, using all of the topics we learned so far
 - Middleware
 
 we'll build a more complex real-world application.
+
+[![rr49](../assets/images/rr49-small.jpg)](../assets/images/rr49.jpg)
+
+- Hosted project: [https://tylermcginnis.com/projects/redux-twitter/](https://tylermcginnis.com/projects/redux-twitter/)
+- GitHub starter code: [https://github.com/udacity/reactnd-chirper-app](https://github.com/udacity/reactnd-chirper-app)
