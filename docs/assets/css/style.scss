@@ -125,6 +125,10 @@ section table {
     margin: 0 40px;
     width: calc(100% - 80px);
 }
+section .center {
+    display: block;
+    text-align: center;
+}
 
 h1, h2, h3, h2+p>strong {
     line-height: 1.0;

@@ -4864,15 +4864,158 @@ In our Chirper project walkthrough, we'll go over the planning stages as well as
 #### 7.2.2 Planning Your React/Redux App's Architecture
 In the Planning Stage, we will go over 4 steps that will help you come up with your app's architecture, which is often the trickiest part.
 
-#### 7.2.2 A Guide for the Planning Stages of Your Project
+##### 7.2.2 A Guide for the Planning Stages of Your Project
 
 1. Identify What Each View Should Look Like
 2. Break Each View Into a Hierarchy of Components
 3. Determine What Events Happen in the App
 4. Determine What Data Lives in the Store
 
-
 #### 7.2.3 Coding in Stages
 We'll be building the project along together, breaking down each phase of the project's development. The first thing we we'll do is take a look at the different views the final project should have.
 
 Let's dive in!
+
+### 7.3 Plan: Views & Components
+#### 7.3.1 Step 1 - Identify Each View
+We need to determine the look and functionality of each view in your app. One of the best approaches is to draw each view of the app on paper so that you'll have a good idea of what information and data you're planning to have on each page.
+
+Instead of paper and pencil, you can be a bit more digital and use [software for creating mockups](https://codingsans.com/blog/mockup-tools). If you were given project specifications, check your mock against them to make sure that you have all of the required features.
+
+For this project, we'll use the screenshots of the app we'll be building instead of mocks.
+
+#### 7.3.2 View for the Dashboard Page
+Let's start by looking at the Dashboard View.
+
+[![rr50](../assets/images/rr50-small.jpg)](../assets/images/rr50.jpg)<br>
+<div class="center">The "dashboard" view displaying the navigation and tweets.</div>
+
+##### 7.3.2 Dashboard View Requirements
+- is located at the home route (`/`)
+- shows tweets sorted from most recently added at the top, to oldest at the bottom
+- each tweet will show:
+  - the author
+  - the time stamp
+  - who the author is replying to
+  - the text of the tweet
+  - a reply button - with the number of replies (if higher than 0)
+  - a like button - with the number of likes (if higher than 0)
+
+#### 7.3.3 View for the Tweet Page
+
+[![rr51](../assets/images/rr51-small.jpg)](../assets/images/rr51.jpg)<br>
+<div class="center">The view for a single tweet.</div>
+
+##### 7.3.3 Tweet Page View Requirements
+- is located at `/tweet/:id`
+- shows an individual tweet
+  - the author
+  - the time stamp
+  - a reply button - with the number of replies (if higher than 0)
+  - a like button - with the number of likes (if higher than 0)
+- has a reply form
+- shows all replies
+
+#### 7.3.4 View for Creating a New Tweet
+
+[![rr52](../assets/images/rr52-small.jpg)](../assets/images/rr52.jpg)<br>
+<div class="center">The view for creating a new tweet.</div>
+
+##### 7.3.4 The New Tweet View Requirements
+- is located at `/new`
+- has a textbox for adding a new tweet
+
+#### 7.3.5 View Recap
+So these are the 3 views we need in our app:
+
+- Dashboard
+- Tweet
+- New Tweet
+
+We now have a clear idea of what we're trying to build and can be confident that our views meet all of the provided requirements.
+
+Now, let's move on to Step 2, where we'll make a conceptual skeleton of our app.
+
+#### 7.3.6 Step 2: Break Each View Into a Hierarchy of Components
+In this step, we'll do 2 things:
+
+- draw boxes around every component
+- arrange our components into a hierarchy
+
+How do we know when something should be a component in a React app?
+
+According to [Thinking in React docs](https://reactjs.org/docs/thinking-in-react.html#step-1-break-the-ui-into-a-component-hierarchy):
+
+>...a component should ideally only do one thing. If it ends up growing, it should be decomposed into smaller subcomponents.
+
+#### 7.3.7 Quiz Question
+Which of the following are true?
+
+- [x] Components let you split the UI into independent, reusable chunks.
+- [x] Each view typically has a component that represents that view
+- [x] Presentational Components don't know where their data comes from.
+- [x] Components that are connected to the store are called
+
+Let's get started by drawing boxes around all of the components and giving them all names. Remember that we have three views:
+
+- Dashboard
+- Tweet
+- New Tweet
+
+Let's start with the Dashboard view.
+
+#### 7.3.8 Components for the Dashboard View
+
+[![rr53](../assets/images/rr53-small.jpg)](../assets/images/rr53.jpg)<br>
+<div class="center">Dashboard view broken up into components.</div>
+
+I broke this view into the following React Components:
+
+- **App** - the overall container for the project
+- **Navigation** - displays the navigation
+- **Tweets List** - responsible for the entire list of tweets
+- **Tweet** - in charge of display the content for a single tweet
+
+#### 7.3.9 Components for the Tweet View
+
+[![rr53](../assets/images/rr53-small.jpg)](../assets/images/rr53.jpg)<br>
+<div class="center">Tweet view broken up into components.</div>
+
+I broke this view into the following React Components:
+
+- **App** - the overall container for the project
+- **Navigation** - displays the navigation
+- **Tweet Container** - displays a list of tweets
+- **Tweet** - displays the content for a single tweet
+- **New Tweet** - display the form to create a new tweet (reply)
+
+#### 7.3.10 Components for the New Tweet View
+
+[![rr54](../assets/images/rr54-small.jpg)](../assets/images/rr54.jpg)<br>
+<div class="center">New Tweet view broken up into components.</div>
+
+I broke this view into the following React Components:
+
+- **App** - the overall container for the project
+- **Navigation** - displays the navigation
+- **New Tweet** - display the form to create a new tweet
+
+#### 7.3.11 All Components
+So from the way I broke things down, the application will have the following components:
+
+- App
+- Navigation
+- Tweets List
+- Tweet Container
+- Tweet
+- New Tweet
+
+This component hierarchy tells us which components will be used inside of other components. It gives us the skeleton of our app.
+
+All of these are presentational components. Right now, we don't care which components will be upgraded to containers. As we start building out the store, we'll create additional components that will be container components to get data from the store and pass it to the presentational components that need the data.
+
+Thus far, we haven't done anything that's special to Redux; all of the steps above are applicable and useful for React applications that do not use Redux.
+
+Remember that Redux doesn't care about *how* our app looks or what components it uses. Instead, it gives a way to manage the state of the application in a predictable way. When we talk about state, we're really talking about data - not just any kind of data inside the app, but data that can change based on the events in the app.
+
+Let's move on to Step 3, where we'll start thinking about the data in this app.
