@@ -4876,6 +4876,7 @@ We'll be building the project along together, breaking down each phase of the pr
 
 Let's dive in!
 
+<!-- 
 ### 7.3 Plan: Views & Components
 #### 7.3.1 Step 1 - Identify Each View
 We need to determine the look and functionality of each view in your app. One of the best approaches is to draw each view of the app on paper so that you'll have a good idea of what information and data you're planning to have on each page.
@@ -5019,3 +5020,44 @@ Thus far, we haven't done anything that's special to Redux; all of the steps abo
 Remember that Redux doesn't care about *how* our app looks or what components it uses. Instead, it gives a way to manage the state of the application in a predictable way. When we talk about state, we're really talking about data - not just any kind of data inside the app, but data that can change based on the events in the app.
 
 Let's move on to Step 3, where we'll start thinking about the data in this app.
+
+### 7.4 Plan: App Events
+#### 7.4.1 Determine What Events Happen in the App
+We need to take a look at *what* is happening in each component. Let's determine what actions the app or the user is performing **on the data**.
+
+Is the data being set, modified, or deleted? If so, we'll need an action to keep track of that event!
+
+Let's *italicize* the action and **bold** the data.
+
+#### 7.4.2 Tweets List Component
+
+[![rr56](../assets/images/rr56-small.jpg)](../assets/images/rr56.jpg)<br>
+<div class="center">The Tweets List Component.</div>
+
+For the Tweets List component, the only information that we see is that we'll have to get a list of all of the tweets. So for this component, we just need to:
+
+- *get* the **tweets**
+
+So the action type for event this will probably be something like `GET_LIST_OF_TWEETS` or `GET_DATA`
+
+#### 7.4.3 Tweet Component
+
+[![rr57](../assets/images/rr57-small.jpg)](../assets/images/rr57.jpg)<br>
+<div class="center">The Tweet Component.</div>
+
+Our action and data.
+
+- We *get* a particular tweet from a list of **tweets**.
+- We *get* the **authedUser (user that is currently logged in)** so the user can *toggle* the likes on each **tweet**.
+- We *get* the **authedUser** so the user can *reply* to a **tweet**.
+
+#### 7.4.4 Tweet Container Component
+
+[![rr58](../assets/images/rr58-small.jpg)](../assets/images/rr58.jpg)<br>
+<div class="center">The Tweet Container Component.</div>
+
+Our action and data.
+
+- We *get* a specific tweet from a list of **tweets**.
+- We *get* the replies to a specific tweet from a list of **tweets**.
+ -->
