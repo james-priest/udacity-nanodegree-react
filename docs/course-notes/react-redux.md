@@ -4850,48 +4850,49 @@ we'll build a more complex real-world application.
 - GitHub starter code: [https://github.com/udacity/reactnd-chirper-app](https://github.com/udacity/reactnd-chirper-app)
 
 ### 7.2 Project Walkthrough
-To help you solidify your understanding of React and Redux, we will do a project walkthrough. The project we'll be building is called “Chirper”. Building this simple Twitter clone will help you practice improving the predictability of an application's state; establishing strict rules for getting, listening, and updating the store; and identifying what state should live inside of Redux and what state should live inside of React components.
+To help solidify your understanding of React and Redux, we'll do a project walkthrough. The project we'll be building is called “Chirper”. It's a Twitter clone that will help you practice
 
-As with most things, there is more than one correct way to achieve a successful result. We will be discussing one approach to building a React/Redux project. We encourage you to come up with an approach that works for you. Regardless of the approach you choose, make sure always to plan out your project's architecture *before* starting to code.
+- Improving the predictability of an application's state
+- Establishing strict rules for getting, listening, and updating the store
+- Identifying what state should live inside of Redux and what state should live inside of React components.
+
+As with most things, there's more than one correct way to achieve a successful result. We'll be discussing one approach to building a React/Redux project. We encourage you to come up with an approach that works for you.
+
+Regardless of the approach you choose, make sure always to plan out your project's architecture *before* starting to code.
 
 #### 7.2.1 The Importance of Planning Your Project
 Many developers make the mistake of starting to code before they've put any thought into figuring out precisely what their app's architecture should be. This approach results in spending an incredible amount of time debugging, restructuring the code, and sometimes even starting over, completely!
 
 Trust us, planning out your project before starting to code will save you a lot of time later on.
 
-In our Chirper project walkthrough, we'll go over the planning stages as well as the coding stages of the project.
+In this Chirper project walkthrough, we'll go over the planning stages as well as the coding stages of the project.
 
-#### 7.2.2 Planning Your React/Redux App's Architecture
+#### 7.2.2 Planning Stage
 In the Planning Stage, we will go over 4 steps that will help you come up with your app's architecture, which is often the trickiest part.
 
-##### 7.2.2 A Guide for the Planning Stages of Your Project
+These consist of:
 
-1. Identify What Each View Should Look Like
-2. Break Each View Into a Hierarchy of Components
-3. Determine What Events Happen in the App
-4. Determine What Data Lives in the Store
+- **Step 1** - Identify What Each View Should Look Like
+- **Step 2** - Break Each View Into a Hierarchy of Components
+- **Step 3** - Determine What Events Happen in the App
+- **Step 4** - Determine What Data Lives in the Store
 
-#### 7.2.3 Coding in Stages
-We'll be building the project along together, breaking down each phase of the project's development. The first thing we we'll do is take a look at the different views the final project should have.
+We'll be coding in stages but before we code, the first thing we we'll do is take a look at the different views the final project should have.
 
-Let's dive in!
+### 7.3 Step 1 - Views
+The first step of the Planning Stage is to identify what each view should look like and how it should function.
 
-<!-- 
-### 7.3 Plan: Views & Components
-#### 7.3.1 Step 1 - Identify Each View
-We need to determine the look and functionality of each view in your app. One of the best approaches is to draw each view of the app on paper so that you'll have a good idea of what information and data you're planning to have on each page.
+One of the best approaches is to draw each view on paper so that you can flush out what information and data is required for each page.
 
-Instead of paper and pencil, you can be a bit more digital and use [software for creating mockups](https://codingsans.com/blog/mockup-tools). If you were given project specifications, check your mock against them to make sure that you have all of the required features.
+Alternatively, you can use [software for creating mockups](https://codingsans.com/blog/mockup-tools). If you were given project specifications, you'll need to check your mockups against them to make sure that you have all of the required features.
 
-For this project, we'll use the screenshots of the app we'll be building instead of mocks.
-
-#### 7.3.2 View for the Dashboard Page
-Let's start by looking at the Dashboard View.
+#### 7.3.1 View for the Dashboard Page
 
 [![rr50](../assets/images/rr50-small.jpg)](../assets/images/rr50.jpg)<br>
-<div class="center">The "dashboard" view displaying the navigation and tweets.</div>
+<span class="center bold">Dashboard view</span>
 
-##### 7.3.2 Dashboard View Requirements
+Dashboard View Requirements:
+
 - is located at the home route (`/`)
 - shows tweets sorted from most recently added at the top, to oldest at the bottom
 - each tweet will show:
@@ -4902,12 +4903,13 @@ Let's start by looking at the Dashboard View.
   - a reply button - with the number of replies (if higher than 0)
   - a like button - with the number of likes (if higher than 0)
 
-#### 7.3.3 View for the Tweet Page
+#### 7.3.2 View for the Tweet Page
 
 [![rr51](../assets/images/rr51-small.jpg)](../assets/images/rr51.jpg)<br>
-<div class="center">The view for a single tweet.</div>
+<span class="center bold">Single tweet view</span>
 
-##### 7.3.3 Tweet Page View Requirements
+Tweet Page View Requirements:
+
 - is located at `/tweet/:id`
 - shows an individual tweet
   - the author
@@ -4917,28 +4919,30 @@ Let's start by looking at the Dashboard View.
 - has a reply form
 - shows all replies
 
-#### 7.3.4 View for Creating a New Tweet
+#### 7.3.3 View for Creating a New Tweet
 
 [![rr52](../assets/images/rr52-small.jpg)](../assets/images/rr52.jpg)<br>
-<div class="center">The view for creating a new tweet.</div>
+<span class="center bold">New tweet view</span>
 
-##### 7.3.4 The New Tweet View Requirements
+New Tweet View Requirements:
+
 - is located at `/new`
 - has a textbox for adding a new tweet
 
-#### 7.3.5 View Recap
+#### 7.3.4 View Recap
 So these are the 3 views we need in our app:
 
 - Dashboard
 - Tweet
 - New Tweet
 
-We now have a clear idea of what we're trying to build and can be confident that our views meet all of the provided requirements.
+Now that we have a clear idea of what we're trying to build we can be confident that our views meet all of the provided requirements.
 
-Now, let's move on to Step 2, where we'll make a conceptual skeleton of our app.
+<!-- 
+### 7.4 Step 2 - Components
+This is where we make a conceptual skeleton of our app and break each view into a hierarchy of components.
 
-#### 7.3.6 Step 2: Break Each View Into a Hierarchy of Components
-In this step, we'll do 2 things:
+We do 2 things to achieve this:
 
 - draw boxes around every component
 - arrange our components into a hierarchy
@@ -4949,13 +4953,13 @@ According to [Thinking in React docs](https://reactjs.org/docs/thinking-in-react
 
 >...a component should ideally only do one thing. If it ends up growing, it should be decomposed into smaller subcomponents.
 
-#### 7.3.7 Quiz Question
-Which of the following are true?
-
-- [x] Components let you split the UI into independent, reusable chunks.
-- [x] Each view typically has a component that represents that view
-- [x] Presentational Components don't know where their data comes from.
-- [x] Components that are connected to the store are called
+> #### Components Quiz Question
+> Which of the following are true?
+>
+> - [x] Components let you split the UI into independent, reusable chunks.
+> - [x] Each view typically has a component that represents that view
+> - [x] Presentational Components don't know where their data comes from.
+> - [x] Components that are connected to the store are called
 
 Let's get started by drawing boxes around all of the components and giving them all names. Remember that we have three views:
 
@@ -4963,24 +4967,22 @@ Let's get started by drawing boxes around all of the components and giving them 
 - Tweet
 - New Tweet
 
-Let's start with the Dashboard view.
-
-#### 7.3.8 Components for the Dashboard View
+#### 7.4.1 Dashboard View Components
 
 [![rr53](../assets/images/rr53-small.jpg)](../assets/images/rr53.jpg)<br>
-<div class="center">Dashboard view broken up into components.</div>
+<span class="center bold">Dashboard view components</span>
 
-I broke this view into the following React Components:
+This view is broken down into the following React Components:
 
 - **App** - the overall container for the project
 - **Navigation** - displays the navigation
 - **Tweets List** - responsible for the entire list of tweets
 - **Tweet** - in charge of display the content for a single tweet
 
-#### 7.3.9 Components for the Tweet View
+#### 7.4.2 Tweet View Components
 
 [![rr54](../assets/images/rr54-small.jpg)](../assets/images/rr54.jpg)<br>
-<div class="center">Tweet view broken up into components.</div>
+<span class="center bold">Tweet view components</span>
 
 I broke this view into the following React Components:
 
@@ -4990,10 +4992,10 @@ I broke this view into the following React Components:
 - **Tweet** - displays the content for a single tweet
 - **New Tweet** - display the form to create a new tweet (reply)
 
-#### 7.3.10 Components for the New Tweet View
+#### 7.4.3 New Tweet View Components
 
 [![rr55](../assets/images/rr55-small.jpg)](../assets/images/rr55.jpg)<br>
-<div class="center">New Tweet view broken up into components.</div>
+<span class="center bold">New tweet view components</span>
 
 I broke this view into the following React Components:
 
@@ -5001,63 +5003,231 @@ I broke this view into the following React Components:
 - **Navigation** - displays the navigation
 - **New Tweet** - display the form to create a new tweet
 
-#### 7.3.11 All Components
-So from the way I broke things down, the application will have the following components:
+#### 7.4.4 Master List of Components
+Once we did a break down of components across each view of our app we were able to determine the following master list.
 
-- App
-- Navigation
-- Tweets List
-- Tweet Container
-- Tweet
-- New Tweet
+- **App**
+- **Navigation**
+- **Tweets List**
+- **Tweet Container**
+- **Tweet**
+- **New Tweet**
 
-This component hierarchy tells us which components will be used inside of other components. It gives us the skeleton of our app.
+The component hierarchies tells us which components will be used inside of other components. It gives us the skeleton of our app.
 
-All of these are presentational components. Right now, we don't care which components will be upgraded to containers. As we start building out the store, we'll create additional components that will be container components to get data from the store and pass it to the presentational components that need the data.
+One thing to bear in mind is that each of these components are **presentational components**.
+
+Right now, we don't care which components will be upgraded to containers. As we start building out the store, we'll create additional components that will become **container components**.
+
+Remember that container components get data from the store and pass it to the presentational components that need the data.
 
 Thus far, we haven't done anything that's special to Redux; all of the steps above are applicable and useful for React applications that do not use Redux.
 
-Remember that Redux doesn't care about *how* our app looks or what components it uses. Instead, it gives a way to manage the state of the application in a predictable way. When we talk about state, we're really talking about data - not just any kind of data inside the app, but data that can change based on the events in the app.
+Also remember that Redux doesn't care about *how* our app looks or what components it uses. Instead, it gives a way to manage the state of the application in a predictable way.
 
-Let's move on to Step 3, where we'll start thinking about the data in this app.
+When we talk about state, we're really talking about data and not just any kind of data inside the app, but data that can change based on the events in the app.
 
-### 7.4 Plan: App Events
-#### 7.4.1 Determine What Events Happen in the App
-We need to take a look at *what* is happening in each component. Let's determine what actions the app or the user is performing **on the data**.
+Step 3 is where we'll start thinking about the data in this app.
+
+### 7.5 Step 3 - App Events
+This is where we determine what events happen in the app.
+
+We do this by taking a look at what can happen in each component. Specifically, what actions the app or user is performing *on the data* in each component.
 
 Is the data being set, modified, or deleted? If so, we'll need an action to keep track of that event!
 
-Let's *italicize* the action and **bold** the data.
+We'll do the following in the analysis of of each component:
 
-#### 7.4.2 Tweets List Component
+- *italicize* the action
+- **bold** the data
+
+#### 7.5.1 Tweets List Component
 
 [![rr56](../assets/images/rr56-small.jpg)](../assets/images/rr56.jpg)<br>
-<div class="center">The Tweets List Component.</div>
+<span class="center bold">Tweets List component</span>
 
-For the Tweets List component, the only information that we see is that we'll have to get a list of all of the tweets. So for this component, we just need to:
+Action and data:
 
 - *get* the **tweets**
 
-So the action type for event this will probably be something like `GET_LIST_OF_TWEETS` or `GET_DATA`
+The action type might be something like `GET_LIST_OF_TWEETS` or `GET_DATA`.
 
-#### 7.4.3 Tweet Component
+#### 7.5.2 Tweet Component
 
 [![rr57](../assets/images/rr57-small.jpg)](../assets/images/rr57.jpg)<br>
-<div class="center">The Tweet Component.</div>
+<span class="center bold">Tweet component</span>
 
-Our action and data.
+Action and data:
 
-- We *get* a particular tweet from a list of **tweets**.
-- We *get* the **authedUser (user that is currently logged in)** so the user can *toggle* the likes on each **tweet**.
-- We *get* the **authedUser** so the user can *reply* to a **tweet**.
+- *get* a particular tweet from a list of **tweets**.
+- *get* the **authedUser (user that is currently logged in)** so the user can *toggle* the likes on each **tweet**.
+- *get* the **authedUser** so the user can *reply* to a **tweet**.
 
-#### 7.4.4 Tweet Container Component
+#### 7.5.3 Tweet Container Component
 
 [![rr58](../assets/images/rr58-small.jpg)](../assets/images/rr58.jpg)<br>
-<div class="center">The Tweet Container Component.</div>
+<span class="center bold">Tweet Container component</span>
 
-Our action and data.
+Action and data:
 
-- We *get* a specific tweet from a list of **tweets**.
-- We *get* the replies to a specific tweet from a list of **tweets**.
- -->
+- *get* a specific tweet from a list of **tweets**.
+- *get* the replies to a specific tweet from a list of **tweets**.
+
+#### 7.5.4 New Tweet Component
+
+[![rr59](../assets/images/rr59-small.jpg)](../assets/images/rr59.jpg)<br>
+<span class="center bold">New Tweet component</span>
+
+Action and data:
+
+- *get* the **authedUser** so the user can create a new tweet.
+- *set* the **text** of the new tweet.
+
+Let's move on to Step 4, where we'll determine which of the data above will live in the store.
+
+### 7.6 Step 4 - Store Data
+The next step is to determine what data lives in the store and what should live in the component.
+
+Remember that the main problems that Redux (and react-redux bindings) was meant to solve were:
+
+- Propagation of props through the entire component tree.
+- Ensuring consistency and predictability of the state across the app.
+
+According to Dan Abramov, the creator of Redux, we should use the following principle for determining whether to store a piece of data in the store or in a React component:
+
+> "Use Redux for state that matters globally or is mutated in complex ways… The rule of thumb is: do whatever is less awkward."
+
+See the following for more information on this.
+
+- [Organizing State](https://redux.js.org/faq/organizing-state)
+- [How to choose between Redux's store and React's state?](https://github.com/reactjs/redux/issues/1287)
+
+For each piece of data from Step 3, let's see whether it's used by multiple components or mutated in a complex way.
+
+#### 7.6.1 Text data (for new tweet)
+***Text of the new tweet Used by:* New Tweet Component**
+
+This piece of data is not used by multiple components and is not mutated in a complex way. That means that it's a great candidate for component state instead of app state that resides in the store.
+
+#### 7.6.2 Tweet data
+***Tweets Used by:* Dashboard Component, Tweet Page Component, Tweet Component**
+
+In the Tweet Page Component, we need to show the reply tweets. Let's take a look at our starter code in the `_Data.js` file. This is how the tweets are stored in the database:
+
+```jsx
+let tweets = {
+  tweetId: {
+    id: tweetId,
+    text: tweetText,
+    author: userId,
+    timestamp: timestamp,
+    likes: [userId1, userId2],
+    replies: [tweetId1, tweetId2],
+    replyingTo: tweetId_OR_null
+  }
+};
+```
+
+To get the reply tweets, we can get the tweet with a specific id from the list of all of the tweets and access its `replies` property.
+
+In the **Dashboard Component**, we need to access the current list of tweets. If the Dashboard component knows the ID of the tweet that needs to be displayed, it can just pass that ID to the Tweet Component, which will render the tweet.
+
+In the **Tweet Component**, we need to pick out a tweet with a specific id from the current list of tweets.
+
+That means that we can store the tweets in the store and make the **Tweet Page Component**, the **Dashboard Component**, and the **Tweet Component** into containers (components that have access to the store via the `connect` function).
+
+As soon as that data changes — if someone likes the tweet, for example — all of the components that use that data will update.
+
+[![rr60](../assets/images/rr60-small.jpg)](../assets/images/rr60.jpg)<br>
+<span class="center bold">The Store contains a `tweets` property.</span>
+
+Keep in mind that each tweet contains the author's name and the author's avatar. One way we could model our state is:
+
+```js
+// Flat structure repeats data, doesn't scale well, & makes lookups difficult
+tweets: {
+  tweetId: {tweetId, authorId, authorName, authorAvatar, timestamp, text, likes,
+    replies, replyingTo},
+  tweetId: {tweetId, authorId, authorName, authorAvatar, timestamp, text, likes,
+    replies, replyingTo}
+}
+```
+
+Modeling the state this way is inconvenient if, for instance, we want to extend the functionality of our application to find tweets made by a particular author.
+
+Moreover, this way of storing the data mixes the two types of objects:
+
+- tweets data
+- user data
+
+This goes against [Redux documentation recommendations](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape) to normalize our state according to the following normalization principles.
+
+- Each type of data gets its own "table" in the state.
+- Each "data table" should store the individual items in an object, with the IDs of the items as keys and the items themselves as the values.
+- Any references to individual items should be done by storing the item's ID.
+- Arrays of IDs should be used to indicate ordering.
+
+```js
+{
+  tweets: {
+    tweetId: { tweetId, authorId, timestamp, text, likes, replies, replyingTo},
+    tweetId: { tweetId, authorId, timestamp, text, likes, replies, replyingTo}
+  },
+  users: {
+    userId: {userId, userName, avatar, tweetsArray},
+    userId: {userId, userName, avatar, tweetsArray}
+  }
+}
+```
+
+Our store at this point:
+
+[![rr62](../assets/images/rr62-small.jpg)](../assets/images/rr62.jpg)<br>
+<span class="center bold">The Store contains `tweets` & `users` properties.</span>
+
+#### 7.6.3 AuthedUser data
+
+***authedUser Used by:* Tweet Component, New Tweet Component**
+
+Each **Tweet Component** needs to show whether the logged in used has liked a tweet. In order to do that, we need to know who the logged in user is. From looking at our Component Hierarchy from Step 2, we know that the **Tweet Component** gets used by multiple components. Therefore, we need to upgrade this component to a container so it could access the `authedUser` piece of data from the store to see whether to show a red heart.
+
+We also know that for every new tweet, we'll have to record the tweet's author (`authedUser`). The React way of storing state is to put the state in the most parent component and then pass it down to all the children that need it. In this app, that would mean storing in the **App Component**.
+
+While this works, it's inconvenient. It would be much simpler to just store the authedUser in the store and then provide the **Tweet Component** access to the store.
+
+The **New Tweet Component** could then just dispatch an action with the text of the new tweet and the id of the tweet we're replying to as parameters in order to save the new tweet.
+
+Saving a tweet is an asynchronous operation and we could use redux thunks to do that. Thunks give us access to the store, so we could have the following action creator:
+
+```js
+function handleAddTweet(text, replyingTo) {
+  return (dispatch, getState) => {
+    const { authedUser } = getState();
+
+    return saveTweetToDatabase({
+      text,
+      author: authedUser,
+      replyingTo
+    }).then(tweet => dispatch(addTweet(tweet)));
+  };
+}
+```
+
+Generally, accessing the store from an action creator is [considered an anti-pattern](https://stackoverflow.com/questions/35667249/accessing-redux-state-in-an-action-creator/35674575#35674575). Dan Abramov says that the few use cases where it's acceptable to do that are:
+
+> to check cached data before you make a request or to check whether you are authenticated (in other words, doing a conditional dispatch).
+
+Another reason we would want to keep the `authedUser` piece of data in the store is that if we extend our application to include the ability to sign in and sign out, this functionality would be easy to manage with Redux.
+
+The **New Tweet Component** doesn't need to access the `authedUser` piece of state, but it *does* need to be able to dispatch an action to let the reducers know that a new tweet has been made.
+
+In order to have access to the `dispatch` method, a component must be connected to the store. In other words, **it must be a container**.
+
+So, we know that both the **Tweet Component** and the **New Tweet Component** will be upgraded to containers.
+
+[![rr61](../assets/images/rr61-small.jpg)](../assets/images/rr61.jpg)<br>
+<span class="center bold">The Store contains `tweets`, `users`, & `authedUsers` properties.</span>
+
+We are done making our store! While we were making our store, we also determined which components will be upgraded to containers, so our skeleton app is now even more complete.
+
+We are now at a good point to start coding. We will go view by view and fill in the details of our skeleton along the way. -->
