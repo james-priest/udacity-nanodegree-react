@@ -5084,7 +5084,6 @@ Action and data:
 
 Let's move on to Step 4, where we'll determine which of the data above will live in the store.
 
-<!-- 
 ### 7.6 Step 4 - Store Data
 The next step is to determine what data lives in the store and what should live in the component.
 
@@ -5230,4 +5229,4 @@ So, we know that both the **Tweet Component** and the **New Tweet Component** wi
 
 We are done making our store! While we were making our store, we also determined which components will be upgraded to containers, so our skeleton app is now even more complete.
 
-We are now at a good point to start coding. We will go view by view and fill in the details of our skeleton along the way. -->
+We are now at a good point to start coding. We will go view by view and fill in the details of our skeleton along the way.
