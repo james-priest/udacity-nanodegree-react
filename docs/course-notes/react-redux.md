@@ -4938,7 +4938,6 @@ So these are the 3 views we need in our app:
 
 Now that we have a clear idea of what we're trying to build we can be confident that our views meet all of the provided requirements.
 
-<!-- 
 ### 7.4 Step 2 - Components
 This is where we make a conceptual skeleton of our app and break each view into a hierarchy of components.
 
@@ -5029,6 +5028,7 @@ When we talk about state, we're really talking about data and not just any kind 
 
 Step 3 is where we'll start thinking about the data in this app.
 
+<!-- 
 ### 7.5 Step 3 - App Events
 This is where we determine what events happen in the app.
 
