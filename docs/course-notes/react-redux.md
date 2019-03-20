@@ -5028,7 +5028,6 @@ When we talk about state, we're really talking about data and not just any kind 
 
 Step 3 is where we'll start thinking about the data in this app.
 
-<!-- 
 ### 7.5 Step 3 - App Events
 This is where we determine what events happen in the app.
 
@@ -5085,6 +5084,7 @@ Action and data:
 
 Let's move on to Step 4, where we'll determine which of the data above will live in the store.
 
+<!-- 
 ### 7.6 Step 4 - Store Data
 The next step is to determine what data lives in the store and what should live in the component.
 
