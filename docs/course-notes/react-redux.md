@@ -5386,7 +5386,6 @@ export function handleInitialData() {
 }
 ```
 
-<!-- 
 ### 7.8 Reducers
 A Reducer describes how an application's state changes. You’ll often see the [Object Spread Operator](https://redux.js.org/recipes/using-object-spread-operator) (`...`) used inside of a reducer because a reducer **must return a *new* object** instead of mutating the old state.
 
@@ -5565,6 +5564,7 @@ The point of creating a store is to allow components to be able to access it wit
 
 The Provider component (which comes from the `react-redux` package) makes it possible for all components to access the store via the `connect()` function.
 
+<!-- 
 ### 7.9 Middleware
 Next we create the app's Middleware functions.
 
