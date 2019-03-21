@@ -5564,7 +5564,6 @@ The point of creating a store is to allow components to be able to access it wit
 
 The Provider component (which comes from the `react-redux` package) makes it possible for all components to access the store via the `connect()` function.
 
-<!-- 
 ### 7.9 Middleware
 Next we create the app's Middleware functions.
 
@@ -5728,4 +5727,4 @@ Now all our code is hooked up and in place. This includes:
   - `thunk`
   - `logger`
 
-We won't actually see anything in our UI because we aren't dispatching any actions yet. -->
+We won't actually see anything in our UI because we aren't dispatching any actions yet.
