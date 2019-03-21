@@ -5230,3 +5230,502 @@ So, we know that both the **Tweet Component** and the **New Tweet Component** wi
 We are done making our store! While we were making our store, we also determined which components will be upgraded to containers, so our skeleton app is now even more complete.
 
 We are now at a good point to start coding. We will go view by view and fill in the details of our skeleton along the way.
+
+### 7.7 Actions
+Let's start from the Dashboard View. Our Dashboard View displays a list of tweets and a menu.
+
+We need to take a look at what is happening in this view. Let's determine what actions the app or the user is performing **on the data** - is the data being set, modified, or deleted?
+
+Remember that in Step 4 of the Planning Stage, we determined that our store will look like this:
+
+[![rr61](../assets/images/rr61-small.jpg)](../assets/images/rr61.jpg)<br>
+<span class="center bold">The Store contains `tweets`, `users`, & `authedUsers` properties.</span>
+
+When the app loads, the Dashboard View is displayed. The Dashboard Component therefore needs to:
+
+- *get* the **tweets**
+- *get* the **users**
+- *get* the **authedUser**
+
+This data is stored in a database. For this view to load all of the tweets (including their author's avatars), we need to
+
+1) get the tweets and users data from the database
+2) then pass that data into the component.
+
+#### 7.7.1 Question 1 of 2
+Which of the following are best practices for making API requests in React apps? Select all that apply.
+
+- [ ] The component's `render()` method.
+- [x] The `componentDidMount()` lifecycle method.
+- [ ] The component's constructor
+- [ ] The `shouldComponentUpdate()` lifecycle method.
+
+#### 7.7.2 Question 2 of 2
+Which of the following are best practices for making API requests in React/Redux apps? Select all that apply.
+
+- [ ] From presentational components.
+- [ ] From the render method.
+- [ ] From the reducer.
+- [x] From asynchronous action creators.
+- [ ] From the `componentDidMound()` lifecycle method.
+
+> Note: Here are two other side effect management libraries besides redux-thunk that help you make async requests.
+> - [redux-sagas](https://hackernoon.com/moving-api-requests-to-redux-saga-21780f49cbc8)
+> - [axios calls](https://github.com/svrcekmichal/redux-axios-middleware)
+>
+> If you want to learn more about the differences between these libraries, check out this article
+> - [what-is-the-right-way-to-do-asynchronous-operations-in-redux](https://decembersoft.com/posts/what-is-the-right-way-to-do-asynchronous-operations-in-redux/)
+
+Remember how normal Action Creators return actions - simple Javascript objects that then go to all of our reducers? Well, making an API request is an *asynchronous* action, so we cannot just send a plain Javascript object to our reducers.
+
+Redux middleware can gain access to an action when it's on its way to the reducers. We'll be using the `redux-thunk` middleware in this example.
+
+If the Redux Thunk middleware is enabled (which is done via the `applyMiddleware()` function), then any time your action creator returns a function instead of a Javascript object, it will go to the `redux-thunk` middleware.
+
+Dan Abramov [describes](https://stackoverflow.com/questions/35411423/how-to-dispatch-a-redux-action-with-a-timeout/35415559#35415559) what happens next:
+
+> *“The middleware will call that function with dispatch method itself as the first argument...The action will only reach the reducers once the API request is completed. It will also “swallow” such actions so don't worry about your reducers receiving weird function arguments. Your reducers will only receive plain object actions—either emitted directly, or emitted by the functions as we just described."*
+
+Here's what a thunk action creator looks like:
+
+```js
+function handleInitialData () {
+  return function (dispatch) {}
+}
+```
+
+Which is equivalent to this in ES6:
+
+```js
+function handleInitialData () {
+  return (dispatch) => {}
+}
+```
+
+Now, we need to give our components access to the data that came in. In other words, we need to populate the store with `tweets` and `users`.
+
+[![rr63](../assets/images/rr63-small.jpg)](../assets/images/rr63.jpg)<br>
+<span class="center bold">The Model of our Store</span>
+
+The **tweets** slice of the state in the store will be modified by actions that go through the *tweets* reducer.
+
+The **users** slice of the state in the store will be modified by actions that go through the users reducer.
+
+The **authedUser** portion of the state in the store will be modified by actions that go through the *authedUser* reducer.
+
+#### 7.7.3 Actions code
+The first thing we want to do is populate our app with application data. We do this by invoking `getInitialData()` from `src/utils/api.js` which is an async API call.
+
+Async operations are best handled by action thunks (which are action creators that return a function rather than an object). We prep our app to handle this by adding redux-thunk middleware. (We'll do this later)
+
+When we invoke our async API call it should populate our store. Since all store operations occur by dispatching an event (action), we need to first build out our action creators.
+
+We start by creating the following files in `src/actions/`.
+
+- authedUser.js
+- tweets.js
+- users.js
+- shared.js
+
+```js
+// tweets.js
+export const RECEIVE_TWEETS = 'RECEIVE_TWEETS';
+
+export function receiveTweets(tweets) {
+  return {
+    type: RECEIVE_TWEETS,
+    tweets
+  };
+}
+```
+
+```js
+// users.js
+export const RECEIVE_USERS = 'RECEIVE_USERS';
+
+export function receiveUsers(users) {
+  return {
+    type: RECEIVE_USERS,
+    users
+  };
+}
+```
+
+```js
+// authedUser.js
+export const SET_AUTHED_USER = 'SET_AUTHED_USER';
+
+export function setAuthedUser(id) {
+  return {
+    type: SET_AUTHED_USER,
+    id
+  };
+}
+```
+
+Here we mock our authentication by hard-coding an `AUTHED_ID`. This ends up getting tied to any new tweet, reply tweet, or like event we do.
+
+```js
+// shared.js
+import { getInitialData } from '../utils/api';
+import { receiveUsers } from '../actions/users';
+import { receiveTweets } from '../actions/tweets';
+import { setAuthedUser } from '../actions/authedUser';
+
+const AUTHED_ID = 'sarah_edo';
+
+export function handleInitialData() {
+  return dispatch => {
+    return getInitialData().then(({ users, tweets }) => {
+      console.log(tweets, users);
+      dispatch(receiveUsers(users));
+      dispatch(receiveTweets(tweets));
+      dispatch(setAuthedUser(AUTHED_ID));
+    });
+  };
+}
+```
+
+<!-- 
+### 7.8 Reducers
+A Reducer describes how an application's state changes. You’ll often see the [Object Spread Operator](https://redux.js.org/recipes/using-object-spread-operator) (`...`) used inside of a reducer because a reducer **must return a *new* object** instead of mutating the old state.
+
+If you need a refresher on the spread operator, check out [this ES6 lesson](https://classroom.udacity.com/nanodegrees/nd019/parts/290ec447-6555-41bf-ac39-457220a09aae/modules/9c5b7af0-0943-4d6e-b672-520440885aba/lessons/42383e89-ac6a-491a-b7d0-198851287bbe/concepts/398d36e6-3393-4c50-b870-44a4dffb0ac4).
+
+If you want to know why Redux requires immutability, check out the [Immutable Data Section of the docs](https://redux.js.org/faq/immutable-data#why-is-immutability-required).
+
+Reducers have the following signature:
+
+```js
+(previousState, action) => newState
+```
+
+In our app, the `tweets` reducer will determine how the tweets part of the state changes. The `users` reducer will determine how the users part of the state changes, and so forth:
+
+[![rr63](../assets/images/rr63-small.jpg)](../assets/images/rr63.jpg)<br>
+<span class="center">This is how our state will be modified.</span>
+
+#### 7.8.1 Initializing State
+There are 2 ways to initialize the state inside the store:
+
+1. You can pass the initial state (or a part of the initial state) as `preloadedState` to the `createStore` function.
+
+   For example:
+
+   ```js
+   const store = createStore (
+     rootReducer,
+     { tweets: {} }
+   );
+   ```
+
+2. You can include a default state parameter as the first argument inside a particular reducer function.
+
+   For example:
+
+   ```js
+   function tweets (state = {}, action) {
+
+   }
+   ```
+
+To see how these approaches interact, check out the [Initializing State section of the documentation](https://redux.js.org/recipes/structuring-reducers/initializing-state).
+
+#### 7.8.2 Reducers code
+Each reducer takes in a `state` and `action` parameter and returns a new state object.
+
+We start the reducers code by creating the following files in `src/reducers/`.
+
+- authedUsers.js
+- tweets.js
+- users.js
+- index.js
+
+```js
+// tweets.js
+import { RECEIVE_TWEETS } from '../actions/tweets';
+
+export default function users(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_TWEETS:
+      return {
+        ...state,
+        ...action.tweets
+      };
+    default:
+      return state;
+  }
+}
+```
+
+```js
+// users.js
+import { RECEIVE_USERS } from '../actions/users';
+
+export default function users(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_USERS:
+      return {
+        ...state,
+        ...action.users
+      };
+    default:
+      return state;
+  }
+}
+```
+
+```js
+// authedUser.js
+import { SET_AUTHED_USER } from '../actions/authedUser';
+
+export default function authedUser(state = null, action) {
+  switch (action.type) {
+    case SET_AUTHED_USER:
+      return action.id;
+    default:
+      return state;
+  }
+}
+```
+
+In our app, we initialized each slice of the store by setting a default state value as the first parameter inside each reducer function.
+
+At this point, our store looks like this:
+
+[![rr64](../assets/images/rr64-small.jpg)](../assets/images/rr64.jpg)<br>
+<span class="center bold">Initialized State inside the Store</span>
+
+Both the **tweets** and **users** slice of the store have been initialized to an empty object and **authedUser** slice of the store has been initialized to `null`.
+
+What we now have is:
+
+- A `tweets` reducer to manage the tweets slice of the state.
+- A `users` reducer to manage the users slice of the state.
+- An `authedUser` reducer to manage the authedUser portion of the state.
+
+Each of these reducers will manage just its own part of the state.
+
+#### 7.8.3 Combine Reducers code
+Next we combine our reducers into one main, root reducer, which will combine the following into a single state object.
+
+- `tweets` reducer
+- `users` reducer
+- `authedUser` reducer
+
+Remember, we need to do this because the `createStore` function only accepts a single reducer.
+
+```js
+// src/reducers/index.js
+import { combineReducers } from 'redux';
+import { authedUsers } from '../reducers/authedUser';
+import { users } from '../reducers/users';
+import { tweets } from '../reducers/tweets';
+
+export default combineReducers({
+  authedUsers,
+  users,
+  tweets
+});
+```
+
+#### 7.8.4 Add Redux Provider code to entry point
+The next thing to do is install `redux` and `react-redux` packages.
+
+```bash
+npm install --save redux react-redux
+```
+
+Now that all of our reducers are set up, we need to create the store and provide it to our application. We do that in our React app's entry point.
+
+This takes place in `src/index.js`.
+
+```jsx
+// src/index.js
+// other imports...
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import reducer from './reducers/index';
+
+const store = createStore(reducer);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
+```
+
+After importing `createStore`, `Provider` and our root reducer, we instantiate the store and pass it to Provider.
+
+Redux applications have a single store. We have to pass the Root Reducer to our `createStore()` function in order for the store to know what pieces of state it should have.
+
+The point of creating a store is to allow components to be able to access it without having to pass the data down through multiple components.
+
+The Provider component (which comes from the `react-redux` package) makes it possible for all components to access the store via the `connect()` function.
+
+### 7.9 Middleware
+Next we create the app's Middleware functions.
+
+Just like in the previous Todos application, we're going to create a *logger* middleware that will help us view the actions and state of the store as we interact with our application.
+
+Also, since the `handleInitialData()` action creator in src/actions/shared.js returns a function, we'll need to install the `react-thunk` package:
+
+```bash
+npm install --save redux-thunk
+```
+
+Next we'll hook up `redux-thunk` middleware and implement our logger middleware to make debugging easier.
+
+All middleware follows this currying pattern:
+
+```js
+const logger = (store) => (next) => (action) => {
+ // ...
+}
+```
+
+The variable `logger` is assigned to a function that takes the `store` as its argument. That function returns another function, which is passed `next` (which is the next middleware in line or the dispatch function). That other function return another function which is passed an `action`. Once inside that third function, we have access to `store`, `next`, and `action`.
+
+It’s important to note that the value of the `next` parameter will be determined by the `applyMiddleware` function. Why? All middleware will be called in the order it is listed in that function. In our case, the `next` will be `dispatch` because `logger` is the last middleware listed in that function.
+
+#### 7.9.1 Middleware code
+We start our middleware code by creating the following in `src/middleware/`.
+
+- logger.js
+- index.js
+
+```js
+// logger.js
+const logger = store => next => action => {
+  console.group(action.type);
+  console.log('The action:', action);
+  const returnValue = next(action);
+  console.log('The new state: ', store.getState());
+  console.groupEnd();
+  return returnValue;
+};
+
+export default logger;
+```
+
+```js
+// index.js
+import thunk from 'redux-thunk';
+import logger from './logger';
+import { applyMiddleware } from 'redux';
+
+export default applyMiddleware(thunk, logger);
+
+```
+
+#### 7.9.2 Add Redux Middleware code to entry point
+The the next thing we do is make sure our store is aware of our middleware.  We do this in `src/index.js`
+
+```js
+// index.js
+// other imports...
+import middleware from './middleware';
+
+const store = createStore(reducer, middleware);
+
+// render code...
+```
+
+#### 7.9.3 Middleware explained
+Here’s our middleware wiring inside of `src/middleware/index.js`.
+
+```js
+// index.js
+export default applyMiddleware(
+  thunk,
+  logger
+);
+```
+
+Each thing returned by an action creator - be it an action or a function - will go through our thunk middleware. This is the source code for the thunk middleware:
+
+```js
+// redux-thunk package
+function createThunkMiddleware(extraArgument) {
+  return ({ dispatch, getState }) => next => action => {
+    if (typeof action === 'function') {
+      return action(dispatch, getState, extraArgument);
+    }
+    return next(action);
+  };
+}
+
+const thunk = createThunkMiddleware();
+thunk.withExtraArgument = createThunkMiddleware;
+
+export default thunk;
+```
+
+If the thunk middleware sees an action, that action will be sent to the next middleware in line - the logger middleware. If it sees a function, the thunk middleware will call that function.
+
+That function can contain side effects - such as API calls - and dispatch actions, simple Javascript objects.
+
+These dispatched actions will again go to all of the middleware. The thunk middleware will see that it’s a simple action and pass the action on to the next middleware, the logger.
+
+Once inside the logger:
+
+```js
+// logger.js
+const logger = store => next => action => {
+  console.group(action.type); 
+  console.log("The action:", action);
+  const returnValue = next(action);
+  console.log("The new state:", store.getState());
+  console.groupEnd();
+  return returnValue;
+};
+```
+
+#### 7.9.4 Quiz Question
+Would these two pieces of code make the logger produce the same output in the console?
+
+```js
+export default applyMiddleware(
+  logger,
+  thunk
+);
+```
+
+```js
+export default applyMiddleware(
+  thunk,
+  logger
+);
+```
+
+- [ ] Yes
+- [x] No
+
+The middleware is called in the order it is listed in this function.
+
+The thunk action creators we're using to load initial date, save tweets, and toggle tweets are functions.
+
+So if they go to the logger middleware before going to the thunk middleware (which takes the functions and executes them, thereby obtaining actions to pass to the reducers), we're going to be logging function, not the actual actions.
+
+#### 7.9.5 Code Summary
+Now all our code is hooked up and in place. This includes:
+
+- Action Creators
+  - `setAuthedUser`
+  - `receiveTweets`
+  - `receiveUsers`
+- Thunk Action Creator
+  - `handleInitialData`
+- Reducers
+  - `authedUser`
+  - `users`
+  - `tweets`
+- Root Reducer
+  - `combineReducers`
+- Middleware
+  - `thunk`
+  - `logger`
+
+We won't actually see anything in our UI because we aren't dispatching any actions yet. -->
