@@ -5790,14 +5790,48 @@ export default connect()(App);
 
 We use the `connect()` method to wire our App component to the Redux store. This is done with currying and passes App as the second curried argument to `connect()`.
 
-Then we deconstruct `dispatch` from `this.props` (since `store` is passed in through the Provider component in `index.js`). This allows us to dispatch our `handleInitialData` action creator.
+Then we deconstruct `dispatch` from `this.props` (since a connected component receives `props.dispatch` by default from react-redux). This allows us to dispatch our `handleInitialData` action creator.
+
+> #### 7.10.2 Recommended Code Update
+> I learned that rather than directly using `dispatch` from within our component, it's better to use the "object shorthand" form for the `mapDispatchToProps` argument.
+>
+> This will wrap our action creator with something like
+>
+> - `(...args) => dispatch(actionCreator(...args))`.
+>
+> It will then allow our actionCreator to be accessed as a prop.
+>
+>You can read more here: [Defining mapDispatchToProps As An Object](https://react-redux.js.org/using-react-redux/connect-mapdispatch#defining-mapdispatchtoprops-as-an-object)
+>
+> Thank you by [Mark Erikson](https://twitter.com/acemarke) for the instruction.
+>
+> ```jsx
+> // App.js
+> import React, { Component } from 'react';
+> import { handleInitialData } from '../actions/shared';
+> import { connect } from 'react-redux';
+>
+> class App extends Component {
+>   componentDidMount() {
+>     this.props.handleInitialData();
+>   }
+>   render() {
+>     return <div>Starter Code</div>;
+>   }
+> }
+>
+> export default connect(
+>   null,
+>   { handleInitialData }
+> )(App);
+> ```
 
 Using the `connect()` function upgrades a component to a container. Containers can read state from the store and dispatch actions.
 
 Here we can see the store data output to the console through our logger middleware.
 
 [![rr67](../assets/images/rr67-small.jpg)](../assets/images/rr67.jpg)<br>
-**Live Preview:** [Chirper - Redux Twitter@4-handle-initial-data](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/4-handle-initial-data)
+**Live Demo:** [Chirper - Redux Twitter@4-handle-initial-data](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/4-handle-initial-data) on CodeSandbox
 
 Read more about our ability to customize our container’s relationship with the store in the [react-redux API documentation](https://react-redux.js.org/api/connect). Make sure to go through the excellent examples that are provided in the linked documentation to gain a deeper understanding of Redux.
 
@@ -5877,7 +5911,6 @@ import { connect } from 'react-redux';
 class Dashboard extends React.Component {
   render() {
     const { tweetsIds } = this.props;
-    // console.log('tweetsIds', tweetsIds);
     return (
       <div>
         <h3 className="center">Your Timeline</h3>
@@ -5910,6 +5943,7 @@ We now need to update the App component with a loading property.
 This happens in `src/components/App.js`.
 
 ```jsx
+// App.js
 import React, { Component } from 'react';
 import { handleInitialData } from '../actions/shared';
 import { connect } from 'react-redux';
@@ -5917,9 +5951,7 @@ import Dashboard from './Dashboard';
 
 class App extends Component {
   componentDidMount() {
-    const { dispatch } = this.props;
-
-    dispatch(handleInitialData());
+    this.props.handleInitialData();
   }
   render() {
     return <div>{this.props.loading === true ? null : <Dashboard />}</div>;
@@ -5932,13 +5964,16 @@ function mapStateToProps({ authedUser }) {
   };
 }
 
-export default connect(mapStateToProps)(App);
+export default connect(
+  mapStateToProps,
+  { handleInitialData }
+)(App);
 ```
 
 The Dashboard Component now outputs a list of Tweet IDs.
 
 [![rr66](../assets/images/rr66-small.jpg)](../assets/images/rr66.jpg)<br>
-**Live Preview:** [Chirper - Redux Twitter@5-dashboard](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/5-dashboard)
+**Live Demo:** [Chirper - Redux Twitter@5-dashboard](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/5-dashboard) on CodeSandbox
 
 <!--
 ### 7.12 Tweet Component
