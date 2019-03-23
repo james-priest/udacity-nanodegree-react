@@ -5794,8 +5794,14 @@ Then we deconstruct `dispatch` from `this.props` (since `store` is passed in thr
 
 Using the `connect()` function upgrades a component to a container. Containers can read state from the store and dispatch actions.
 
+Here we can see the store data output to the console through our logger middleware.
+
+[![rr67](../assets/images/rr67-small.jpg)](../assets/images/rr67.jpg)<br>
+**Live Preview:** [Chirper - Redux Twitter@4-handle-initial-data](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/4-handle-initial-data)
+
 Read more about our ability to customize our container’s relationship with the store in the [react-redux API documentation](https://react-redux.js.org/api/connect). Make sure to go through the excellent examples that are provided in the linked documentation to gain a deeper understanding of Redux.
 
+<!--
 ### 7.11 Dashboard Component
 In Step 4 of the Planning Stage, we determined that our store should look like this:
 
@@ -5935,7 +5941,6 @@ The Dashboard Component now outputs a list of Tweet IDs.
 [![rr66](../assets/images/rr66-small.jpg)](../assets/images/rr66.jpg)<br>
 **Live Preview:** [Chirper - Redux Twitter@5-dashboard](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/5-dashboard)
 
-<!-- 
 ### 7.12 Tweet Component
 In Step 4 of the Planning Stage, we saw that this component will need access to the following data:
 
