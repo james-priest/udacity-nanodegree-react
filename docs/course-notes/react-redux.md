@@ -5728,3 +5728,218 @@ Now all our code is hooked up and in place. This includes:
   - `logger`
 
 We won't actually see anything in our UI because we aren't dispatching any actions yet.
+
+### 7.10 Initialize App Data
+We have previously determined that we need to get the `users` and `tweets` data from our database and then send that data to our store along with the `authedUser` data when the home page loads.
+
+We have also created a thunk action creator that gets the data from the database and then dispatches actions to the store to set the three pieces of state we have in our store:
+
+- `users`
+- `tweets`
+- `authedUser`
+
+Here's what the `handleInitialData()` thunk action creator looks like:
+
+```js
+function handleInitialData () {
+  return (dispatch) => {
+    return getInitialData()
+      .then(({ users, tweets }) => {
+        dispatch(receiveUsers(users));
+        dispatch(receiveTweets(tweets));
+        dispatch(setAuthedUser(AUTHED_ID));
+      });
+  };
+}
+```
+
+Now, the question is where do we dispatch this action creator?
+
+#### 7.10.1 Quiz Question
+Think about this for a moment - Will our app work as desired if we dispatch the handleInitialData() action creator inside of the Dashboard Component?
+
+- [ ] Yes
+- [x] No
+
+It is true that the root route will load correctly, but if we go to a different route -- `tweets/:id`, for example -- our store will still be empty and the tweet will not be found.
+
+When we walked through the architecture of our app, we saw that the App Component will contain every other component. If we load the initial data (by dispatching the `handleInitialData()` action creator from the App component, then no matter which route our users goes to, they’ll see all of the correct data.
+
+#### 7.10.1 Initialize App Data code
+Now it's time to connect the Redux store to our React app. We do this in `src/components/App.js`.
+
+```jsx
+// App.js
+import React, { Component } from 'react';
+import { handleInitialData } from '../actions/shared';
+import { connect } from 'react-redux';
+
+class App extends Component {
+  componentDidMount() {
+    const { dispatch } = this.props;
+
+    dispatch(handleInitialData());
+  }
+  render() {
+    return <div>Starter Code</div>;
+  }
+}
+
+export default connect()(App);
+```
+
+We use the `connect()` method to wire our App component to the Redux store. This is done with currying and passes App as the second curried argument to `connect()`.
+
+Then we deconstruct `dispatch` from `this.props` (since `store` is passed in through the Provider component in `index.js`). This allows us to dispatch our `handleInitialData` action creator.
+
+Using the `connect()` function upgrades a component to a container. Containers can read state from the store and dispatch actions.
+
+Read more about our ability to customize our container’s relationship with the store in the [react-redux API documentation](https://react-redux.js.org/api/connect). Make sure to go through the excellent examples that are provided in the linked documentation to gain a deeper understanding of Redux.
+
+<!-- 
+### 7.11 Dashboard Component
+In Step 4 of the Planning Stage, we determined that our store should look like this:
+
+In our application, normalized state would look like this:
+
+```js
+{
+  tweets: {
+    tweetId: { tweet id, author id, timestamp, text, likes, replies, replyTo},
+    tweetId: { tweet id, author id, timestamp, text, likes, replies, replyTo}
+  },
+  users: {
+    userId: {user id, user name, avatar, tweets array},
+    userId: {user id, user name, avatar, tweets array}
+  }
+}
+```
+
+In the Planning Stage, we also determined that the Dashboard Component will be a container since it will need access to the `tweets` part of the store in order to display the list of tweets.
+
+To make a container, we need to make use the `connect()` function. Remember that the signature of the connect function looks like this:
+
+```js
+connect([mapStateToProps], [mapDispatchToProps], [mergeProps], [options])
+```
+
+These details about `mapStateToProps` and `mapDispatchToProps` are crucial:
+
+> **mapStateToProps** - If this argument is specified, the new component will subscribe to Redux store updates. This means that any time the store is updated, mapStateToProps will be called. The results of mapStateToProps must be a plain object, which will be merged into the component’s props. If you don't want to subscribe to store updates, pass null or undefined in place of mapStateToProps.
+>
+> **mapDispatchToProps** - If an object is passed, each function inside it is assumed to be a Redux action creator. An object with the same function names, but with every action creator wrapped into a dispatch call so they may be invoked directly, will be merged into the component’s props. If a function is passed, it will be given dispatch as the first parameter. It’s up to you to return an object that somehow uses dispatch to bind action creators in your own way. (Tip: you may use the [bindActionCreators()](https://redux.js.org/api-reference/bindactioncreators) helper from Redux.)
+
+The Component Hierarchy we made in Step 2 of the Planning Stage said that the Tweet Component will be inside of the Dashboard Component.
+
+If the Dashboard Component knows the ID of the tweet that needs to be displayed, it can just pass that ID to the Tweet Component, which will render the tweet.
+
+Remember that the signature of the mapStateToProps function is:
+
+```js
+mapStateToProps(state, [ownProps])
+```
+
+- `state` is the state inside the store
+- `ownProps` are the properties that have been passed to this component from a parent component
+
+Since we only care about the `tweets` part of the store, we can use destructuring to pass the `tweets` part of the state in the store as the parameter to the `mapStateToProps()` function.
+
+[![rr65](../assets/images/rr65-small.jpg)](../assets/images/rr65.jpg)<br>
+<span class="center bold">The breakdown of our `mapStateToProps` function</span>
+
+So this is what the Dashboard Component's mapStateToProps() function looks like:
+
+```js
+function mapStateToProps( {tweets} ){
+  return { tweetIds: Object.keys(tweets) };
+}
+```
+
+The important things to note are that:
+
+- **tweets** is the slice of the state that this component cares about
+- **tweetIds** will show up as a property on this container
+
+#### 7.11.1 Dashboard Component code
+The dashboard component will be a container component because it needs a list of tweetIds from the store.
+
+We do this by adding the following `src/components/Dashboard.js`.
+
+```jsx
+// Dashboard.js
+import React from 'react';
+import { connect } from 'react-redux';
+
+class Dashboard extends React.Component {
+  render() {
+    const { tweetsIds } = this.props;
+    // console.log('tweetsIds', tweetsIds);
+    return (
+      <div>
+        <h3 className="center">Your Timeline</h3>
+        <ul className="dashboard-list">
+          {tweetsIds.map(id => (
+            <li key={id}>
+              <div>TWEET ID: {id}</div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+}
+
+function mapStateToProps({ tweets }) {
+  return {
+    tweetsIds: Object.keys(tweets).sort(
+      (a, b) => tweets[b].timestamp - tweets[a].timestamp
+    )
+  };
+}
+
+export default connect(mapStateToProps)(Dashboard);
+```
+
+#### 7.11.2 Update App Component code
+We now need to update the App component with a loading property.
+
+This happens in `src/components/App.js`.
+
+```jsx
+import React, { Component } from 'react';
+import { handleInitialData } from '../actions/shared';
+import { connect } from 'react-redux';
+import Dashboard from './Dashboard';
+
+class App extends Component {
+  componentDidMount() {
+    const { dispatch } = this.props;
+
+    dispatch(handleInitialData());
+  }
+  render() {
+    return <div>{this.props.loading === true ? null : <Dashboard />}</div>;
+  }
+}
+
+function mapStateToProps({ authedUser }) {
+  return {
+    loading: authedUser === null
+  };
+}
+
+export default connect(mapStateToProps)(App);
+```
+
+The Dashboard Component now outputs a list of Tweet IDs.
+
+[![rr66](../assets/images/rr66-small.jpg)](../assets/images/rr66.jpg)<br>
+**Live Preview:** [Chirper - Redux Twitter@5-dashboard](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/5-dashboard)
+
+### 7.12 Tweet Component
+In Step 4 of the Planning Stage, we saw that this component will need access to the following data:
+
+- `users`
+- `tweets`
+- `authedUser`
+ -->
