@@ -5975,11 +5975,200 @@ The Dashboard Component now outputs a list of Tweet IDs.
 [![rr66](../assets/images/rr66-small.jpg)](../assets/images/rr66.jpg)<br>
 **Live Demo:** [Chirper - Redux Twitter@5-dashboard](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/5-dashboard) on CodeSandbox
 
-<!--
 ### 7.12 Tweet Component
 In Step 4 of the Planning Stage, we saw that this component will need access to the following data:
 
 - `users`
 - `tweets`
 - `authedUser`
- -->
+
+Most of this happens in `mapStateToProps`. We create a new file in `src/components/Tweet.js`.
+
+```jsx
+// Tweet.js
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { formatTweet } from '../utils/helpers';
+
+export class Tweet extends Component {
+  render() {
+    console.log(this.props);
+    return (
+      <div className="tweet">
+        <h3>tweet</h3>
+      </div>
+    );
+  }
+}
+
+function mapStateToProps({ authedUser, users, tweets }, { id }) {
+  const tweet = tweets[id];
+
+  return {
+    authedUser,
+    tweet: formatTweet(tweet, users[tweet.author], authedUser)
+  };
+}
+
+export default connect(mapStateToProps)(Tweet);
+```
+
+Next we update our Dashboard component at `src/components/Dashboard.js`.
+
+```jsx
+// Dashboard.js
+// other imports...
+import Tweet from './Tweet';
+
+class Dashboard extends React.Component {
+  render() {
+    const { tweetsIds } = this.props;
+    return (
+      <div>
+        <h3 className="center">Your Timeline</h3>
+        <ul className="dashboard-list">
+          {tweetsIds.map(id => (
+            <li key={id}>
+              <Tweet id={id} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+}
+// more code...
+```
+
+Notice how we're passing an `id` prop along to the Tweet component:
+
+```text
+<Tweet id={id} />
+```
+
+Because we're doing this, the `mapStateToProps` function's second argument (`ownProps`) will be an object that has an `id` property with this value.
+
+
+[![rr68](../assets/images/rr68-small.jpg)](../assets/images/rr68.jpg)<br>
+<span class="center bold">Arguments inside of `mapStateToProps` function</span>
+
+So as of right now, this is what the `mapStateToProps` function looks like:
+
+```js
+function mapStateToProps ({ authedUser, users, tweets }, { id }) {
+  const tweet = tweets[id];
+
+  return {
+    authedUser,
+    tweet: formatTweet(tweet, users[tweet.author], authedUser)
+  };
+}
+```
+
+The important thing to notice here is that `mapStateToProps` accepts two arguments:
+
+- the state of the store
+- the props passed to the Tweet component
+
+We're destructuring both arguments. From the store, we're extracting:
+
+- the `authedUser` data
+- the users data
+- the tweets data
+
+Then we're getting the `id` from the props passed to the Tweets Component. We need both of these pieces of data (coming from the store's state and coming from the component) so that we can determine which Tweet should be displayed by Tweet Component.
+
+Next we update the `mapStateToProps` function in `Tweets.js` to also handle the `parentTweet` if one exists and use ternary conditionals in case a tweet doesn't exit.
+
+```jsx
+// Tweets.js
+function mapStateToProps({ authedUser, users, tweets }, { id }) {
+  const tweet = tweets[id];
+  const parentTweet = tweet ? tweets[tweet.replyingTo] : null;
+
+  return {
+    authedUser,
+    tweet: tweet
+      ? formatTweet(tweet, users[tweet.author], authedUser, parentTweet)
+      : null
+  };
+}
+```
+
+Now that we're getting all of the data we need from the store, we can actually build the UI for the Tweet Component.
+
+```jsx
+// Tweet.js
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { formatTweet, formatDate } from '../utils/helpers';
+import {
+  TiArrowBackOutline,
+  TiHeartOutline,
+  TiHeartFullOutline
+} from 'react-icons/ti/index';
+
+export class Tweet extends Component {
+  handleLike = e => {
+    e.preventDefault();
+    // toggle like
+  };
+  toParent = (e, id) => {
+    e.preventDefault();
+    // redirect to the parent tweet
+  };
+  render() {
+    const { tweet } = this.props;
+    if (tweet === null) {
+      return <p>This tweet doesn't exist</p>;
+    }
+    const {
+      name,
+      avatar,
+      timestamp,
+      text,
+      hasLiked,
+      likes,
+      replies,
+      parent
+    } = tweet;
+    return (
+      <div className="tweet">
+        <img src={avatar} alt={`Avatar of ${name}`} className="avatar" />
+        <div className="tweet-info">
+          <div>
+            <span>{name}</span>
+            <div>{formatDate(timestamp)}</div>
+            {parent && (
+              <button
+                className="replying-to"
+                onClick={e => this.toParent(e, parent.id)}
+              >
+                Replying to @{parent.author}
+              </button>
+            )}
+            <p>{text}</p>
+          </div>
+          <div className="tweet-icons">
+            <TiArrowBackOutline className="tweet-icon" />
+            <span>{replies !== 0 && replies}</span>
+            <button className="heart-button" onClick={this.handleLike}>
+              {hasLiked === true ? (
+                <TiHeartFullOutline color="#e0245e" className="tweet-icon" />
+              ) : (
+                <TiHeartOutline className="tweet-icon" />
+              )}
+            </button>
+            <span>{likes !== 0 && likes}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+```
+
+Here's what the UI looks like after updating our Tweet component.
+
+[![rr69](../assets/images/rr69-small.jpg)](../assets/images/rr69.jpg)<br>
+**Live Demo:** [Chirper - Redux Twitter@6-tweet-ui](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/6-tweet-ui) on CodeSandbox
