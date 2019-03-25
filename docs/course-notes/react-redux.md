@@ -6172,3 +6172,87 @@ Here's what the UI looks like after updating our Tweet component.
 
 [![rr69](../assets/images/rr69-small.jpg)](../assets/images/rr69.jpg)<br>
 **Live Demo:** [Chirper - Redux Twitter@6-tweet-ui](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/6-tweet-ui) on CodeSandbox
+
+### 7.13 Loading Bar
+for the loading bar we will use an npm package called `react-redux-loading`.
+
+```bash
+npm install --save react-redux-loading
+```
+
+Next we update our reducers in `src/reducers/index.js`.
+
+```jsx
+// index.js
+import { combineReducers } from 'redux';
+import authedUser from '../reducers/authedUser';
+import users from '../reducers/users';
+import tweets from '../reducers/tweets';
+import { loadingBarReducer } from 'react-redux-loading';
+
+export default combineReducers({
+  authedUser,
+  users,
+  tweets,
+  loadingBar: loadingBarReducer
+});
+```
+
+We imported the `loadingBarReducer` and combined it with our other reducers.
+
+Next we add in two new action creators which we dispatch to change the loading bar state. The first dispatch is `showLoading()` the last one is `hideLoading()`.
+
+This occurs in `src/actions/shared.js`
+
+```jsx
+// shared.js
+import { getInitialData } from '../utils/api';
+import { receiveUsers } from '../actions/users';
+import { receiveTweets } from '../actions/tweets';
+import { setAuthedUser } from '../actions/authedUser';
+import { showLoading, hideLoading } from 'react-redux-loading';
+
+const AUTHED_ID = 'sarah_edo';
+
+export function handleInitialData() {
+  return dispatch => {
+    dispatch(showLoading());
+    return getInitialData().then(({ users, tweets }) => {
+      dispatch(receiveUsers(users));
+      dispatch(receiveTweets(tweets));
+      dispatch(setAuthedUser(AUTHED_ID));
+      dispatch(hideLoading());
+    });
+  };
+}
+```
+
+Lastly we include a loading component we can render. This occurs in `src/components/App.js`
+
+```jsx
+// App.js
+// other imports...
+import LoadingBar from 'react-redux-loading';
+
+class App extends Component {
+  componentDidMount() {
+    this.props.handleInitialData();
+  }
+  render() {
+    return (
+      <div>
+        <LoadingBar />
+        {this.props.loading === true ? null : <Dashboard />}
+      </div>
+    );
+  }
+}
+
+// more code...
+```
+
+[![rr70](../assets/images/rr70-small.jpg)](../assets/images/rr70.jpg)<br>
+<span class="center bold">Loading...</span>
+
+[![rr71](../assets/images/rr71-small.jpg)](../assets/images/rr71.jpg)<br>
+**Live Demo:** [Chirper - Redux Twitter@7-loading](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/7-loading) on CodeSandbox
