@@ -6256,3 +6256,10 @@ class App extends Component {
 
 [![rr71](../assets/images/rr71-small.jpg)](../assets/images/rr71.jpg)<br>
 **Live Demo:** [Chirper - Redux Twitter@7-loading](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/7-loading) on CodeSandbox
+
+#### 7.13.1 Additional Resources
+One of the most common mistakes with Redux is falling into the View, Action Creator, Reducer pattern.
+
+This post talks about what it is, why this happens, and how to avoid it.
+
+- [The Perils of Using a Common Redux Anti-Pattern](https://itnext.io/the-perils-of-using-a-common-redux-anti-pattern-344d778e59da)
