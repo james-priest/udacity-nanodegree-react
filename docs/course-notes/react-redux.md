@@ -5673,7 +5673,7 @@ Once inside the logger:
 ```js
 // logger.js
 const logger = store => next => action => {
-  console.group(action.type); 
+  console.group(action.type);
   console.log("The action:", action);
   const returnValue = next(action);
   console.log("The new state:", store.getState());
@@ -6048,7 +6048,6 @@ Notice how we're passing an `id` prop along to the Tweet component:
 
 Because we're doing this, the `mapStateToProps` function's second argument (`ownProps`) will be an object that has an `id` property with this value.
 
-
 [![rr68](../assets/images/rr68-small.jpg)](../assets/images/rr68.jpg)<br>
 <span class="center bold">Arguments inside of `mapStateToProps` function</span>
 
@@ -6263,3 +6262,176 @@ One of the most common mistakes with Redux is falling into the View, Action Crea
 This post talks about what it is, why this happens, and how to avoid it.
 
 - [The Perils of Using a Common Redux Anti-Pattern](https://itnext.io/the-perils-of-using-a-common-redux-anti-pattern-344d778e59da)
+
+### 7.14 Liking a Tweet
+In the Planning stage, we figured out that we needed to give the Tweet Component access to the `authedUser` data for the tweet to correctly show whether the logged in user liked the tweet or not and for the user to reply to tweets. We also figured out that once the user likes or un-likes a tweet, that information needs to be reflected in the store for other components show the correct data.
+
+#### 7.14.1 Like Tweet Action Creator
+We’ll need to write an asynchronous action creator since we need to record whether the logged in user liked a tweet not only in the store but also in our database. [Redux thunks](https://github.com/gaearon/redux-thunk) to the rescue!
+
+[![rr72](../assets/images/rr72-small.jpg)](../assets/images/rr72.jpg)<br>
+<span class="center bold">Thunk Action Creator</span>
+
+A Thunk Action Creator returns a function that will be passed `store.dispatch` and `store.getState` when it's invoked.
+
+We can write this as our thunk action creator:
+
+```js
+// sample pessimistic update
+function handleToggleTweet (info) {
+  return (dispatch) => {
+    saveLikeToggle(info)
+      .then(() => {
+        dispatch(toggleTweet(info));
+        })
+      .catch((e) => {
+        console.warn('Error in handleToggleTweet: ', e);
+        alert('There was an error liking the tweet. Try again.');
+    });
+  };
+}
+```
+
+The code above only updates the UI once we receive confirmation that the backend update was successful. This can make the app seem to lag.
+
+A common approach to UI updates is Optimistic Updating; updating the UI before the action gets recorded on the backend so it seems more performant. We’ll see that approach below as we build out our Tweet Actions.
+
+#### 7.14.1 Like Tweet Action Creator code
+Here are the additions we make in `src/actions/tweets.js`.
+
+```jsx
+// tweets.js
+import { saveLikeToggle } from '../utils/api';
+
+export const TOGGLE_TWEET = 'TOGGLE_TWEET';
+
+function toggleTweet({ id, authedUser, hasLiked }) {
+  return {
+    type: TOGGLE_TWEET,
+    id,
+    authedUser,
+    hasLiked
+  };
+}
+
+export function handleToggleTweet(info) {
+  return dispatch => {
+    dispatch(toggleTweet(info));
+
+    return saveLikeToggle(info).catch(e => {
+      console.warn('Error in handleToggleTweet:', e);
+      dispatch(toggleTweet(info));
+      alert('There was an error liking the tweet. Try again.');
+    });
+  };
+}
+```
+
+#### 7.14.2 Like Tweet Reducer
+Remember that the `tweets` reducer will determine how the `tweets` part of the state changes:
+
+[![rr73](../assets/images/rr73-small.jpg)](../assets/images/rr73.jpg)<br>
+<span class="center">Each reducer modifies its own slice of the state.</span>
+
+When liking a tweet (or unliking a tweet), the state for that specific tweet needs to change - either the tweet's `like` property (which, if you remember, is an array and will contain the names of the users that have liked the tweet) will need to change to include the user that clicked it (if they're liking the tweet) or the user's name will need to be removed from the array (if they're unliking the tweet).
+
+So we need to update the reducer to handle these changes.
+
+#### 7.14.3 Like Tweet Reducer code
+The next step is to update our Tweets reducer and insert a new TOGGLE_TWEET `action.type`. This is done in `src/reducers/tweets.js`.
+
+```js
+// tweets.js
+import { RECEIVE_TWEETS, TOGGLE_TWEET } from '../actions/tweets';
+
+export default function tweets(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_TWEETS:
+      return {
+        ...state,
+        ...action.tweets
+      };
+    case TOGGLE_TWEET:
+      return {
+        ...state,
+        [action.id]: {
+          ...state[action.id],
+          likes:
+            action.hasLiked === true
+              ? state[action.id].likes.filter(uid => uid !== action.authedUser)
+              : state[action.id].likes.concat(action.authedUser)
+        }
+      };
+    default:
+      return state;
+  }
+}
+```
+
+#### 7.14.4 Like Tweet Component code
+The last update happens to the `handleLike` method of our Tweet Component.  This is done in `src/components/Tweet.js`.
+
+Here is what the lesson shows as the proper way to code the Tweet Component.
+
+```jsx
+// Tweet.js
+// Not ideal method
+import { handleToggleTweet } from '../actions/tweets';
+
+export class Tweet extends Component {
+  handleLike = e => {
+    e.preventDefault();
+    const { dispatch, tweet, authedUser } = this.props;
+
+    dispatch(
+      handleToggleTweet({
+        id: tweet.id,
+        authedUser,
+        hasLiked: tweet.hasLiked
+      })
+    );
+  };
+  // more code...
+}
+
+export default connect(mapStateToProps)(Tweet);
+```
+
+This works fine but ideally we want to avoid using `dispatch` in our component code. Instead we want to call a method that wraps our action creator with `dispatch`.
+
+This is the recommended approach and is described in [Defining mapDispatchToProps As An Object](https://react-redux.js.org/using-react-redux/connect-mapdispatch#defining-mapdispatchtoprops-as-an-object) from the React Redux docs.
+
+Here is the updated code using this method.
+
+```jsx
+// Tweet.js
+// Recommended method
+export class Tweet extends Component {
+  handleLike = e => {
+    e.preventDefault();
+    const { tweet, authedUser } = this.props;
+
+    this.props.handleToggleTweet({
+      id: tweet.id,
+      authedUser,
+      hasLiked: tweet.hasLiked
+    });
+  };
+  // more code...
+}
+
+const actionCreators = { handleToggleTweet };
+
+export default connect(
+  mapStateToProps,
+  actionCreators
+)(Tweet);
+```
+
+Here's the updated UI.
+
+[![rr74](../assets/images/rr74-small.jpg)](../assets/images/rr74.jpg)<br>
+<span class="center bold">Loading...</span>
+
+[![rr75](../assets/images/rr75-small.jpg)](../assets/images/rr75.jpg)<br>
+**Live Demo:** [Chirper - Redux Twitter@8-like-tweet](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/8-like-tweet) on CodeSandbox
