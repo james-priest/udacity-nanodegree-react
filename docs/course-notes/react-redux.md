@@ -2,7 +2,7 @@
 title: Udacity React & Redux
 description: Notes by James Priest
 ---
-<!-- markdownlint-disable MD022 MD024 MD032 MD033 -->
+<!-- markdownlint-disable MD022 MD024 MD028 MD031 MD032 MD033 -->
 <!-- # React Nanodegree -->
 # React & Redux
 
@@ -6435,3 +6435,461 @@ Here's the updated UI.
 
 [![rr75](../assets/images/rr75-small.jpg)](../assets/images/rr75.jpg)<br>
 **Live Demo:** [Chirper - Redux Twitter@8-like-tweet](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/8-like-tweet) on CodeSandbox
+
+### 7.15 New Tweet Component
+We'll be building a controlled component since we want the submit button disabled until we type something into the text field.
+
+So, whenever you are updating UI based on the current state of your component, you'll want to use a controlled component.
+
+The first thing we'll do is update `src/components/App.js` to use the NewTweet component we're about to build.
+
+```jsx
+// App.js
+import NewTweet from './NewTweet';
+
+class App extends Component {
+  componentDidMount() {
+    this.props.handleInitialData();
+  }
+  render() {
+    return (
+      <div>
+        <LoadingBar />
+        {this.props.loading === true ? null : <NewTweet />}
+      </div>
+    );
+  }
+}
+```
+
+#### 7.15.1 New Tweet Component UI
+
+Next we'll create the NewTweet component at `src/components/NewTweet.js`.
+
+```jsx
+//NewTweet.js
+import React, { Component } from 'react';
+
+class NewTweet extends Component {
+  state = {
+    text: ''
+  };
+  handleChange = e => {
+    const text = e.target.value;
+
+    this.setState(() => ({
+      text
+    }));
+  };
+  handleSubmit = e => {
+    e.preventDefault();
+
+    const { text } = this.state;
+
+    // todo: Add tweet to store
+
+    console.log('New Tweet:', text);
+
+    this.setState(() => ({
+      text: ''
+    }));
+  };
+  render() {
+    const { text } = this.state;
+
+    // todo: Redirect if submitted
+
+    const tweetLeft = 280 - text.length;
+
+    return (
+      <div>
+        <h3 className="center">Compose new tweet</h3>
+        <form className="new-tweet" onSubmit={this.handleSubmit}>
+          <textarea
+            placeholder="What's happening?"
+            value={text}
+            onChange={this.handleChange}
+            className="textarea"
+            maxLength={280}
+          />
+          {tweetLeft <= 100 && <div className="tweet-length">{tweetLeft}</div>}
+          <button className="btn" type="submit" disabled={text === ''}>
+            Submit
+          </button>
+        </form>
+      </div>
+    );
+  }
+}
+
+export default NewTweet;
+```
+
+Here's the rendered UI.
+
+[![rr76](../assets/images/rr76-small.jpg)](../assets/images/rr76.jpg)<br>
+<span class="center bold">Compose new Tweet UI</span>
+
+#### 7.15.2 Adding a New Tweet
+Let’s now work on the logic of adding a new tweet.
+
+Once the user submits a new tweet, it should show up in the list of all of tweets and be added to our database.
+
+Since this tweet will be used by more than one component, we know that we want to make sure the store is modified to reflect the updated list of tweets. Recording tweets in a database is an asynchronous operation, so we can use [Redux Thunk](https://github.com/gaearon/redux-thunk) to issue the API request.
+
+#### 7.15.3 Add Tweet Action Creator
+Here we need to add the action creator and the thunk method for the async API call.
+
+We do this in `src/actions/tweets.js`.
+
+```js
+// tweets.js
+export const ADD_TWEET = 'ADD_TWEET';
+
+function addTweet(tweet) {
+  return {
+    type: ADD_TWEET,
+    tweet
+  };
+}
+
+export function handleAddTweet(text, replyingTo) {
+  return (dispatch, getState) => {
+    const { authedUser } = getState();
+
+    dispatch(showLoading());
+
+    return saveTweet({
+      text,
+      author: authedUser,
+      replyingTo
+    })
+      .then(tweet => dispatch(addTweet(tweet)))
+      .then(() => dispatch(hideLoading()));
+  };
+}
+```
+
+#### 7.15.4 Return statement
+Let’s quickly cover a common JavaScript bug at this point.
+
+Make sure that whenever an arrow function has curly braces, you’re using a return statement, if you want to return something.
+
+#### 7.15.5 Question 1 of 2
+Given this array, const nums = [1,2,3]; Which statements produce the following output [3,3,3] ? Select all that apply.
+
+- [x] `nums.map(num => nums.length);`
+- [ ] `nums.map(num => { nums.length });`
+- [x] `nums.map(num => { return nums.length });`
+
+#### 7.15.6 New Tweet Reducer
+We know that our store looks like this:
+
+```text
+{
+  tweets: {
+    tweetId: { tweetId, authorId, timestamp, text, likes, replies, replyingTo},
+    tweetId: { tweetId, authorId, timestamp, text, likes, replies, replyingTo}
+  },
+  users: {
+    userId: {userId, userName, avatar, tweets array},
+    userId: {userId, userName, avatar, tweets array}
+  },
+  authedUser: userId
+}
+```
+
+Let’s start working on the New Tweet Reducer. How will we be modifying the state to reflect the new tweet?
+
+This is going to be a two-part process:
+
+1. The new tweet needs to be added to the list of tweets
+2. An already existing tweet needs to be modified if the new tweet is a response to another tweet
+
+In this reducer we'll do the following.
+
+1. Concatenate the new tweet to the list of the already-existing tweets by using the spread operator.
+2. Modify the `replies` property of the tweet the new tweet is replying to.
+
+Remember that the [object spread operator](https://redux.js.org/recipes/using-object-spread-operator) offers us the most concise way to concatenate a list of values.
+
+#### 7.15.7 New Tweet Reducer code
+The next set of additions happens in `src/reducers/tweets.js`.
+
+```js
+// tweets.js
+import { RECEIVE_TWEETS, TOGGLE_TWEET, ADD_TWEET } from '../actions/tweets';
+
+export default function tweets(state = {}, action) {
+  switch (action.type) {
+    // additional action types...
+    case ADD_TWEET:
+      const { tweet } = action;
+
+      console.log(`tweet.id`, tweet.id);
+      console.log({
+        ...state,
+        [tweet.id]: { ...tweet }
+      });
+
+      let replyingTo = {};
+      if (tweet.replyingTo !== null) {
+        replyingTo = {
+          [tweet.replyingTo]: {
+            ...state[tweet.replyingTo],
+            replies: state[tweet.replyingTo].replies.concat([tweet.id])
+          }
+        };
+      }
+
+      return {
+        ...state,
+        [tweet.id]: tweet,
+        ...replyingTo
+      };
+    default:
+      return state;
+  }
+}
+```
+
+#### 7.15.8 New Tweet Component Logic
+In Step 2 of the Planning Stage, we determined that the New Tweet Component will show up inside of the App Component when the user goes to the `/new` page and that it will be inside of the Tweet Page Component when the user is on the `/tweet/:id` page.
+
+When the user is at the `/new` route, the new tweet will not be attached to another tweet. When the user is at the `tweet/:id` route, the new tweet will be attached to the already-displayed tweet. Notice that the route already contains the parent tweet’s `id`. We can just pass the `id` from the route to the New Tweet Component whenever we’re creating a reply tweet.
+
+What happens when someone clicks “Submit” to add a new tweet? The New Tweet Component will need to communicate with our store. We communicate with the store by dispatching actions. `dispatch` is a method on the store. That means that the New Tweet Component needs to be `connect()`ed to Redux. Once a component is connected to the store, it will have `dispatch` on its props.
+
+#### 7.15.9 Question 2 of 2
+When will the `mapStateToProps` function be called? Select all that apply.
+
+- [x] Anytime the store is updated.
+- [x] Whenever the component receives new props.
+- [ ] Neither option correctly describes when the `mapStateToProps` function will be called.
+
+Here a link to the [React Redux docs](https://react-redux.js.org/using-react-redux/connect-mapstate).
+
+#### 7.15.10 New Tweet Component Logic code
+Next we need to update our New Tweet Component so it can dispatch the `handleAddTweet` thunk action creator.
+
+This is done in `src/components/NewTweet.js`
+
+```jsx
+// NewTweet.js
+import { connect } from 'react-redux';
+import { handleAddTweet } from '../actions/tweets';
+
+class NewTweet extends Component {
+  // other code...
+  handleSubmit = e => {
+    e.preventDefault();
+
+    const { text } = this.state;
+    const { id } = this.props;
+
+    this.props.handleAddTweet(text, id);
+
+    this.setState(() => ({
+      text: ''
+    }));
+  };
+  // other code...
+}
+
+const actionCreators = { handleAddTweet };
+
+export default connect(
+  null,
+  actionCreators
+)(NewTweet);
+```
+
+#### 7.15.11 Tweet Page Component
+The Tweet Page comes up when a user clicks on a tweet and it shows the following.
+
+- The tweet
+- The ability to reply to that tweet (with the "Compose new Tweet" input form)
+- List of existing replies to the tweet
+
+Here is a screenshot of the Tweet Page.
+
+[![rr77](../assets/images/rr77-small.jpg)](../assets/images/rr77.jpg)<br>
+<span class="center bold">Tweet Page Component</span>
+
+One thing to notice is that React Router will eventually be rendering the component and the `Id` of the tweet will be a URL parameter.
+
+[![rr78](../assets/images/rr78-small.jpg)](../assets/images/rr78.jpg)<br>
+<span class="center bold">Id of tweet as URL Parameter</span>
+
+For that reason, when we render TweetPage we will need to pass a tweet `id` as props to the component.
+
+#### 7.15.12 Tweet Page Component code
+We start out by creating the following file `src/components/TweetPage.js`.
+
+```jsx
+// TweetPage.jsx
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import Tweet from './Tweet';
+import NewTweet from './NewTweet';
+
+export class TweetPage extends Component {
+  render() {
+    const { id, replies } = this.props;
+
+    return (
+      <div>
+        <Tweet id={id} />
+        <NewTweet id={id} />
+        {replies.length !== 0 && <h3 className="center">Replies</h3>}
+        <ul>
+          {replies.map(replyId => (
+            <li key={replyId}>
+              <Tweet id={replyId} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+}
+
+function mapStateToProps({ authedUser, tweets, users }, props) {
+  const { id } = props.match.params;
+
+  return {
+    id,
+    replies: !tweets[id]
+      ? []
+      : tweets[id].replies.sort(
+          (a, b) => tweets[b].timestamp - tweets[a].timestamp
+        )
+  };
+}
+
+export default connect(mapStateToProps)(TweetPage);
+```
+Now we must update the App Component in order to test our new TweetPage Component.
+
+The file is `src/components/App.js`.
+
+```jsx
+// App.js
+// more code...
+class App extends Component {
+  componentDidMount() {
+    this.props.handleInitialData();
+  }
+  render() {
+    return (
+      <div>{% raw %}
+        <LoadingBar />
+        {this.props.loading === true ? null : (
+          // <NewTweet />
+          <TweetPage match={{ params: { id: 'hbsc73kzqi75rg7v1e0i6a' } }} />
+        )}
+      </div>{% endraw %}
+    );
+  }
+}
+// more code...
+```
+
+Since TweetPage is displayed when a user clicks on a tweet we'll hard code a tweet id to pass into it.
+
+We do this as a `match` argument which we pass a `params` object to because this replicates React Router.
+
+One other thing we'll want to update is the heading in NewTweet.js which will be based on whether we are replying to a tweet or adding a brand new one.
+
+We'll update the following file `src/components/NewTweet.js`.
+
+```jsx
+// NewTweet.js
+// more code...
+class NewTweet extends Component {
+  render() {
+    return (
+      <div>
+        <h3 className="center">
+          {this.props.id ? 'Reply to tweet' : 'Compose new tweet'}
+        </h3>
+        { /* more code... */ }
+      </div>
+    );
+  }
+}
+```
+
+Now when we display the page it will show an updated heading.
+
+[![rr79](../assets/images/rr79-small.jpg)](../assets/images/rr79.jpg)<br>
+<span class="center bold">TweetPage Component</span>
+
+#### 7.15.13 Lesson Challenge
+Suppose we replaced the `case ADD_TWEET:` portion of the code in the `src/reducers/tweets.js` file with the code below.
+
+- Would the state change in the same way? Why or why not?
+- Would the new tweet appear on the page? Why or why not?
+
+Run the code to check your answer.
+
+```js
+// tweets.js
+case ADD_TWEET :
+   const { tweet } = action
+
+   let replyingTo = {}
+   if (tweet.replyingTo !== null) {
+      const allReplies = state[tweet.replyingTo].replies.concat([tweet.id]);
+
+      return {
+        ...state,
+        [action.tweet.id]: action.tweet,
+        [action.tweet.replyingTo.replies]: allReplies  //<- bad assignment here
+      }
+   }
+
+   return {
+      ...state,
+      [action.tweet.id]: action.tweet,
+      ...replyingTo,
+   }
+```
+
+What this does is it just assigns `allReplies` to an empty index property of the tweets object.
+
+Rather we should do the following.
+
+```js
+// tweets.js
+case ADD_TWEET :
+   const { tweet } = action
+
+   let replyingTo = {}
+   if (tweet.replyingTo !== null) {
+      const allReplies = state[tweet.replyingTo].replies.concat([tweet.id]);
+
+      return {
+        ...state,
+        [action.tweet.id]: action.tweet,
+        [action.tweet.replyingTo]: {          //<- tweet id index
+          ...state[action.tweet.replyingTo],  //<- spread tweet properties
+          replies: allReplies                 //<- assign replies property
+      }
+    };
+   }
+
+   return {
+      ...state,
+      [action.tweet.id]: action.tweet,
+      ...replyingTo,
+   }
+```
+
+#### 7.15.14 Further Learning
+Carefully go over these reducer patterns in the Redux docs.
+
+- [Immutable Update Patterns](https://redux.js.org/recipes/structuring-reducers/immutable-update-patterns#immutable-update-patterns)
+- [Designing the State Shape](https://redux.js.org/basics/reducers#designing-the-state-shape)
+
+Remember, that doing a shallow copy of the top level is not sufficient - [nestedState objects] should be copied as well.
