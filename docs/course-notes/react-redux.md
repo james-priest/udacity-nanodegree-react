@@ -6436,7 +6436,7 @@ Here's the updated UI.
 [![rr75](../assets/images/rr75-small.jpg)](../assets/images/rr75.jpg)<br>
 **Live Demo:** [Chirper - Redux Twitter@8-like-tweet](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/8-like-tweet) on CodeSandbox
 
-### 7.15 New Tweet Component
+### 7.15 NewTweet Component
 We'll be building a controlled component since we want the submit button disabled until we type something into the text field.
 
 So, whenever you are updating UI based on the current state of your component, you'll want to use a controlled component.
@@ -6462,7 +6462,7 @@ class App extends Component {
 }
 ```
 
-#### 7.15.1 New Tweet Component UI
+#### 7.15.1 NewTweet Component UI
 
 Next we'll create the NewTweet component at `src/components/NewTweet.js`.
 
@@ -6582,7 +6582,7 @@ Given this array, const nums = [1,2,3]; Which statements produce the following o
 - [ ] `nums.map(num => { nums.length });`
 - [x] `nums.map(num => { return nums.length });`
 
-#### 7.15.6 New Tweet Reducer
+#### 7.15.6 ADD_TWEET Reducer
 We know that our store looks like this:
 
 ```text
@@ -6613,7 +6613,7 @@ In this reducer we'll do the following.
 
 Remember that the [object spread operator](https://redux.js.org/recipes/using-object-spread-operator) offers us the most concise way to concatenate a list of values.
 
-#### 7.15.7 New Tweet Reducer code
+#### 7.15.7 ADD_TWEET Reducer code
 The next set of additions happens in `src/reducers/tweets.js`.
 
 ```js
@@ -6653,7 +6653,7 @@ export default function tweets(state = {}, action) {
 }
 ```
 
-#### 7.15.8 New Tweet Component Logic
+#### 7.15.8 NewTweet Component Logic
 In Step 2 of the Planning Stage, we determined that the New Tweet Component will show up inside of the App Component when the user goes to the `/new` page and that it will be inside of the Tweet Page Component when the user is on the `/tweet/:id` page.
 
 When the user is at the `/new` route, the new tweet will not be attached to another tweet. When the user is at the `tweet/:id` route, the new tweet will be attached to the already-displayed tweet. Notice that the route already contains the parent tweet’s `id`. We can just pass the `id` from the route to the New Tweet Component whenever we’re creating a reply tweet.
@@ -6669,7 +6669,7 @@ When will the `mapStateToProps` function be called? Select all that apply.
 
 Here a link to the [React Redux docs](https://react-redux.js.org/using-react-redux/connect-mapstate).
 
-#### 7.15.10 New Tweet Component Logic code
+#### 7.15.10 NewTweet Component Logic code
 Next we need to update our New Tweet Component so it can dispatch the `handleAddTweet` thunk action creator.
 
 This is done in `src/components/NewTweet.js`
@@ -6704,7 +6704,8 @@ export default connect(
 )(NewTweet);
 ```
 
-#### 7.15.11 Tweet Page Component
+<!-- 
+### 7.16 TweetPage Component
 The Tweet Page comes up when a user clicks on a tweet and it shows the following.
 
 - The tweet
@@ -6723,7 +6724,7 @@ One thing to notice is that React Router will eventually be rendering the compon
 
 For that reason, when we render TweetPage we will need to pass a tweet `id` as props to the component.
 
-#### 7.15.12 Tweet Page Component code
+#### 7.16.1 TweetPage Component code
 We start out by creating the following file `src/components/TweetPage.js`.
 
 ```jsx
@@ -6825,7 +6826,7 @@ Now when we display the page it will show an updated heading.
 [![rr79](../assets/images/rr79-small.jpg)](../assets/images/rr79.jpg)<br>
 <span class="center bold">TweetPage Component</span>
 
-#### 7.15.13 Lesson Challenge
+#### 7.16.2 Lesson Challenge
 Suppose we replaced the `case ADD_TWEET:` portion of the code in the `src/reducers/tweets.js` file with the code below.
 
 - Would the state change in the same way? Why or why not?
@@ -6886,10 +6887,10 @@ case ADD_TWEET :
    }
 ```
 
-#### 7.15.14 Further Learning
+#### 7.16.3 Further Learning
 Carefully go over these reducer patterns in the Redux docs.
 
 - [Immutable Update Patterns](https://redux.js.org/recipes/structuring-reducers/immutable-update-patterns#immutable-update-patterns)
 - [Designing the State Shape](https://redux.js.org/basics/reducers#designing-the-state-shape)
 
-Remember, that doing a shallow copy of the top level is not sufficient - [nestedState objects] should be copied as well.
+Remember, that doing a shallow copy of the top level is not sufficient - [nestedState objects] should be copied as well. -->
