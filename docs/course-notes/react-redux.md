@@ -6626,12 +6626,6 @@ export default function tweets(state = {}, action) {
     case ADD_TWEET:
       const { tweet } = action;
 
-      console.log(`tweet.id`, tweet.id);
-      console.log({
-        ...state,
-        [tweet.id]: { ...tweet }
-      });
-
       let replyingTo = {};
       if (tweet.replyingTo !== null) {
         replyingTo = {
@@ -6704,7 +6698,6 @@ export default connect(
 )(NewTweet);
 ```
 
-<!-- 
 ### 7.16 TweetPage Component
 The Tweet Page comes up when a user clicks on a tweet and it shows the following.
 
@@ -6893,4 +6886,4 @@ Carefully go over these reducer patterns in the Redux docs.
 - [Immutable Update Patterns](https://redux.js.org/recipes/structuring-reducers/immutable-update-patterns#immutable-update-patterns)
 - [Designing the State Shape](https://redux.js.org/basics/reducers#designing-the-state-shape)
 
-Remember, that doing a shallow copy of the top level is not sufficient - [nestedState objects] should be copied as well. -->
+Remember, that doing a shallow copy of the top level is not sufficient - [nestedState objects] should be copied as well.
