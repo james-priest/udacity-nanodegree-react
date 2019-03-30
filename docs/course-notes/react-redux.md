@@ -7110,7 +7110,6 @@ The finished TweetPage is shown below.
 [![rr80](../assets/images/rr80-small.jpg)](../assets/images/rr80.jpg)<br>
 **Live Demo:** [Chirper - Redux Twitter@11-react-router](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/11-react-router) on CodeSandbox
 
-<!-- 
 ### 7.18 Review Redux Projects
 Research suggests being exposed to examples of what we're trying to learn helps us gain a more in-depth understanding of those concepts and ideas.
 
@@ -7142,4 +7141,4 @@ This is a GitHub repo of links to various resources including
   - Tutorials
   - Concepts
   - Architecture & Structure
-  - Immutable.js, FP, Forms, Styling, etc. -->
+  - Immutable.js, FP, Forms, Styling, etc.
