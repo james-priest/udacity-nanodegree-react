@@ -6887,3 +6887,259 @@ Carefully go over these reducer patterns in the Redux docs.
 - [Designing the State Shape](https://redux.js.org/basics/reducers#designing-the-state-shape)
 
 Remember, that doing a shallow copy of the top level is not sufficient - [nestedState objects] should be copied as well.
+
+### 7.17 Using React Router
+First we need to install our package.
+
+```bash
+npm install --save react-router-dom
+```
+
+#### 7.17.1 Quick React Router Review
+Here's a link to [React Router Philosophy](https://reacttraining.com/react-router/web/guides/philosophy) from the docs.
+
+#### 7.17.2 `BrowserRouter` Component
+`BrowserRouter` listens for changes in the URL and makes sure that the correct screen shows up when the URL changes.
+
+Doing this:
+
+```bash
+<BrowserRouter>
+   <App />
+</BrowserRouter>
+```
+
+will allow us to
+
+- use the other components `browser-router-dom` comes with inside of our app
+- listen to the URL so that whenever the url changes, the routing components will be notified of the change
+
+#### 7.17.3 `Link` Component
+Users navigate through React apps with the help of the Link Component.
+
+```jsx
+<Link to="/about">About</Link>
+```
+
+The `Link` component talks to the `BrowserRouter` and tells it to update the URL. By passing a `to` property to the `Link` component, you tell your app which path to route to.
+
+What if you wanted to pass state to the new route? Instead of passing a string to `Link`s `to` prop, you can pass it an object like this:
+
+```jsx{% raw %}
+<Link to={{
+  pathname: '/courses',
+  search: '?sort=name',
+  hash: '#the-hash',
+  state: { fromDashboard: true }
+}}>
+  Courses
+</Link>{% endraw %}
+```
+
+#### 7.17.5 Nav Component code
+The first thing we create is the nav at `src/components/Nav.js`
+
+```jsx
+// Nav.js
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+
+export default function Nav() {
+  return (
+    <nav className="nav">
+      <ul>
+        <li>
+          <NavLink to="/" exact activeClassName="active">
+            Home
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/new" activeClassName="active">
+            New Tweet
+          </NavLink>
+        </li>
+      </ul>
+    </nav>
+  );
+}
+```
+
+#### 7.17.6 BrowserRouter & Route component code
+The next thing we do is wrap our App with the BrowserRouter component. We can then create our Routes which render a particular component based on the URL path.
+
+We make our changes in `src/components/App.js`.
+
+```jsx
+// App.js
+import React, { Component, Fragment } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+// additional imports...
+
+class App extends Component {
+  componentDidMount() {
+    this.props.handleInitialData();
+  }
+  render() {
+    return (
+      <Router>
+        <Fragment>
+          <LoadingBar />
+          <div className="container">
+            <Nav />
+            {this.props.loading === true ? null : (
+              <div>
+                <Route path="/" exact component={Dashboard} />
+                <Route path="/tweet/:id" component={TweetPage} />
+                <Route path="/new" component={NewTweet} />
+              </div>
+            )}
+          </div>
+        </Fragment>
+      </Router>
+    );
+  }
+}
+// additional code...
+```
+
+#### 7.17.7 NewTweet Component update
+The NewTweet component needs to redirect us to the Dashboard if we are creating a brand new tweet. Otherwise if it is being used from within the TweetPage then no redirect should happen.
+
+The file we need to update is `src/components/NewTweet.js`.
+
+```js
+// NewTweet.js
+// imports...
+import { Redirect } from 'react-router-dom';
+
+class NewTweet extends Component {
+  state = {
+    text: '',
+    toHome: false
+  };
+  // handler code...
+  handleSubmit = e => {
+    e.preventDefault();
+
+    const { text } = this.state;
+    const { id } = this.props;
+
+    this.props.handleAddTweet(text, id);
+
+    this.setState(() => ({
+      text: '',
+      toHome: id ? false : true
+    }));
+  };
+  render() {
+    const { text, toHome } = this.state;
+
+    if (toHome === true) {
+      return <Redirect to="/" />;
+    }
+
+    return (
+      ...
+    )
+  }
+}
+```
+
+If an `id` is present then we redirect to home (`/`).
+
+#### 7.17.8 Tweet Component update
+Next we update our Tweet Component. We start with import of `Link` and `withRouter` components from `react-router-dom`.
+
+`Link` makes the whole tweet clickable and navigates to the location specified in the `to` argument.
+
+Wrapping our component `withRouter` allows us to non-declaratively redirect the page when the link to the parent tweet is clicked.
+
+Our updates happens in `src/components/Tweet.js`.
+
+```jsx
+// Tweet.js
+import { Link, withRouter } from 'react-router-dom';
+
+export class Tweet extends Component {
+  // code...
+  toParent = (e, id) => {
+    e.preventDefault();
+    // redirect to the parent tweet
+    this.props.history.push(`/tweet/${id}`);
+  };
+  render() {
+    const { tweet, id } = this.props;
+    // more code...
+
+    return (
+      <Link to={`/tweet/${id}`} className="tweet">
+        ...
+        <div className="tweet-info">
+          <div>
+            <span>{name}</span>
+            <div>{formatDate(timestamp)}</div>
+            {parent && (
+              <button
+                className="replying-to"
+                onClick={e => this.toParent(e, parent.id)}
+              >
+                Replying to @{parent.author}
+              </button>
+            )}
+            <p>{text}</p>
+          </div>
+        </div>
+        ...
+      </Link>
+    );
+  }
+}
+
+const actionCreators = { handleToggleTweet };
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    actionCreators
+  )(Tweet)
+);
+```
+
+The finished TweetPage is shown below.
+
+[![rr80](../assets/images/rr80-small.jpg)](../assets/images/rr80.jpg)<br>
+**Live Demo:** [Chirper - Redux Twitter@11-react-router](https://codesandbox.io/s/github/james-priest/reactnd-redux-twitter/tree/11-react-router) on CodeSandbox
+
+<!-- 
+### 7.18 Review Redux Projects
+Research suggests being exposed to examples of what we're trying to learn helps us gain a more in-depth understanding of those concepts and ideas.
+
+We strongly recommend that you go through the Redux sample projects to solidify your understanding of the material and learn different architectures for building React/Redux apps.
+
+- React/Redux sample projects
+  - in [Redux Docs](https://redux.js.org/introduction/examples) (Uses embedded CodeSandbox)
+  - in [GitHub Repo](https://github.com/reduxjs/redux/tree/master/examples)
+
+#### 7.18.1 Review Approach
+Here's an approach to try:
+
+1. Go through each example and see how:
+- the components work together;
+- what information is stored in the store;
+- how the data in the store is modified;
+- how the project is structured.
+2. Determine the similarities and the differences between the architecture of the different examples.
+3. If you have time, download some of the examples and try changing them to practice your new skills.
+
+Doing this will help you to develop a systematic framework for tackling React/Redux projects.
+
+Once you're done, share your observations and something that surprised you with your classmates.
+
+### 7.19 React/Redux Resources
+This is a GitHub repo of links to various resources including
+
+- [React Redux Links Repo](https://github.com/markerikson/react-redux-links)
+  - Tutorials
+  - Concepts
+  - Architecture & Structure
+  - Immutable.js, FP, Forms, Styling, etc. -->
