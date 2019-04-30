@@ -4958,7 +4958,7 @@ According to [Thinking in React docs](https://reactjs.org/docs/thinking-in-react
 > - [x] Components let you split the UI into independent, reusable chunks.
 > - [x] Each view typically has a component that represents that view
 > - [x] Presentational Components don't know where their data comes from.
-> - [x] Components that are connected to the store are called
+> - [x] Components that are connected to the store are called "containers".
 
 Let's get started by drawing boxes around all of the components and giving them all names. Remember that we have three views:
 
@@ -5517,9 +5517,9 @@ Remember, we need to do this because the `createStore` function only accepts a s
 ```js
 // src/reducers/index.js
 import { combineReducers } from 'redux';
-import { authedUsers } from '../reducers/authedUser';
-import { users } from '../reducers/users';
-import { tweets } from '../reducers/tweets';
+import authedUsers from '../reducers/authedUser';
+import users from '../reducers/users';
+import tweets from '../reducers/tweets';
 
 export default combineReducers({
   authedUsers,
@@ -6767,6 +6767,8 @@ Now we must update the App Component in order to test our new TweetPage Componen
 
 The file is `src/components/App.js`.
 
+<!-- cspell:disable  -->
+
 ```jsx
 // App.js
 // more code...
@@ -6788,6 +6790,8 @@ class App extends Component {
 }
 // more code...
 ```
+
+<!-- cspell:enable  -->
 
 Since TweetPage is displayed when a user clicks on a tweet we'll hard code a tweet id to pass into it.
 
