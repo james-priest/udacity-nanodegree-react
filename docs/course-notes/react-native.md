@@ -81,7 +81,7 @@ Further Research
 - [Bridging in React Native](https://tadeuzagallo.com/blog/react-native-bridge/)
 - [12 Common Questions from Working with React Native](https://medium.com/dailyjs/12-common-questions-about-react-native-74fc9ba49b17)
 
-<!-- ### 1.3 Dev Environment Setup
+### 1.3 Dev Environment Setup
 When we build our app throughout this course, we'll be building it for both Android and iOS. One of the puzzles at hand is that we'll need to support two separate development environments: iOS uses [Xcode](https://developer.apple.com/xcode/), and Android uses [Android Studio](https://developer.android.com/studio/index.html). This introduces a lot of complexity into this course; after all, both Xcode and Android Studio could probably each be their own set of courses!
 
 #### 1.3.1 Expo-CLI
@@ -177,6 +177,15 @@ In order to run this with an Android emulator we need to:
 - Create & Start a device
 - Turn on Developer mode & USB Debugging in the device's Settings
 
+> #### Expo on Windows 10 with WSL
+>
+> There seems to be an error on Windows 10 with running expo on WSL. This causes the network to loose connectivity.
+>
+> The workaround was to run Expo in Cmd Console.
+>
+> - [GitHub Fix #1](https://github.com/expo/expo-cli/issues/99#issuecomment-472591763)
+> - [GitHub Fix #2](https://github.com/Microsoft/WSL/issues/2913#issuecomment-471277845)
+
 #### 1.3.8 Summary
 Expo is similar to Create React App in that it scaffolds and builds a starter application with minimal configuration. This allows us to have an app up and running without the need for Xcode or Android Studio! Some of the benefits include:
 
@@ -185,4 +194,4 @@ Expo is similar to Create React App in that it scaffolds and builds a starter ap
 - A single build tool
 - No lock-in (i.e., ejection at any time)
 
-You can also set up simulators to aid in development as well. But regardless of which platform we choose to develop for (iOS, Android), and which environment we're in (Mac, Windows, Linux) -- we're just building with the same old JavaScript that we're used to! -->
+You can also set up simulators to aid in development as well. But regardless of which platform we choose to develop for (iOS, Android), and which environment we're in (Mac, Windows, Linux) -- we're just building with the same old JavaScript that we're used to!
