@@ -37,10 +37,27 @@ Welcome! This course covers the React Native framework. Here's a quick breakdown
 #### 1.1.2 In-Class Project
 During this course, you'll follow along and create a daily fitness-tracking application, [UdaciFitness](https://github.com/udacity/reactnd-UdaciFitness-complete). You'll tie in what you've learned from React Fundamentals as well as React & Redux, then leverage React Native to create a fully functional mobile application!
 
-<!-- ### 1.2 What is React Native
+### 1.2 What is React Native
 
 [![rn3](../assets/images/rn3-small.jpg)](../assets/images/rn3.jpg)<br>
 <span class="center bold">React Native code</span>
+
+React Native allows you to use React to build native iOS and Android applications. Companies like Walmart, Airbnb, and Tesla are all using React Native in some capacity on their mobile applications.
+
+In my opinion though, React Native is even more beneficial to smaller startups.
+
+Instead of having a web team, an iOS team, and an Android team, with React Native, you can just have a single UI team. This not only saves the organization a lot of money but also developer hours as well.
+
+You may have heard the phrase, "Write Once, Run Anywhere". The idea of this is that it would be nice if you could use a single code base on the web,
+on iOS, and on Android.
+
+In practice though, this is pretty difficult. This is because each of those platforms have such a unique experience.
+
+Unlike write once, run anywhere, React Native's motto is, "Learn Once, Write Anywhere."
+
+Once you learn React, you should be able to take those same principles and not only build UI for the web, but also for native platforms like iOS and Android.
+
+So instead of sharing the same codebase amongst all the different platforms, we're sharing the same principles. Things like component composition and declarative UI.
 
 #### 1.2.1 React Native under the Hood
 When React was first introduced, a big selling point was the [Virtual DOM](https://reactjs.org/docs/faq-internals.html). The idea is pretty standard in most UI libraries now, but when it first came out, it was groundbreaking! We can look at what exactly the Virtual DOM is by breaking down the process of what happens when you call `setState()`.
@@ -64,7 +81,7 @@ Further Research
 - [Bridging in React Native](https://tadeuzagallo.com/blog/react-native-bridge/)
 - [12 Common Questions from Working with React Native](https://medium.com/dailyjs/12-common-questions-about-react-native-74fc9ba49b17)
 
-### 1.3 Dev Environment Setup
+<!-- ### 1.3 Dev Environment Setup
 When we build our app throughout this course, we'll be building it for both Android and iOS. One of the puzzles at hand is that we'll need to support two separate development environments: iOS uses [Xcode](https://developer.apple.com/xcode/), and Android uses [Android Studio](https://developer.android.com/studio/index.html). This introduces a lot of complexity into this course; after all, both Xcode and Android Studio could probably each be their own set of courses!
 
 #### 1.3.1 Expo-CLI
