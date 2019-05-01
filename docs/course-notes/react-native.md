@@ -195,3 +195,76 @@ Expo is similar to Create React App in that it scaffolds and builds a starter ap
 - No lock-in (i.e., ejection at any time)
 
 You can also set up simulators to aid in development as well. But regardless of which platform we choose to develop for (iOS, Android), and which environment we're in (Mac, Windows, Linux) -- we're just building with the same old JavaScript that we're used to!
+
+### 1.4 Using the Debugger
+#### 1.4.1 How to Debug
+As we've mentioned before, perhaps one of the best things about React Native is that it takes the development experience you're used to on the web, and brings it all to native development.
+
+Things like live reloading and debugging just work out of the box. Let's take a deeper dive into some of these features -- first with debugging!
+
+Once Android emulator is installed properly and running we can start our Expo project.
+
+```bash
+npm start
+```
+
+That will open Expo Developer Tools.
+
+[![rn4](../assets/images/rn4-small.jpg)](../assets/images/rn4.jpg)<br>
+<span class="center bold">Expo Developer Tools</span>
+
+Next we click "Run on Android device/emulator". This will open up the app in the emulator.
+
+We can then open the Developer Debug Menu and select from the following options
+
+- **Reload** - reloads app
+- **Start Remote JS Debugging** - enables debugging in Chrome DevTools
+- **Enable Live Reload** - reloads on code save
+- **Enable Hot Reloading** - preserves state on reload
+- **Toggle Inspector** - shows element inspector
+- **Show Perf Monitor** - perf monitor
+- **Start/Stop Sampling Profiler** - profiler
+
+[![rn5](../assets/images/rn5-small.jpg)](../assets/images/rn5.jpg)<br>
+<span class="center bold">Developer Debug Menu in Android</span>
+
+The debug items we'll use the most are:
+
+- Reload
+- Start Remote JS Debugging
+- Toggle Inspector
+
+Here are some links to additional info
+
+- [Expo Docs - Debugging](https://docs.expo.io/versions/v32.0.0/workflow/debugging/) - Debugging JavaScript, HTTP, Redux, etc.
+- [React DevTools](https://github.com/facebook/react-devtools/tree/master/packages/react-devtools) - Standalone DevTools app for React & React Native
+- [React Native Debugger](https://github.com/jhen0409/react-native-debugger) - Includes
+  - Remote JS Debugger
+  - React Inspector
+  - Redux DevTools
+
+If we need to Reload the app we can just type R key twice.
+
+#### 1.4.2 Quiz Question
+How should you access the in-app developer menu? Select all that apply:
+
+- [ ] Change a setting in the Expo mobile app
+- [ ] Choose **Debug** from the notification drawer
+- [x] Shake your phone
+- [x] Select **Shake Gesture** in the simulator
+- [x] Press Cmd+D in iOS simulator or Cmd+M in Android emulator
+
+#### 1.4.3 Summary
+What's great about React Native development is that it takes much of what you're used to from web development and takes it to native development. Accessing the in-app developer menu allows you to reload your JavaScript code, debug remotely via Developer Tools, and even display an in-app inspector.
+
+##### To Debug
+All you have to do is shake your phone, or press:
+
+- ⌘D in the iOS simulator
+- ⌘M in the Android simulator
+
+##### To Refresh
+To refresh the app, just:
+
+- Double-tap “R” on your keyboard (if using the simulator)
+- Shake the phone, then select “Refresh”
