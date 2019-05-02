@@ -329,11 +329,12 @@ The two most common components in RN are
 - `<Text>`
 
 ### 2.4 Triathlon Tracker Project
+This is the project we will be building as we learn React Native.
 
 [![rn6](../assets/images/rn6-small.jpg)](../assets/images/rn6.jpg)<br>
 <span class="center bold">Triathlon Tracker</span>
 
-#### Icons
+### 2.5 Icons
 Right out of the box, Expo offers support for thousands of vector icons to use in your applications. Check out the link for a complete list.
 
 - [Expo vector icon directory](https://expo.github.io/vector-icons)
