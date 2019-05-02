@@ -380,3 +380,145 @@ const styles = StyleSheet.create({
   }
 });
 ```
+
+### 2.6 AddEntry Component
+The next step is to create the AddEntry component and add it to App.js.  We also update our helpers.js component with a `getMetricMetaInfo()` method.
+
+This will begin to scaffold our app. For now we will just render a bike icon to our screen.
+
+[![rn8](../assets/images/rn8-small.jpg)](../assets/images/rn8.jpg)<br>
+<span class="center bold">AddEntry Component</span>
+
+#### 2.6.1 AddEntry Component
+This file is located at '/components/AddEntry.js'.
+
+```jsx
+// AddEntry.js
+import React, { Component } from 'react';
+import { View, Text } from 'react-native';
+import { getMetricMetaInfo } from '../utils/helpers';
+
+export default class AddEntry extends Component {
+  render() {
+    return <View>{getMetricMetaInfo('bike').getIcon()}</View>;
+  }
+}
+```
+
+#### 2.6.2 Helper Method
+This file is located at '/utils/helper.js'.
+
+```jsx
+// helper.js
+...
+export const getMetricMetaInfo = metric => {
+  const info = {
+    run: {
+      displayName: 'Run',
+      max: 50,
+      unit: 'miles',
+      step: 1,
+      type: 'steppers',
+      getIcon() {
+        return (
+          <View>
+            <MaterialIcons name="directions-run" color={'black'} size={35} />
+          </View>
+        );
+      }
+    },
+    bike: {
+      displayName: 'Bike',
+      max: 100,
+      unit: 'miles',
+      step: 1,
+      type: 'steppers',
+      getIcon() {
+        return (
+          <View>
+            <MaterialCommunityIcons name="bike" color={'red'} size={35} />
+          </View>
+        );
+      }
+    },
+    swim: {
+      displayName: 'Swim',
+      max: 9900,
+      unit: 'meters',
+      step: 100,
+      type: 'steppers',
+      getIcon() {
+        return (
+          <View>
+            <MaterialCommunityIcons name="swim" color={'black'} size={35} />
+          </View>
+        );
+      }
+    },
+    sleep: {
+      displayName: 'Sleep',
+      max: 24,
+      unit: 'hours',
+      step: 1,
+      type: 'slider',
+      getIcon() {
+        return (
+          <View>
+            <FontAwesome name="bed" color={'black'} size={35} />
+          </View>
+        );
+      }
+    },
+    eat: {
+      displayName: 'Eat',
+      max: 10,
+      unit: 'rating',
+      step: 1,
+      type: 'slider',
+      getIcon() {
+        return (
+          <View>
+            <MaterialCommunityIcons name="food" color={'black'} size={35} />
+          </View>
+        );
+      }
+    }
+  };
+
+  return typeof metric === 'undefined' ? info : info[metric];
+};
+```
+
+#### 2.6.3 App Component
+This file is located at '/App.js'.
+
+```jsx
+// App.js
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import AddEntry from './components/AddEntry';
+
+export default class App extends React.Component {
+  componentDidMount() {
+    console.log('begin');
+    debugger;
+    console.log('end');
+  }
+  render() {
+    return (
+      <View style={styles.container}>
+        <AddEntry />
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
+});
+```
