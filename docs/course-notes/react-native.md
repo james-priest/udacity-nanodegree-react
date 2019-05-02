@@ -268,3 +268,114 @@ To refresh the app, just:
 
 - Double-tap “R” on your keyboard (if using the simulator)
 - Shake the phone, then select “Refresh”
+
+## 2. React vs React Native
+### 2.1 Intro
+In this lesson, we'll look at how the web, iOS, and Android all differ from one another from both a user interface perspective and a user experience perspective.
+
+We'll look at the components that React Native comes with, and last, we'll add Redux into a React Native application.
+
+### 2.2 Web vs. Native
+From a technological standpoint, React Native does a great job of letting you take your experiences on the web to build native applications.
+
+What's critical to understand is that the experiences you're developing for on mobile are fundamentally different than on the web.
+
+Not only are native apps different than web apps, but iOS apps are different than Android apps. If you took an Android Style app and put it on iOS, it would just feel weird.
+
+In this lesson, we're going to cover the subtle differences you need to watch out for when building for the web, iOS and Android.
+
+#### 2.2.1 Additional differences
+Native applications look and "feel" different because they are fundamentally different. Even though we're using the same React principles that you've learned throughout this program, keep in mind that this is no longer the web! While some of these distinctions are more apparent (e.g., the development process, access to native features, how users get updates, etc.), there are some key differences that we'll be taking a deep dive into during this course.
+
+For one, native apps often leverage **animations** to help create a great user experience. Animations such as button effects, screen transitions, and other visual feedback may be subtle, but they support continuity and guidance in the apps you build. They all function to dynamically tell a story about how your application works. Without animations, an application can feel like just a collection of static screens. For now, stay tuned; we'll be checking out animations in-depth during Lesson 5.
+
+Another key difference between native and web applications is in **navigation**. Recall that React Router's `Route` component allows us to map a URL to a specific UI component. In React Native, routers function as a stack; that is, individual screens are "pushed" and "popped" as needed. We'll look at routing more closely later in Lesson 4.
+
+#### 2.2.2 Android vs. iOS
+Not only are there fundamental differences between native apps and web apps, you'll also find differences between how native platforms (iOS and Android) look and feel as well. Perhaps the most apparent are the distinct design philosophies on each platform: Android apps utilize Google's [Material Design](https://material.io/guidelines/material-design/introduction.html), while iOS apps take advantage of Apple's [Human Interface Design](https://developer.apple.com/ios/human-interface-guidelines/overview/themes/). When designing mobile applications, it's important to your users that an iOS app feels like an iOS app, and an Android app feels like an Android app.
+
+Navigation between screens feels distinct between Android and iOS as well. Android devices have access to a **navigation bar** at the bottom of the screen, which allows users to go back to the previous screen (among other features). On iOS, the approach is different: there is no such universal navigation bar! When building the UI for an iOS application, it is important to include a back button (perhaps on a custom [navigation bar](https://developer.apple.com/ios/human-interface-guidelines/bars/navigation-bars/)) to help guide users through your app.
+
+One more key difference between Android and iOS involves tab navigation. iOS apps include [tab bars](https://developer.apple.com/ios/human-interface-guidelines/bars/tab-bars/) at the bottom of the app's screen, allowing for convenient access to different portions of the app. Likewise, Android apps include them as well; however tabs are distinctly located [at the top of the screen](https://material.io/guidelines/components/tabs.html). Both allow access to high-level content, and we'll explore React Native's **TabNavigator** in closer detail in Lesson 4.
+
+#### 2.2.3 Quiz Question
+What is true about web applications or native applications? Select all that apply:
+
+- [ ] Web applications tend to be characterized by more animations than in native applications
+- [x] Tabs in native iOS applications are generally expected to be found at the bottom of the device screen
+- [ ] Each screen in a native application is actually just a URL mapped to a UI component
+- [ ] Native iOS applications can leverage a universal "back" button
+
+#### 2.2.4 Summary
+When developing your React Native projects, keep in mind that you're designing for a different experience than that of web applications. Mobile applications look and feel different due to fundamental differences, such as subtle animations that build a sense of continuity for your users. Differences exist between Android and iOS as well, especially in their design philosophies and navigation. We'll look at some fundamental components that make up React Natives apps in the next section!
+
+- [iOS  Interface Essentials](https://developer.apple.com/ios/human-interface-guidelines/overview/interface-essentials/)
+- [Material Design Navigation](https://material.io/design/navigation/understanding-navigation.html)
+
+### 2.3 Common RN Components
+When you're developing for the web, you automatically have access to every element in the HTML specification. This includes elements like `div` and `span`.
+
+In React Native, it is similar, except instead of using elements provided by the HTML spec, you'll use components provided by React Native. Components like `view` and `text`.
+
+In this lesson, we'll be covering some of the most common React Native components you might come across. Some of these we'll use in the Udacity fitness project, others we won't. But they're all good to know.
+
+When writing HTML, we're used to using `<div>` and `<span>` tags to define sections or to contain other elements on the page. In React Native, a similar principle applies, but this time we're using React Native's `<View>` component to build the application UI. Just like HTML's `<div>`, `<View>` components can accommodate several props (e.g. style), and can even be nested inside other `<View>` components!
+
+`<Text>` works just how you'd expect, as well. Its main objective is to, by no surprise, render text in the application. Just like `<View>`, styling and nesting capabilities apply to `<Text>` components, as well.
+
+The two most common components in RN are
+
+- `<View>`
+- `<Text>`
+
+### 2.4 Triathlon Tracker Project
+
+[![rn6](../assets/images/rn6-small.jpg)](../assets/images/rn6.jpg)<br>
+<span class="center bold">Triathlon Tracker</span>
+
+#### Icons
+Right out of the box, Expo offers support for thousands of vector icons to use in your applications. Check out the link for a complete list.
+
+- [Expo vector icon directory](https://expo.github.io/vector-icons)
+
+Whichever icon set you choose, just be sure that it fits the overall look and feel of your application (e.g., using platform-specific icons).
+
+[![rn7](../assets/images/rn7-small.jpg)](../assets/images/rn7.jpg)<br>
+<span class="center bold">Icon</span>
+
+```jsx
+// App.js
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+export default class App extends React.Component {
+  componentDidMount() {
+    console.log('begin');
+    debugger;
+    console.log('end');
+  }
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>Open up App.js to start working on your app!</Text>
+        <Text style={styles.redText}>My red text works</Text>
+        <MaterialCommunityIcons name="emoticon-devil" color="red" size={100} />
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  redText: {
+    color: 'red',
+    fontSize: 20
+  }
+});
+```
