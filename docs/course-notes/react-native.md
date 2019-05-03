@@ -422,7 +422,7 @@ export const getMetricMetaInfo = metric => {
       getIcon() {
         return (
           <View>
-            <MaterialIcons name="directions-run" color={'black'} size={35} />
+            <MaterialIcons name="directions-run" color={'green'} size={65} />
           </View>
         );
       }
@@ -436,7 +436,7 @@ export const getMetricMetaInfo = metric => {
       getIcon() {
         return (
           <View>
-            <MaterialCommunityIcons name="bike" color={'red'} size={35} />
+            <MaterialCommunityIcons name="bike" color={'red'} size={65} />
           </View>
         );
       }
@@ -450,7 +450,7 @@ export const getMetricMetaInfo = metric => {
       getIcon() {
         return (
           <View>
-            <MaterialCommunityIcons name="swim" color={'black'} size={35} />
+            <MaterialCommunityIcons name="swim" color={'blue'} size={65} />
           </View>
         );
       }
@@ -464,7 +464,7 @@ export const getMetricMetaInfo = metric => {
       getIcon() {
         return (
           <View>
-            <FontAwesome name="bed" color={'black'} size={35} />
+            <FontAwesome name="bed" color={'black'} size={65} />
           </View>
         );
       }
@@ -478,7 +478,7 @@ export const getMetricMetaInfo = metric => {
       getIcon() {
         return (
           <View>
-            <MaterialCommunityIcons name="food" color={'black'} size={35} />
+            <MaterialCommunityIcons name="food" color={'orange'} size={65} />
           </View>
         );
       }
@@ -521,4 +521,96 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 });
+```
+
+### 2.7 Stepper & Slider Stubs
+Next we add two control components to AddEntry. These are the UdaciSlider and UdaciStepper components.
+
+For now each will be a stub that we bring into AddEntry.
+
+[![rn9](../assets/images/rn9-small.jpg)](../assets/images/rn9.jpg)<br>
+<span class="center bold">AddEntry with Slider & Stepper Components</span>
+
+#### 2.7.1 UdaciSlider Component
+Located in '/components/UdaciSlider.js'.
+
+```jsx
+// UdaciSlider.js
+import React, { Component } from 'react';
+import { Text, View } from 'react-native';
+
+export default class UdaciSlider extends Component {
+  render() {
+    return (
+      <View>
+        <Text> UdaciSlider </Text>
+      </View>
+    );
+  }
+}
+```
+
+#### 2.7.2 UdaciStepper Component
+Located in '/components/UdaciStepper.js'.
+
+```jsx
+// UdaciStepper.js
+import React, { Component } from 'react';
+import { Text, View } from 'react-native';
+
+export default class UdaciStepper extends Component {
+  render() {
+    return (
+      <View>
+        <Text> UdaciStepper </Text>
+      </View>
+    );
+  }
+}
+```
+
+#### 2.7.3 AddEntry Component
+Located in '/components/AddEntry.js'.
+
+```jsx
+// AddEntry.js
+...
+import UdaciSlider from './UdaciSlider';
+import UdaciStepper from './UdaciStepper';
+
+export default class AddEntry extends Component {
+  ...
+  render() {
+    const metaInfo = getMetricMetaInfo();
+
+    return (
+      <View>
+        {Object.keys(metaInfo).map(key => {
+          const { getIcon, type, ...rest } = metaInfo[key];
+          const value = this.state[key];
+
+          return (
+            <View key={key}>
+              {getIcon()}
+              {type === 'slider' ? (
+                <UdaciSlider
+                  value={value}
+                  onChange={value => this.slide(key, value)}
+                  {...rest}
+                />
+              ) : (
+                <UdaciStepper
+                  value={value}
+                  onIncrement={() => this.increment(key)}
+                  onDecrement={() => this.decrement(key)}
+                  {...rest}
+                />
+              )}
+            </View>
+          );
+        })}
+      </View>
+    );
+  }
+}
 ```
