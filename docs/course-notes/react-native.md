@@ -614,3 +614,56 @@ export default class AddEntry extends Component {
   }
 }
 ```
+
+### 2.8 DateHeader Component
+Next we add the DateHeader component which will be included in a few different places.
+
+[![rn10](../assets/images/rn10-small.jpg)](../assets/images/rn10.jpg)<br>
+<span class="center bold">DateHeader component</span>
+
+#### 2.8.1 DateHeader
+Located in '/components/DateHeader.js'.
+
+```jsx
+// DateHeader.js
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Text, StyleSheet } from 'react-native';
+
+const DateHeader = ({ date }) => {
+  return <Text style={styles.dateText}>{date}</Text>;
+};
+
+DateHeader.propTypes = {
+  date: PropTypes.string.isRequired
+};
+
+const styles = StyleSheet.create({
+  dateText: {
+    fontSize: 30
+  }
+});
+
+export default DateHeader;
+```
+
+#### 3.8.2 AddEntry.js
+Located in '/components/AddEntry.js'.
+
+```jsx
+// AddEntry.js
+import DateHeader from './DateHeader';
+
+export default class AddEntry extends Component {
+  render() {
+    const metaInfo = getMetricMetaInfo();
+
+    return (
+      <View>
+        <DateHeader date={new Date().toLocaleDateString()} />
+        ...
+      </View>
+    );
+  }
+}
+```
