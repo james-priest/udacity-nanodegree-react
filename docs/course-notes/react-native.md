@@ -667,3 +667,391 @@ export default class AddEntry extends Component {
   }
 }
 ```
+
+### 2.9 Touchables
+Users mainly interact with web apps with clicks. In the world of mobile apps, however, several different touch gestures are used to navigate through the app: tapping a button, swiping to scroll through a list, and so on.
+
+React Native offers a number of components to handle "tapping gestures," or what is called **Touchables**. Let's take a look at them in detail in the following video:
+
+- `Button`
+- `TouchableHighlight`
+- `TouchableOpacity`
+- `TouchableNativeFeedback`
+- `TouchableWithoutFeedback`
+
+#### 2.9.1 TouchableHighlight
+
+```jsx
+import React from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableHighlight,
+} from 'react-native';
+import AddEntry from './components/AddEntry';
+
+export default class App extends React.Component {
+  handlePress = () => {
+    alert('hello!');
+  };
+  render() {
+    return (
+      <View style={styles.container}>
+        <TouchableHighlight
+          style={styles.btn}
+          onPress={this.handlePress}
+          underlayColor="#d4271b"
+        >
+          <Text style={styles.btnText}>Touchable Highlight</Text>
+        </TouchableHighlight>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    marginLeft: 10,
+    marginRight: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  btn: {
+    backgroundColor: '#E53224',
+    padding: 10,
+    paddingLeft: 50,
+    paddingRight: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5
+  },
+  btnText: {
+    color: '#fff'
+  }
+});
+```
+
+#### 2.9.2 TouchableOpacity
+
+```jsx
+import React from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
+import AddEntry from './components/AddEntry';
+
+export default class App extends React.Component {
+  handlePress = () => {
+    alert('hello!');
+  };
+  render() {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.btn} onPress={this.handlePress}>
+          <Text style={styles.btnText}>Touchable Highlight</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+}
+...
+```
+
+#### 2.9.3 TouchableWithoutFeedback
+
+```jsx
+import React from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableWithoutFeedback
+} from 'react-native';
+import AddEntry from './components/AddEntry';
+
+export default class App extends React.Component {
+  handlePress = () => {
+    alert('hello!');
+  };
+  render() {
+    return (
+      <View style={styles.container}>
+        <TouchableWithoutFeedback onPress={this.handlePress}>
+          <View style={styles.btn}>
+            <Text style={styles.btnText}>Touchable Highlight</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    );
+  }
+}
+...
+```
+
+#### 2.9.4 TouchableNativeFeedback
+
+```jsx
+import React from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableNativeFeedback,
+} from 'react-native';
+import AddEntry from './components/AddEntry';
+
+export default class App extends React.Component {
+  handlePress = () => {
+    alert('hello!');
+  };
+  render() {
+    return (
+      <View style={styles.container}>
+        <TouchableNativeFeedback
+          onPress={this.handlePress}
+          background={TouchableNativeFeedback.SelectableBackground()}
+        >
+          <View style={styles.btn}>
+            <Text style={styles.btnText}>Touchable Highlight</Text>
+          </View>
+        </TouchableNativeFeedback>
+      </View>
+    );
+  }
+}
+...
+```
+
+### 2.10 Update Components
+Next we add in the Submit button and submit method.
+
+#### 2.10.1 AddEntry SubmitBtn
+Located in '/components/AddEntry.js'.
+
+[![rn11](../assets/images/rn11-small.jpg)](../assets/images/rn11.jpg)<br>
+<span class="center bold">Submit Button</span>
+
+```jsx
+// AddEntry.js
+import PropTypes from 'prop-types';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { getMetricMetaInfo, timeToString } from '../utils/helpers';
+
+const SubmitBtn = ({ onPress }) => {
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <Text>SUBMIT</Text>
+    </TouchableOpacity>
+  );
+};
+SubmitBtn.propTypes = {
+  onPress: PropTypes.func.isRequired
+};
+
+export default class AddEntry extends Component {
+  ...
+  submit = () => {
+    const key = timeToString();
+    const entry = this.state;
+
+    // Update Redux
+
+    this.setState({
+      run: 0,
+      bike: 0,
+      swim: 0,
+      sleep: 0,
+      eat: 0
+    });
+
+    // Navigate to home
+
+    // Save to DB
+
+    // Clear local notification
+  };
+  render() {
+    ...
+    return (
+      <View>
+      ...
+      <SubmitBtn onPress={this.submit} />
+      </View>
+    );
+  }
+}
+```
+
+#### 2.10.2 Quiz Question
+What is true about handling touches in React Native apps? Select all that apply:
+
+- [ ] Unlike Buttons, Touchables already include some basic default styling
+- [ ] Buttons look the same on iOS as they do on Android
+- [x] Both Buttons and Touchables have access to an `onPress` prop
+- [x] Touchables can be nested within Views, and Views can be nested within Touchables
+
+#### 2.10.3 Slider Component
+Now we'll work on the Slider component located in '/components/Slider.js'
+
+[![rn12](../assets/images/rn12-small.jpg)](../assets/images/rn12.jpg)<br>
+<span class="center bold">Slider components</span>
+
+```jsx
+// UdaciSlider.js
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { View, Text, Slider } from 'react-native';
+
+export default function UdaciSlider({ max, unit, step, value, onChange }) {
+  return (
+    <View>
+      <Slider
+        step={step}
+        value={value}
+        maximumValue={max}
+        minimumValue={0}
+        onValueChange={onChange}
+      />
+      <View>
+        <Text>{value}</Text>
+        <Text>{unit}</Text>
+      </View>
+    </View>
+  );
+}
+
+UdaciSlider.propTypes = {
+  max: PropTypes.number.isRequired,
+  unit: PropTypes.string.isRequired,
+  step: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+  onChange: PropTypes.func.isRequired
+};
+```
+
+#### 2.10.4 Stepper Component
+Now we'll work on the Stepper component located in '/components/Stepper.js'
+
+[![rn13](../assets/images/rn13-small.jpg)](../assets/images/rn13.jpg)<br>
+<span class="center bold">Stepper components</span>
+
+```jsx
+// UdaciStepper.js
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Text, View, TouchableOpacity } from 'react-native';
+import { FontAwesome, Entypo } from '@expo/vector-icons';
+
+export default function UdaciStepper({
+  max,
+  unit,
+  step,
+  value,
+  onIncrement,
+  onDecrement
+}) {
+  return (
+    <View>
+      <View>
+        <TouchableOpacity onPress={onDecrement}>
+          <FontAwesome name="minus" size={30} color={'black'} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onIncrement}>
+          <FontAwesome name="plus" size={30} color={'black'} />
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Text>{value}</Text>
+        <Text>{unit}</Text>
+      </View>
+    </View>
+  );
+}
+
+UdaciStepper.propTypes = {
+  max: PropTypes.number.isRequired,
+  unit: PropTypes.string.isRequired,
+  step: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+  onIncrement: PropTypes.func.isRequired,
+  onDecrement: PropTypes.func.isRequired
+};
+```
+
+#### 2.10.5 Update Icon in AddEntry
+This will show a message when items are already logged for that day.
+
+[![rn14](../assets/images/rn14-small.jpg)](../assets/images/rn14.jpg)<br>
+<span class="center bold">AddEntry Icon</span>
+
+We start with '/components/TextButton.js'.
+
+```jsx
+// TextButton.js
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Text, TouchableOpacity } from 'react-native';
+
+export default function TextButton({ children, onPress }) {
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <Text>{children}</Text>
+    </TouchableOpacity>
+  );
+}
+
+TextButton.propTypes = {
+  children: PropTypes.string.isRequired,
+  onPress: PropTypes.func.isRequired
+};
+```
+
+Next we incorporate this in AddEntry which is located in 'components/AddEntry.js'.
+
+```jsx
+// AddEntry.js
+import { Ionicons } from '@expo/vector-icons';
+import TextButton from './TextButton';
+
+export default class AddEntry extends Component {
+  static propTypes = {
+    alreadyLogged: PropTypes.bool
+  };
+  ...
+  reset = () => {
+    const key = timeToString();
+
+    // Update Redux
+
+    // Route to Home
+
+    // Update DB
+  };
+  render() {
+    const metaInfo = getMetricMetaInfo();
+
+    if (this.props.alreadyLogged) {
+      return (
+        <View>
+          <Ionicons name="ios-happy" size={100} />
+          <Text>You already logged your information for today.</Text>
+          <TextButton onPress={this.reset}>Reset</TextButton>
+        </View>
+      );
+    }
+
+    return (
+      ...
+    )
+  }
+}
+```
+
+<!-- 
+### 2.11 Lists -->
