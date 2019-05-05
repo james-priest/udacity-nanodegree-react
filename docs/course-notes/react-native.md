@@ -1119,7 +1119,6 @@ React Native provides a variety of built-in components for developing mobile app
 
 While some support basic functionality in an application (e.g., text, images, lists), others offer more specialized functionality (e.g., pulling to refresh, displaying a loading indicator).
 
-<!--
 ### 2.12 AsyncStorage
 #### 2.12.1 Local Storage
 In order to persist data in a web application, we'd normally store the data in some sort of database. This prevents app data from being lost between page refreshes.
@@ -1173,4 +1172,82 @@ The React Native documentation on [AsyncStorage](https://facebook.github.io/reac
 
 > *AsyncStorage is a simple, unencrypted, asynchronous, persistent, key-value storage system that is global to the app. It should be used instead of LocalStorage.*
 
-In the next video, we'll see just how we can implement it into our app! -->
+In the next video, we'll see just how we can implement it into our app!
+
+#### 2.12.4 Add API calls
+The first thing to do is create the api file.  This is located in '/utils/api.js'.
+
+```js
+// api.js
+import { AsyncStorage } from 'react-native';
+import { CALENDAR_STORAGE_KEY } from './_calendar';
+
+export function submitEntry({ entry, key }) {
+  return AsyncStorage.mergeItem(
+    CALENDAR_STORAGE_KEY,
+    JSON.stringify({
+      [key]: entry
+    })
+  );
+}
+
+export function removeEntry(key) {
+  return AsyncStorage.getItem(CALENDAR_STORAGE_KEY).then(results => {
+    const data = JSON.parse(results);
+    data[key] = undefined;
+    delete data[key];
+    AsyncStorage.setItem(CALENDAR_STORAGE_KEY, JSON.stringify(data));
+  });
+}
+```
+
+Next we update the `submit` and `reset` methods in AddEntry.
+
+```jsx
+// AddEntry.js
+import { submitEntry, removeEntry } from '../utils/api';
+
+export default class AddEntry extends Component {
+  submit = () => {
+    const key = timeToString();
+    const entry = this.state;
+
+    // Update Redux
+
+    this.setState({
+      run: 0,
+      bike: 0,
+      swim: 0,
+      sleep: 0,
+      eat: 0
+    });
+
+    // Navigate to home
+
+    submitEntry({ key, entry });
+
+    // Clear local notification
+  };
+  reset = () => {
+    const key = timeToString();
+
+    // Update Redux
+
+    // Route to Home
+
+    removeEntry(key);
+  };
+  ...
+}
+```
+
+#### 2.12.5 Summary
+React Native's version of `localStorage` is `AsyncStorage`. Conveniently, since `AsyncStorage` is just an abstraction over iOS and Android equivalents, there's no need to consider the different environments.
+
+We took a close look at these 3 methods available on `AsyncStorage`:
+
+- `setItem`
+- `mergeItem`
+- `getItem`
+
+Feel free to visit the [AsyncStorage documentation](https://facebook.github.io/react-native/docs/asyncstorage.html#methods) for a complete list.
