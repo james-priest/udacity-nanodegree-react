@@ -1055,6 +1055,10 @@ export default class AddEntry extends Component {
 
 ### 2.11 Lists, Forms, Images
 #### 2.11.1 Lists
+
+[![rn15](../assets/images/rn15-small.jpg)](../assets/images/rn15.jpg)<br>
+<span class="center bold">Lists</span>
+
 React Native comes with a few ways to render lists. You'll probably run into `ScrollView` and `FlatList` components most commonly.
 
 - ScrollView - renders all child components at once
@@ -1062,6 +1066,10 @@ React Native comes with a few ways to render lists. You'll probably run into `Sc
 - SectionList - renders on-screen items, but with headers
 
 #### 2.11.2 Forms
+
+[![rn16](../assets/images/rn16-small.jpg)](../assets/images/rn16.jpg)<br>
+<span class="center bold">Forms</span>
+
 Forms in React Native are just like the forms in React that you already know: the state of input form elements is controlled by the React component that renders that form. That is, form values are held in local component state, making state the "source of truth" for that form.
 
 React Native provides a few basic components to use in your application's forms. We'll take a look at each of these more closely in the following video:
@@ -1093,7 +1101,7 @@ Image components can be local or remote.
 ```
 
 #### 2.11.5 Other Components
-We've just seen some of the most important components built into React Native. These components will get you started with the essential functionalities in the apps that you build. 
+We've just seen some of the most important components built into React Native. These components will get you started with the essential functionalities in the apps that you build.
 
 - [ActivityIndicator](https://facebook.github.io/react-native/docs/activityindicator.html) - circular loading indicator
 - [Picker](https://facebook.github.io/react-native/docs/picker.html) - native picker component on iOS and Android.
@@ -1110,3 +1118,59 @@ Note that certain components are also platform-specific! Though you want to buil
 React Native provides a variety of built-in components for developing mobile applications.
 
 While some support basic functionality in an application (e.g., text, images, lists), others offer more specialized functionality (e.g., pulling to refresh, displaying a loading indicator).
+
+<!--
+### 2.12 AsyncStorage
+#### 2.12.1 Local Storage
+In order to persist data in a web application, we'd normally store the data in some sort of database. This prevents app data from being lost between page refreshes.
+
+Using `localStorage`, we can achieve a similar effect for the user by storing this data directly in their browser. Best of all -- data stored in localStorage has no expiration date. This means that even if a session ends data will not be lost!
+
+Check out [Window.localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) on MDN for an overview.
+
+#### 2.12.2 Example: Saving to localStorage
+Let's say we're building a simple React and Redux application that lets users create and manage a list of tasks. Basic functionality allows users to add items to their task list, remove items, and mark items as completed.
+
+Assuming much of this data is kept in the application's store, how would we go about persisting this data?
+
+One way would be to save to `localStorage` each time that state is updated. That is, the store's state will be saved with each dispatch:
+
+```jsx
+// store.js
+
+import { createStore } from 'redux';
+import Reducer from '../reducers/reducer';
+
+const configureStore = () => {
+  const store = createStore(Reducer);
+
+  store.subscribe(() => {
+    localStorage.state = JSON.stringify(store.getState());
+  });
+
+  return store;
+};
+
+export default configureStore;
+```
+
+After the store is created, we call `store.subscribe()` and pass in a callback function. The callback effectively saves a JSON string of the store's state into `localStorage`.
+
+By subscribing to the store right after it is created, we can save data related to all of the user's tasks right into the browser.
+
+#### 2.12.3 AsyncStorage
+React Native's version of `LocalStorage` is called `AsyncStorage`. It's similar to LocalStorage, except it's asynchronous.
+
+What's nice about AsyncStorage is it's a JavaScript abstraction over the iOS and Android equivalents. So when using it, you don't need to worry about the different environments.
+
+Similar to LocalStorage, AsyncStorage has three main methods:
+
+- set item,
+- remove item
+- clear all
+
+The React Native documentation on [AsyncStorage](https://facebook.github.io/react-native/docs/asyncstorage.html) mentions:
+
+> *AsyncStorage is a simple, unencrypted, asynchronous, persistent, key-value storage system that is global to the app. It should be used instead of LocalStorage.*
+
+In the next video, we'll see just how we can implement it into our app! -->
