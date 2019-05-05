@@ -1053,5 +1053,60 @@ export default class AddEntry extends Component {
 }
 ```
 
-<!-- 
-### 2.11 Lists -->
+### 2.11 Lists, Forms, Images
+#### 2.11.1 Lists
+React Native comes with a few ways to render lists. You'll probably run into `ScrollView` and `FlatList` components most commonly.
+
+- ScrollView - renders all child components at once
+- FlatList - renders only items visible on screen
+- SectionList - renders on-screen items, but with headers
+
+#### 2.11.2 Forms
+Forms in React Native are just like the forms in React that you already know: the state of input form elements is controlled by the React component that renders that form. That is, form values are held in local component state, making state the "source of truth" for that form.
+
+React Native provides a few basic components to use in your application's forms. We'll take a look at each of these more closely in the following video:
+
+- `TextInput`
+- `KeyboardAvoidingView`
+- `Slider`
+- `Switch`
+
+#### 2.11.3 Quiz Question
+What is true about `KeyboardAvoidingView`?
+
+- [x] Without `KeyboardAvoidingView`, the keyboard will "pop-up", hiding text inputs
+- [x] `KeyboardAvoidingView` can wrap around `TextInput` components
+- [ ] `KeyboardAvoidingView` should always be contained within a `View` component
+- [x] Padding can be adjusted via a prop on `KeyboardAvoidingView`
+
+#### 2.11.4 Images
+Image components can be local or remote.
+
+```bash
+// Local
+<Image source={require('./image.png')} />
+```
+
+```bash
+// Remote{% raw %}
+<Image source={{uri: 'https://site.com/image.png'}} />{% endraw %}
+```
+
+#### 2.11.5 Other Components
+We've just seen some of the most important components built into React Native. These components will get you started with the essential functionalities in the apps that you build. 
+
+- [ActivityIndicator](https://facebook.github.io/react-native/docs/activityindicator.html) - circular loading indicator
+- [Picker](https://facebook.github.io/react-native/docs/picker.html) - native picker component on iOS and Android.
+- [WebView](https://facebook.github.io/react-native/docs/webview.html) - renders web content in a native view
+- [Modal](https://facebook.github.io/react-native/docs/modal.html) - presents content above an enclosing view
+
+Review the React Native documentation for a complete list.
+
+- [Components and APIs Guide](https://facebook.github.io/react-native/docs/components-and-apis.html#components-and-apis).
+
+Note that certain components are also platform-specific! Though you want to build cross-platform components with composition, reusing as much code as possible, it may make sense for certain elements to be different depending on your audience (i.e., iOS vs. Android).
+
+#### 2.11.6 Summary
+React Native provides a variety of built-in components for developing mobile applications.
+
+While some support basic functionality in an application (e.g., text, images, lists), others offer more specialized functionality (e.g., pulling to refresh, displaying a loading indicator).
