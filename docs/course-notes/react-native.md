@@ -1070,6 +1070,9 @@ React Native comes with a few ways to render lists. You'll probably run into `Sc
 [![rn16](../assets/images/rn16-small.jpg)](../assets/images/rn16.jpg)<br>
 <span class="center bold">Forms</span>
 
+[![rn16](../assets/images/rn16-small.jpg)](../assets/images/rn16.jpg)<br>
+<span class="center bold">Forms</span>
+
 Forms in React Native are just like the forms in React that you already know: the state of input form elements is controlled by the React component that renders that form. That is, form values are held in local component state, making state the "source of truth" for that form.
 
 React Native provides a few basic components to use in your application's forms. We'll take a look at each of these more closely in the following video:
@@ -1251,3 +1254,182 @@ We took a close look at these 3 methods available on `AsyncStorage`:
 - `getItem`
 
 Feel free to visit the [AsyncStorage documentation](https://facebook.github.io/react-native/docs/asyncstorage.html#methods) for a complete list.
+
+### 2.13 Redux & React Native
+#### 2.13.1 Adding Redux
+Recall that Redux is a predictable state container for JavaScript applications. It is agnostic to any particular view library or framework, so not only can we use it with React, but we can integrate it into React Native applications, as well!
+
+With its lean size and minimal dependencies, Redux is a great tool for React Native projects. And best of all: since React Native is still fundamentally just JavaScript, Redux can be added into projects the same way that we're used to. Let's check it out -- first, with building out actions!
+
+#### 2.13.2 Actions
+This is located at '/actions/index.js'.
+
+```js
+// index.js
+export const RECEIVE_ENTRIES = 'RECEIVE_ENTRIES';
+export const ADD_ENTRY = 'ADD_ENTRY';
+
+export function receiveEntries(entries) {
+  return {
+    type: RECEIVE_ENTRIES,
+    entries
+  };
+}
+
+export function addEntry(entry) {
+  return {
+    type: ADD_ENTRY,
+    entry
+  };
+}
+```
+
+#### 2.13.3 Reducers
+This is located at '/reducers/index.js'.
+
+```js
+// index.js
+import { RECEIVE_ENTRIES, ADD_ENTRY } from '../actions/index';
+
+function entries(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_ENTRIES:
+      return {
+        ...state,
+        ...action.entries
+      };
+    case ADD_ENTRY:
+      return {
+        ...state,
+        ...action.entry
+      };
+    default:
+      return state;
+  }
+}
+
+export default entries;
+```
+
+#### 2.13.4 Create Store
+First we have to add redux & react-redux.
+
+```bash
+npm install redux react-redux --save
+```
+
+Then we update App with Redux Provider component and createStore method. This is located in '/App.js'.
+
+```jsx
+// App.js
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import reducer from './reducers';
+
+export default class App extends React.Component {
+  ...
+  render() {
+    return (
+      <Provider store={createStore(reducer)}>
+        <View style={styles.container}>
+          <AddEntry />
+        </View>
+      </Provider>
+    );
+  }
+}
+...
+```
+
+#### 2.13.5 Connect AddEntry to Redux
+Next we add a helper function and connect AddEntry to the store.
+
+This is located in '/utils/helpers.js'.
+
+```js
+// helpers.js
+...
+export function getDailyReminderValue() {
+  return {
+    today: "👋 Don't forget to log your data today!"
+  };
+}
+```
+
+The next file is located in '/components/AddEntry.js'.
+
+```jsx
+// AddEntry.js
+import {
+  getMetricMetaInfo,
+  timeToString,
+  getDailyReminderValue
+} from '../utils/helpers';
+import { connect } from 'react-redux';
+import { addEntry } from '../actions';
+
+class AddEntry extends Component {
+  static propTypes = {
+    alreadyLogged: PropTypes.bool,
+    addEntry: PropTypes.func.isRequired
+  };
+  ...
+  submit = () => {
+    const key = timeToString();
+    const entry = this.state;
+
+    // Update Redux
+    this.props.addEntry({
+      [key]: entry
+    });
+
+    ...
+  };
+  reset = () => {
+    const key = timeToString();
+
+    // Update Redux
+    this.props.addEntry({
+      [key]: getDailyReminderValue()
+    });
+
+    ...
+  };
+  ...
+}
+
+function mapStateToProps(state) {
+  const key = timeToString();
+
+  return {
+    alreadyLogged: state[key] && typeof state[key].today === 'undefined'
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  { addEntry }
+)(AddEntry);
+```
+
+#### 2.13.6 Resolve Error
+
+[![rn17](../assets/images/rn17-small.jpg)](../assets/images/rn17.jpg)<br>
+<span class="center bold">Compatibility Error</span>
+
+This produced an error in expo. Due to package incompatibilities. I needed to do the following:
+
+```bash
+npm i react@16.5.0 react-redux@6.0.1
+npm i schedule@0.4.0 --save-dev
+```
+
+Here are the write-ups on these:
+
+- [Expo Forums](https://forums.expo.io/t/react-default-memo-is-not-a-function/21623/2) - This shows the proper package.json packages.
+- [StackOverflow](https://stackoverflow.com/questions/55599755/error-when-using-connect-function-of-the-react-redux-library) - This shows the steps.
+
+Made sure to clear cache and reload with Shift-R in Expo console.
+
+#### 2.13.7 Summary
+Remember that React Native is fundamentally still just JavaScript. As such, adding Redux to help manage application state will involve the very same principles and processes as adding Redux to a web application.
