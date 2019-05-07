@@ -1433,3 +1433,538 @@ Made sure to clear cache and reload with Shift-R in Expo console.
 
 #### 2.13.7 Summary
 Remember that React Native is fundamentally still just JavaScript. As such, adding Redux to help manage application state will involve the very same principles and processes as adding Redux to a web application.
+
+## 3. Styling & Layout
+### 3.1 CSS in JS
+Let's start with what typical styling of HTML looks like with CSS.
+
+```html
+<!-- index.css -->
+.avatar {
+  border-radius: 5px;
+  margin: 10px;
+  width: 48px;
+  height: 48px;
+}
+
+<!-- // index.html -->
+<div>
+  <img class='avatar' src='https://tylermcginnis.com/glasses-300.png' />
+</div>
+```
+
+React Native works a little differently. First, all of the core components can accept a prop named `style`.
+
+We can leverage this prop by styling with an inline JavaScript object.
+
+```jsx
+function Avatar ({ src }) {
+  return (
+    <View>
+      <Image{% raw %}
+        style={{borderRadius: 5, margin: 10, width: 48, height: 48}}
+        source={{uri: 'https://tylermcginnis.com/glasses-300.png'}}{% endraw %}
+      />
+    </View>
+  );
+}
+```
+
+In the above stateless functional component, style is set with an inline JavaScript object. Keep in mind that CSS in JavaScript is written in camelCase.
+
+A better way to handle this is by using React Native's `StyleSheet` API.
+
+```jsx
+// Using StyleSheet API
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+
+export default class TextExample extends React.Component {
+  render() {
+    return (
+      <View>
+        <Text style={styles.greenLarge}>This is large green text!</Text>
+        <Text style={styles.red}>This is smaller red text!</Text>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  greenLarge: {
+    color: 'green',
+    fontWeight: 'bold',
+    fontSize: 40
+  },
+  red: {
+    color: 'red',
+    padding: 30
+  },
+});
+```
+
+Here, an object containing styles is passed into `StyleSheet`'s `create` method. This is similar to using a JavaScript object but `StyleSheet` gives few performance and code quality benefits.
+
+Here's the documentation's take.
+
+> Code quality
+>
+> - By moving styles away from the render function, you're making the code easier to understand.
+> - Naming the styles is a good way to add meaning to the low-level components in the render function.
+>
+> Performance
+>
+> - Making a stylesheet from a style object makes it possible to refer to it by ID instead of creating a new style object every time.
+> - It also allows to send the style only once through the bridge. All subsequent uses are going to refer to an id (not implemented yet).
+
+Another benefit is that `StyleSheet` validates the content within the style object as well. This means that should there be any errors in any properties or values in your style objects, the console will throw an error during compilation instead of at runtime.
+
+#### 3.1.1 Additional Styling
+If you wanted to implement more than one `style` to a component, the style prop can accept styles as an array:
+
+```jsx
+{
+<Text style={[styles.red, styles.greenLarge]}>red, then greenLarge</Text>
+}
+```
+
+The above `<Text>` component will render large green text, as the last style in the array will take precedence. This is a great way to inherit styles!
+
+#### 3.1.2 Styling Libraries for CSS in JS
+Styling in React is going through a renaissance period right now. There are many different styling libraries popping up and each has different tradeoffs. Two of the most popular are [Glamorous](https://github.com/robinpowered/glamorous-native) and [Styled Components](https://github.com/styled-components/styled-components).
+
+The whole idea behind both of these libraries is that styling is a primary concern of the component, and therefore styling should be coupled with the component itself.
+
+#### 3.1.3 Quiz Question
+What is true about styling in React Native?
+
+- [x] All of the core components accept a `style` property
+- [ ] Styling React Native apps requires a special syntax to define styles that is unlike anything in traditional JavaScript
+- [ ] Style names and values always match how they are used on the web (e.g., we need to use `background-color` in React Native)
+- [x] The `StyleSheet` API allows us to define multiple styles in a single place
+- [x] With React Native, applications are styled using JavaScript
+
+#### 3.1.4 Summary
+CSS in JS is a distinct approach to styling. The main idea is that styling is handled by JavaScript objects rather than traditional CSS.
+
+Styles can be written inline or accessed via object variables, but React Native offers a `StyleSheet` API that provides a performant and compositional way to style components.
+
+Now that we've seen React Native handle styling, how do we manage the layout of a mobile application? We'll take a look at CSS's flexbox in the next section to do just that!
+
+Further Learning
+
+- [How can I use CSS-in-JS securely?](https://reactarmory.com/answers/how-can-i-use-css-in-js-securely)
+
+<!-- ### 3.2 Flexbox Guide
+
+[![rn18](../assets/images/rn18-small.jpg)](../assets/images/rn18.jpg)<br>
+<span class="center bold">Flexbox model vs Block Model</span>
+
+The goal of flexbox is to create a more efficient way to "lay out, align, and distribute space among items in a container, even when their size is unknown and/or dynamic". In a nutshell, flexbox is all about creating dynamic layouts.
+
+The main idea of flexbox is that you give the parent element the ability to control the layout of all of their (immediate!) child elements rather than having each child element control its own layout. When you do this, the parent becomes a **flex container** while the child elements become **flex items**.
+
+Here are the sections that will be covered.
+
+- Flexbox Axis
+- Flex Direction
+- Justify Content
+  - Flex-Start
+  - Center
+  - Flex-End
+  - Space-Between
+  - Space-Around
+- Align Items
+  - Flex-Start
+  - Center
+  - Flex-End
+- Stretch
+- Centering Content
+- The Flex Property
+- Aligning Individual Items
+
+#### 3.2.1 Flexbox Axis
+The most important concept to understand is that flexbox is all about two  axes. You'll have a **Main Axis** and a **Cross Axis**.
+
+[![rn19](../assets/images/rn19-small.jpg)](../assets/images/rn19.jpg)<br>
+<span class="center bold">Main Axis and Cross Axis</span>
+
+In React Native, by default, the **Main Axis** is vertical while the **Cross Axis** is horizontal. Everything from here on out is built upon this concept of a Main Axis and Cross Axis.
+
+When I say "…which will align all the child elements along the Main Axis" that means that, by default, all the children of the parent element will be laid out vertically from top to bottom. If I say "…which will align the child elements along the Cross Axis" that means that, by default, all the children elements will be laid out horizontally from left to right.
+
+The rest of flexbox is just deciding how you want to align, position, stretch, spread, shrink, center, wrap child elements along the Main and Cross axis.
+
+#### 3.2.2 Flex Direction
+You'll notice that I was very deliberate in mentioning the "default behavior" when it comes to the **Main Axis** and **Cross Axis**. That's because you can actually change which Axis is Main and which is Cross. That brings us to our first flexbox property, `flex-direction` (or `flexDirection` in React Native).
+
+`flex-direction` has two values:
+
+- `row`
+- `column`
+
+By default, every element in React Native has the `flexDirection: column` declaration. When an element has a `flex-direction` of `column`, its Main Axis is vertical and its Cross Axis is horizontal, just as we saw in the image above. However, if you give an element a `flexDirection: row` declaration, the axes switch. The Main axis becomes horizontal, while the Cross axis becomes vertical. Again, this is crucial because your entire layout is dependent on these two axes.
+
+[![rn20](../assets/images/rn20-small.jpg)](../assets/images/rn20.jpg)<br>
+<span class="center bold">`flex-direction` changes which axis is the Main Axis</span>
+
+#### 3.2.3 Justify Content
+Now is when things start getting fun. Let's dive into the different properties and values we can use to align child elements along these axes. Let's focus entirely on the Main Axis, first.
+
+In order to specify how children align themselves along the Main Axis, you'll use the `justifyContent` property. `justifyContent` has five different values you can use in order to change how the children align themselves along the Main Axis.
+
+- `flex-start`
+- `center`
+- `flex-end`
+- `space-around`
+- `space-between`
+
+If you want to follow along (which I highly recommend you do), create a new React Native project called "FlexboxExamples" and swap out your `App.js` code with the following:
+
+```jsx
+import React, { Component } from 'react'
+import { StyleSheet, Text, View, AppRegistry } from 'react-native'
+
+class FlexboxExamples extends Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        <View style={styles.box}/>
+        <View style={styles.box}/>
+        <View style={styles.box}/>
+      </View>
+    )
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  box: {
+    height: 50,
+    width: 50,
+    backgroundColor: '#e76e63',
+    margin: 10,
+  }
+})
+
+export default FlexboxExamples;
+```
+
+Note that with the code above, the only thing we'll be changing is the styling in the `container` object in the `styles` StyleSheet object. Ignore `flex: 1` for now.
+
+##### Justify Content: Flex-Start
+
+[![rn21](../assets/images/rn21-small.jpg)](../assets/images/rn21.jpg)<br>
+<span class="center bold">`justifyContent: flex-start`</span>
+
+`justifyContent: 'flex-start'` will align every child element towards the start of the the Main Axis.
+
+```js
+container: {
+  flex: 1,
+  justifyContent: 'flex-start',
+}
+```
+
+If you were still struggling with the importance of Main Axis and Cross Axis hopefully it just clicked. Because `flexDirection` defaults to `column`, and we're using `justifyContent` which targets the Main Axis, our child elements are going to align themselves towards the start of the Main Axis which is the top left and work their way down.
+
+##### Justify Content: Center
+
+[![rn22](../assets/images/rn22-small.jpg)](../assets/images/rn22.jpg)<br>
+<span class="center bold">`justifyContent: center`</span>
+
+`justifyContent: 'center'` will align every child element towards the center of the the Main Axis. ​
+
+```js
+container: {
+  flex: 1,
+  justifyContent: 'center',
+}
+```
+
+##### Justify Content: Flex-End
+
+[![rn23](../assets/images/rn23-small.jpg)](../assets/images/rn23.jpg)<br>
+<span class="center bold">`justifyContent: flex-end`</span>
+
+`justifyContent: 'flex-end'` will align every child element towards the end of the the Main Axis. ​
+
+```js
+container: {
+  flex: 1,
+  justifyContent: 'flex-end',
+}
+```
+
+##### Justify Content: Space-Between
+
+[![rn24](../assets/images/rn24-small.jpg)](../assets/images/rn24.jpg)<br>
+<span class="center bold">`justifyContent: space-between`</span>
+
+`justifyContent: 'space-between'` will place flex items at both ends of Main Axis with space between the items.
+
+```js
+container: {
+  flex: 1,
+  justifyContent: 'space-between',
+}
+```
+
+##### Justify Content: Space-Around
+
+[![rn25](../assets/images/rn25-small.jpg)](../assets/images/rn25.jpg)<br>
+<span class="center bold">`justifyContent: space-around`</span>
+
+`justifyContent: 'space-around'` will place flex items spaced equidistant along the Main Axis.
+
+```js
+container: {
+  flex: 1,
+  justifyContent: 'space-around',
+}
+```
+
+Now think about what would happen if we changed the `flexDirection` of our container to `row` instead of the default value `column`.
+
+Instead of our Main Axis being vertical, it's going to be horizontal. That means any child elements are going to align themselves horizontally rather than vertically.
+
+```js
+container: {
+  flex: 1,
+  flexDirection: 'row',
+  justifyContent: 'space-around',
+}
+```
+
+[![rn26](../assets/images/rn26-small.jpg)](../assets/images/rn26.jpg)<br>
+<span class="center bold">`flex-direction: row`</span>
+
+Notice that all we changed was the value for `flexDirection`, and it drastically altered our layout. Now you're starting to see the real power of flexbox.
+
+#### 3.2.4 Align Items (The Cross Axis)
+Now let's turn our focus entirely to the Cross Axis. In order to specify how children align themselves along the Cross Axis, you'd use the `align-items` property.
+
+You would think that `alignItems` has the exact same values as `justifyContent`. It's a reasonable guess, but you'd be wrong. This property has four different values you can use in order to change how the children align themselves among the Cross Axis.
+
+- `flex-start`
+- `center`
+- `flex-end`
+- `stretch`
+
+##### Align Items - Flex-Start
+
+[![rn27](../assets/images/rn27-small.jpg)](../assets/images/rn27.jpg)<br>
+<span class="center bold">`alignItems: flex-start`</span>
+
+`alignItems: 'flex-start'` will align every child element towards the start of the the Cross Axis. ​
+
+```js
+container: {
+  flex: 1,
+  alignItems: 'flex-start',
+}
+```
+
+##### Align Items - Center
+
+[![rn28](../assets/images/rn28-small.jpg)](../assets/images/rn28.jpg)<br>
+<span class="center bold">`alignItems: center`</span>
+
+`alignItems: 'center'` will align every child element towards the center of the the Cross Axis. ​
+
+```js
+container: {
+  flex: 1,
+  alignItems: 'center',
+}
+```
+
+##### Align Items - Flex-End
+
+[![rn29](../assets/images/rn29-small.jpg)](../assets/images/rn29.jpg)<br>
+<span class="center bold">`alignItems: flex-end`</span>
+
+`alignItems: 'flex-end'` will align every child element towards the end of the the Cross Axis. ​
+
+```js
+container: {
+  flex: 1,
+  alignItems: 'flex-end',
+}
+```
+
+##### Align Items - Stretch
+
+[![rn30](../assets/images/rn30-small.jpg)](../assets/images/rn30.jpg)<br>
+<span class="center bold">`alignItems: stretch`</span>
+
+`alignItems: 'stretch'` will stretch every child element along the Cross Axis as long as the child element does not have a specified height (`flexDirection: row`) or width (`flexDirection: column`).
+
+```js
+container: {
+  flex: 1,
+  alignItems: 'stretch',
+}
+box: {
+  height: 50,
+  backgroundColor: '#e76e63',
+  margin: 10,
+}
+```
+
+Just when you thought you were getting the hang of it, flexbox throws a wrench in your brain. Whenever you set `alignItems` to `stretch`, each child element is going to stretch the full width or height of the parent container **as long as that child element doesn't have a width or a height**.
+
+Notice in the box styling, I removed the `width: 50` because `flexDirection` is set to `column` by default meaning that flex items will be stretching horizontally (since we're using `alignItems`).
+
+##### flexDirection: row & alignItems: stretch
+
+[![rn31](../assets/images/rn31-small.jpg)](../assets/images/rn31.jpg)<br>
+<span class="center bold">`flexDirection: row; alignItems: stretch`</span>
+
+```js
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'stretch',
+    flexDirection: 'row',
+  },
+  box: {
+    width: 50,
+    backgroundColor: '#e76e63',
+    margin: 10,
+  }
+})
+```
+
+Notice I've changed the `flexDirection` to `row`, and I've added back in `width: 50` and removed the `height: 50`.
+
+Let's break this down. First, the Main Axis is now running horizontally since we added `flexDirection: row`. This means that `alignItems` will be aligning the items along the vertical axis. Because we've removed the height of the child elements and added `alignItems: stretch`, those elements are going to stretch along the vertical axis for the entire length of their parent component, which in this case is the whole view.
+
+Up until this point, we've only had one flex container or parent element. Don't get it twisted though; if you create more nested flex containers, the exact same logic above is going to be true for those child elements (flex items) but instead of being relative to the whole view (as in our example), they'll position themselves according to the their parent component. Your entire UI will be built upon nesting flex containers.
+
+At this point, you're essentially a red belt in React Native styling TaeKwonDo. There are a few other flexbox features we need to look at, though.
+
+You'll very quickly come to a realization that there are no percent-based styling in React Native. Though I agree it makes things a bit more difficult, everything you can do with percent-based styling you can do with flexbox. Remember the `flex: 1` declaration we used in all the examples above? That's the property that's going to allow us to do it. Interestingly enough there's no exact comparison for this feature in flexbox on the web, but it is similar to `flex-grow` if you know what that does.
+
+As we've seen over and over, flexbox is concerned with giving control to the parent element to handle the layout of its children elements. The `flex` property is a bit different as it allows child elements to specify their height or width in comparison to their sibling elements. The best way to explain flex is to look at some examples.
+
+##### Centering Content
+
+[![rn32](../assets/images/rn32-small.jpg)](../assets/images/rn32.jpg)<br>
+<span class="center bold">centering along both axes</span>
+
+How would you implement that? Notice that our Main Axis is horizontal; this gives us a clue that we're using `flexDirection: row`. The boxes are in the center of both axes which means we're using `justifyContent: 'center'` and `alignItems: 'center'`.
+
+```js
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  box: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#e76e63',
+    margin: 10,
+  }
+})
+```
+
+##### The Flex Property
+
+[![rn33](../assets/images/rn33-small.jpg)](../assets/images/rn33.jpg)<br>
+<span class="center bold">using `flex` property</span>
+
+In the above image, it's exactly the same layout -- but now the middle section is twice as wide as its siblings! This is what the flex property allows us to do. Here’s the code:
+
+```jsx
+class FlexboxExamples extends Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        <View style={[styles.box, {flex: 1}]}/>
+        <View style={[styles.box, {flex: 2}]}/>
+        <View style={[styles.box, {flex: 1}]}/>
+      </View>
+    )
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  box: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#e76e63',
+    margin: 10,
+  }
+})
+
+export default FlexboxExamples;
+```
+
+Notice I didn't add any styles; I just made the middle sibling have `flex: 2` while the other siblings have `flex: 1`. This basically says "make sure that the middle sibling is twice as large along the Main Axis as the first and third children".
+
+This is the reason why `flex` can replace percentages because usually a percent-based layout is just one where specific elements are relative to other elements, exactly like we're doing above. It's also important to note that if you place `flex: 1` on an element, that element is going to take up as much space as its parent takes up. That's why in most of our examples above because we want our "layout area" to be the size of the parent, which in our examples was the whole viewport.
+
+##### Aligning Individual Flex Items
+
+[![rn34](../assets/images/rn34-small.jpg)](../assets/images/rn34.jpg)<br>
+<span class="center bold">using `alignSelf` property</span>
+
+It's as if the first and third element are centered both vertically and horizontally, but that second element has a mind of its own and is using `flex-end` along the Cross Axis.
+
+To implement this, we'll need a way to have the child element override a specific positioning it received from its parent. Good news: that's exactly what `alignSelf` allows us to do!
+
+Notice it begins with align, so just like `alignItems`, it's going to position itself along the Cross Axis. It also has the exact same options as `alignItems` (`flex-start`, `flex-end`, `center`, `stretch`).
+
+The code to implement the image above is:
+
+```jsx
+class FlexboxExamples extends Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        <View style={styles.box}/>
+        <View style={[styles.box, {alignSelf: 'flex-end'}]}/>
+        <View style={styles.box}/>
+      </View>
+    )
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  box: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#e76e63',
+    margin: 10,
+  }
+})
+
+export default FlexboxExamples;
+```
+
+Note that all we've done is add `alignSelf: flex-end` to the second child element and that overrode what it was instructed to do by the parent (`alignItems: 'center'`).
+
+If you've made it all the way through this, great work! I realize that was a lot to cover but I hope it's helped you get up and running with styling (and specifically flexbox) on React Native.
+
+#### 3.2.5 Summary
+React Native leverages a version of flexbox to build component layout. This is primarily due to flexbox's ability to provide consistent layouts across different screen sizes.
+
+Flexbox containers comprise of two axes: a **main axis**, as well as a **cross axis**. Some of the more critical properties to consider when building layouts with flexbox include `flex-direction`, `justify-content`, and `align-items`. React Native's implementation of flexbox is a bit different, however. We'll see just how in the very next section! -->
