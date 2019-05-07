@@ -1555,7 +1555,7 @@ Further Learning
 
 - [How can I use CSS-in-JS securely?](https://reactarmory.com/answers/how-can-i-use-css-in-js-securely)
 
-<!-- ### 3.2 Flexbox Guide
+### 3.2 Flexbox Guide
 
 [![rn18](../assets/images/rn18-small.jpg)](../assets/images/rn18.jpg)<br>
 <span class="center bold">Flexbox model vs Block Model</span>
@@ -1967,4 +1967,4 @@ If you've made it all the way through this, great work! I realize that was a lot
 #### 3.2.5 Summary
 React Native leverages a version of flexbox to build component layout. This is primarily due to flexbox's ability to provide consistent layouts across different screen sizes.
 
-Flexbox containers comprise of two axes: a **main axis**, as well as a **cross axis**. Some of the more critical properties to consider when building layouts with flexbox include `flex-direction`, `justify-content`, and `align-items`. React Native's implementation of flexbox is a bit different, however. We'll see just how in the very next section! -->
+Flexbox containers comprise of two axes: a **main axis**, as well as a **cross axis**. Some of the more critical properties to consider when building layouts with flexbox include `flex-direction`, `justify-content`, and `align-items`. React Native's implementation of flexbox is a bit different, however. We'll see just how in the very next section!
