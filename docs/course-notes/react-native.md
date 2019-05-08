@@ -1968,3 +1968,429 @@ If you've made it all the way through this, great work! I realize that was a lot
 React Native leverages a version of flexbox to build component layout. This is primarily due to flexbox's ability to provide consistent layouts across different screen sizes.
 
 Flexbox containers comprise of two axes: a **main axis**, as well as a **cross axis**. Some of the more critical properties to consider when building layouts with flexbox include `flex-direction`, `justify-content`, and `align-items`. React Native's implementation of flexbox is a bit different, however. We'll see just how in the very next section!
+
+### 3.3 Layout in React Native
+
+[![rn35](../assets/images/rn35-small.jpg)](../assets/images/rn35.jpg)<br>
+<span class="center bold">Default flex-direction</span>
+
+#### 3.3.1 React Native's Flexbox Implementation
+React Native implements flexbox for build layouts, but there are some key differences to keep in mind as you develop your applications. First, all containers in React Native are flex containers by default. Recall that in traditional CSS flexbox, you would normally define a flex container like so:
+
+```js
+/*example.css*/
+
+.container {
+  display: flex;
+}
+```
+
+However, this is completely unnecessary in React Native! By default, everything is `display: flex`;. You can just use the defaults as they are, without adding different properties or writing extra code.
+
+Another important distinction is how React Native handles `flex-direction`, a property that establishes the main axis (i.e., defining the direction in which flex items are placed). In web applications, items default to `row`. But since we're working on mobile devices, React Native sets the default to `column`, which lays out items vertically.
+
+One more major difference you'll encounter is how the `flex` property is used. On the web, `flex` specifies how a flex item grows or shrinks to manage the space around it (along the main axis). In React Native, `flex` is generally used with flex items that are on the same level, but hold different `flex` values. For example:
+
+```jsx
+import React from 'react';
+import { View } from 'react-native';
+{% raw %}
+const FlexDemo = props => (
+  <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: 'red'}} />
+    <View style={{flex: 2, backgroundColor: 'green'}} />
+    <View style={{flex: 3, backgroundColor: 'blue'}} />
+  </View>
+);{% endraw %}
+
+export default FlexDemo;
+```
+
+Here, `FlexDemo` is a stateless functional component which renders `<View>` components with different `flex` values. Its outermost container is set to `flex: 1`, which will expand the full available width along the main axis (i.e., the entire screen in this example). Its children `<View>` components will fill the space accordingly, rendering a `blue` background color that takes up three times as much space as `red` takes, and `green` that takes up exactly twice as much space as `red` takes.
+
+[![rn36](../assets/images/rn36-small.jpg)](../assets/images/rn36.jpg)<br>
+<span class="center bold">flex value container</span>
+
+#### 3.3.2 Other Differences
+In addition to the above, here is a list of defaults in other common CSS properties that React Native applies to components:
+
+```css
+box-sizing: border-box;
+position: relative;
+align-items: stretch;
+flex-shrink: 0;
+align-content: flex-start;
+border: 0 solid black;
+margin: 0;
+padding: 0;
+min-width: 0;
+```
+
+#### 3.3.3 Quiz Question
+How does React Native's implementation of CSS flexbox differ from that on the web? Select all that apply:
+
+- [x] Containers are flex containers by default in React Native (i.e. setting `display: flex` is not necessary)
+- [x] In React Native, CSS properties are written in camelCase
+- [ ] The defaults for `flex-direction` are the same in both React Native and on the web
+- [x] Dimensions in React Native are unitless
+
+#### 3.3.4 Icon Styling
+Next we style the app icons.
+
+[![rn37](../assets/images/rn37-small.jpg)](../assets/images/rn37.jpg)<br>
+<span class="center bold">styled icons</span>
+
+This is done in '/utils/helpers.js'.
+
+```jsx
+// helpers.js
+import { View, StyleSheet } from 'react-native';
+import { white, red, orange, blue, lightPurp, pink } from './colors';
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    padding: 5,
+    borderRadius: 8,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 20
+  }
+});
+
+export const getMetricMetaInfo = metric => {
+  const info = {
+    run: {
+      displayName: 'Run',
+      max: 50,
+      unit: 'miles',
+      step: 1,
+      type: 'steppers',
+      getIcon() {
+        return (
+          <View style={[styles.iconContainer, { backgroundColor: red }]}>
+            <MaterialIcons name="directions-run" color={white} size={35} />
+          </View>
+        );
+      }
+    },
+    ...
+  }
+}
+```
+
+#### 3.3.5 App Layout
+
+[![rn38](../assets/images/rn38-small.jpg)](../assets/images/rn38.jpg)<br>
+<span class="center bold">styled layout</span>
+
+The next step was to update the layout in '/components/AddEntry.js'.
+
+```jsx
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  StyleSheet
+} from 'react-native';
+import { white, purple } from '../utils/colors';
+
+const SubmitBtn = ({ onPress }) => {
+  return (
+    <TouchableOpacity
+      style={
+        Platform.OS === 'ios' ? styles.iosSubmitBtn : styles.androidSubmitBtn
+      }
+      onPress={onPress}
+    >
+      <Text style={styles.submitBtnText}>SUBMIT</Text>
+    </TouchableOpacity>
+  );
+};
+
+class AddEntry extends Component {
+  render() {
+    const metaInfo = getMetricMetaInfo();
+
+    if (this.props.alreadyLogged) {
+      return (
+        <View style={styles.center}>
+          <Ionicons
+            name={Platform.OS === 'ios' ? 'ios-happy' : 'md-happy'}
+            size={100}
+          />{% raw %}
+          <Text>You already logged your information for today.</Text>
+          <TextButton style={{ padding: 10 }} onPress={this.reset}>
+            Reset
+          </TextButton>{% endraw %}
+        </View>
+      );
+    }
+    return (
+      <View style={styles.container}>
+        <DateHeader date={new Date().toLocaleDateString()} />
+        {Object.keys(metaInfo).map(key => {
+          const { getIcon, type, ...rest } = metaInfo[key];
+          const value = this.state[key];
+
+          return (
+            <View key={key} style={styles.row}>
+              {getIcon()}
+              {type === 'slider' ? (
+                <UdaciSlider
+                  value={value}
+                  onChange={value => this.slide(key, value)}
+                  {...rest}
+                />
+              ) : (
+                <UdaciStepper
+                  value={value}
+                  onIncrement={() => this.increment(key)}
+                  onDecrement={() => this.decrement(key)}
+                  {...rest}
+                />
+              )}
+            </View>
+          );
+        })}
+        <SubmitBtn onPress={this.submit} />
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: white
+  },
+  row: {
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center'
+  },
+  iosSubmitBtn: {
+    backgroundColor: purple,
+    padding: 10,
+    borderRadius: 7,
+    height: 45,
+    marginLeft: 40,
+    marginRight: 40
+  },
+  androidSubmitBtn: {
+    backgroundColor: purple,
+    padding: 10,
+    paddingLeft: 30,
+    paddingRight: 30,
+    height: 45,
+    borderRadius: 2,
+    alignSelf: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  submitBtnText: {
+    color: white,
+    fontSize: 22,
+    textAlign: 'center'
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 30,
+    marginRight: 30
+  }
+});
+```
+
+#### 3.3.6 UdaciStepper Style
+
+[![rn39](../assets/images/rn39-small.jpg)](../assets/images/rn39.jpg)<br>
+<span class="center bold">UdaciStepper style</span>
+
+Next we update the stepper control located at '/components/UdaciStepper.js'.
+
+```jsx
+// UdaciStepper.js
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  Platform,
+  StyleSheet
+} from 'react-native';
+import { FontAwesome, Entypo } from '@expo/vector-icons';
+import { white, gray, purple } from '../utils/colors';
+
+export default function UdaciStepper({
+  max,
+  unit,
+  step,
+  value,
+  onIncrement,
+  onDecrement
+}) {
+  return ({% raw %}
+    <View style={[styles.row, { justifyContent: 'space-between' }]}>
+      {Platform.OS === 'ios' ? (
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity
+            style={[
+              styles.iosBtn,
+              { borderTopRightRadius: 0, borderBottomRightRadius: 0 }
+            ]}
+            onPress={onDecrement}
+          >
+            <Entypo name="minus" size={30} color={purple} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.iosBtn,
+              { borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }
+            ]}
+            onPress={onIncrement}
+          >
+            <Entypo name="plus" size={30} color={purple} />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity
+            style={[
+              styles.androidBtn,
+              { borderTopRightRadius: 0, borderBottomRightRadius: 0 }
+            ]}
+            onPress={onDecrement}
+          >
+            <FontAwesome name="minus" size={30} color={white} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.androidBtn,
+              { borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }
+            ]}
+            onPress={onIncrement}
+          >
+            <FontAwesome name="plus" size={30} color={white} />
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <View style={styles.metricCounter}>
+        <Text style={{ fontSize: 24, textAlign: 'center' }}>{value}</Text>
+        <Text style={{ fontSize: 18, color: gray }}>{unit}</Text>
+      </View>
+    </View>
+  );
+}{% endraw %}
+
+const styles = StyleSheet.create({
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  iosBtn: {
+    backgroundColor: white,
+    borderColor: purple,
+    borderWidth: 1,
+    borderRadius: 3,
+    padding: 5,
+    paddingLeft: 25,
+    paddingRight: 25
+  },
+  androidBtn: {
+    margin: 5,
+    backgroundColor: purple,
+    padding: 10,
+    borderRadius: 2
+  },
+  metricCounter: {
+    width: 85,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+});
+```
+
+#### 3.3.7 UdaciSlider
+
+[![rn40](../assets/images/rn40-small.jpg)](../assets/images/rn40.jpg)<br>
+<span class="center bold">UdaciSlider style</span>
+
+Next we update the slider control located at '/components/UdaciSlider.js'.
+
+```jsx
+// UdaciSlider.js
+import React from 'react';
+import PropTypes from 'prop-types';
+import { View, Text, Slider, StyleSheet } from 'react-native';
+import { gray } from '../utils/colors';
+
+export default function UdaciSlider({ max, unit, step, value, onChange }) {
+  return ({% raw %}
+    <View style={styles.row}>
+      <Slider
+        style={{ flex: 1 }}
+        step={step}
+        value={value}
+        maximumValue={max}
+        minimumValue={0}
+        onValueChange={onChange}
+      />
+      <View style={styles.metricCounter}>
+        <Text style={{ fontSize: 24, textAlign: 'center' }}>{value}</Text>
+        <Text style={{ fontSize: 18, color: gray }}>{unit}</Text>
+      </View>
+    </View>{% endraw %}
+  );
+}
+
+const styles = StyleSheet.create({
+  row: {
+    flex: 1,
+    flexDirection: 'row'
+  },
+  metricCounter: {
+    width: 85,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+});
+```
+
+#### 3.3.8 TextButton
+
+[![rn41](../assets/images/rn41-small.jpg)](../assets/images/rn41.jpg)<br>
+<span class="center bold">TextButton style</span>
+
+Next we update the slider control located at '/components/TextButton.js'.
+
+```jsx
+// TextButton.js
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { purple } from '../utils/colors';
+
+export default function TextButton({ children, onPress, style = {} }) {
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <Text style={[styles.reset, style]}>{children}</Text>
+    </TouchableOpacity>
+  );
+}
+
+const styles = StyleSheet.create({
+  reset: {
+    textAlign: 'center',
+    color: purple,
+    fontSize: 18
+  }
+});
+```
