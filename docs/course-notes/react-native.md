@@ -2394,3 +2394,131 @@ const styles = StyleSheet.create({
   }
 });
 ```
+
+### 3.4 Dimensions API
+React Native also comes with [Dimensions](https://facebook.github.io/react-native/docs/dimensions.html), which allows you to select window's width and height in the user's device!
+
+First, make sure you pull the API from React Native:
+
+```js
+import { Dimensions } from 'react-native';
+```
+
+Then, you can simply grab the window sizes with the Dimensions API's get method:
+
+```js
+const { width, height } = Dimensions.get('window');
+```
+
+Feel free to use these measurements to, for example, plan how your <View>s will look.
+
+<!-- ### 3.5 Calendar History
+
+[![rn42](../assets/images/rn42-small.jpg)](../assets/images/rn42.jpg)<br>
+<span class="center bold">Raw API data</span>
+
+Next I installed a logger to be able to tell what is happening with Redux.
+
+```bash
+npm i --save redux-logger
+```
+
+#### 3.5.1 Add Redux Logger
+It required the following in '/App.js'.
+
+```jsx
+// App.js
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import AddEntry from './components/AddEntry';
+import { createStore, applyMiddleware } from 'redux';
+import logger from 'redux-logger';
+import { Provider } from 'react-redux';
+import reducer from './reducers';
+import History from './components/History';
+
+const store = createStore(
+  reducer,
+  applyMiddleware(logger)
+);
+export default class App extends React.Component {
+  render() {
+    return (
+      <Provider store={store}>{% raw %}
+        <View style={{ flex: 1 }}>
+          {/* <AddEntry /> */}{% endraw %}
+          <History />
+        </View>
+      </Provider>
+    );
+  }
+}
+```
+
+#### 3.5.2 Add API Method
+The first thing we add is `formatCalendarResults` method into our api file. This happens in '/utils/api.js'.
+
+```jsx
+// api.js
+import { AsyncStorage } from 'react-native';
+import { CALENDAR_STORAGE_KEY, formatCalendarResults } from './_calendar';
+
+export function fetchCalendarResults() {
+  return AsyncStorage.getItem(CALENDAR_STORAGE_KEY).then(formatCalendarResults);
+}
+...
+```
+
+#### 3.5.3 Add Calendar History Component
+Next we add the History component. This is located in '/components/History.js'.
+
+```jsx
+// History.js
+import React, { Component } from 'react';
+import { View, Text } from 'react-native';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { receiveEntries, addEntry } from '../actions';
+import { timeToString, getDailyReminderValue } from '../utils/helpers';
+import { fetchCalendarResults } from '../utils/api';
+
+export class History extends Component {
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired
+  };
+  componentDidMount() {
+    const { dispatch } = this.props;
+
+    fetchCalendarResults()
+      .then(entries => dispatch(receiveEntries(entries)))
+      .then(entries => {
+        if (!entries[timeToString()]) {
+          dispatch(
+            addEntry({
+              [timeToString()]: getDailyReminderValue()
+            })
+          );
+        }
+      });
+  }
+  render() {
+    return (
+      <View>
+        <Text> {JSON.stringify(this.props)} </Text>
+      </View>
+    );
+  }
+}
+
+const mapStateToProps = entries => ({ entries });
+
+export default connect(mapStateToProps)(History);
+```
+
+### 3.5 Calendar Component
+
+[![rn43](../assets/images/rn43-small.jpg)](../assets/images/rn43.jpg)<br>
+<span class="center bold">Calendar Control</span>
+
+[![rn44](../assets/images/rn44-small.jpg)](../assets/images/rn44.jpg)<br>
+<span class="center bold">Calendar Control with data</span> -->
