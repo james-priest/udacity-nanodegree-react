@@ -2412,7 +2412,7 @@ const { width, height } = Dimensions.get('window');
 
 Feel free to use these measurements to, for example, plan how your <View>s will look.
 
-<!-- ### 3.5 Calendar History
+### 3.5 Calendar History
 
 [![rn42](../assets/images/rn42-small.jpg)](../assets/images/rn42.jpg)<br>
 <span class="center bold">Raw API data</span>
@@ -2515,7 +2515,7 @@ const mapStateToProps = entries => ({ entries });
 export default connect(mapStateToProps)(History);
 ```
 
-### 3.5 Calendar Component
+<!-- ### 3.6 Calendar Component
 
 [![rn43](../assets/images/rn43-small.jpg)](../assets/images/rn43.jpg)<br>
 <span class="center bold">Calendar Control</span>
