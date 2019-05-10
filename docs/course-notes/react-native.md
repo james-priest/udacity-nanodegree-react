@@ -2643,7 +2643,7 @@ const styles = StyleSheet.create({
 
 ### 3.8 MetricCard Component
 
-[![rn46](../assets/images/rn46-small.jpg)](../assets/images/rn46.jpg)<br>
+[![rn46](../assets/images/rn46a-small.jpg)](../assets/images/rn46a.jpg)<br>
 <span class="center bold">MetricCard Component</span>
 
 #### 3.8.1 MetricCard Component
