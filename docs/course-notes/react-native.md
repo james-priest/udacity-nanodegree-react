@@ -2641,7 +2641,7 @@ const styles = StyleSheet.create({
 });
 ```
 
-<!-- ### 3.8 MetricCard Component
+### 3.8 MetricCard Component
 
 [![rn46](../assets/images/rn46-small.jpg)](../assets/images/rn46.jpg)<br>
 <span class="center bold">MetricCard Component</span>
@@ -2769,4 +2769,14 @@ export class History extends Component {
     )
   }
 }
-``` -->
+```
+
+#### 3.8.4 Summary
+React Native uses **flexbox** to manage layout in mobile applications. However, there are some minor distinctions between the official flexbox specification (i.e., CSS on the web) and React Native's own implementation. Most of these distinctions are just differences in default settings.
+
+Since differences also exist in how Android and iOS applications should look and feel, React Native also offers a `Platform` API, which we can leverage to style each platform independently.
+
+In the next section, we'll take a look at some common "gotchas" and best practices when styling components.
+
+- [Understanding React Native flexbox layout](https://medium.com/the-react-native-log/understanding-react-native-flexbox-layout-7a528200afd4)
+- [Platform Specific Code](https://facebook.github.io/react-native/docs/platform-specific-code.html) from the React Native docs
