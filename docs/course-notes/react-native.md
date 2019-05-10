@@ -2569,7 +2569,204 @@ export class History extends Component {
 [![rn44](../assets/images/rn44-small.jpg)](../assets/images/rn44.jpg)<br>
 <span class="center bold">Calendar Control with data</span>
 
-<!-- ### 3.7 History Styling
+### 3.7 History Styling
 
 [![rn45](../assets/images/rn45-small.jpg)](../assets/images/rn45.jpg)<br>
-<span class="center bold">Styled entries</span> -->
+<span class="center bold">Styled entries</span>
+
+The next thing we do is to style the history entries. This happens in '/components/History.js'.
+
+```jsx
+// History.js
+import {
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  TouchableOpacity
+} from 'react-native';
+import { white } from '../utils/colors';
+import DateHeader from '../components/DateHeader';
+
+export class History extends Component {
+  renderItem = ({ today, ...metrics }, formattedDate, key) => (
+    <View style={styles.item}>
+      {today ? (
+        <View>
+          <DateHeader date={formattedDate} />
+          <Text style={styles.noDataText}>{today}</Text>
+        </View>
+      ) : (
+        <TouchableOpacity onPress={() => console.log('Pressed!')}>
+          <Text>{JSON.stringify(metrics)}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+  renderEmptyDate(formattedDate) {
+    return (
+      <View style={styles.item}>
+        <DateHeader date={formattedDate} />
+        <Text style={styles.noDataText}>You didn't log any data this day</Text>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  item: {
+    backgroundColor: white,
+    borderRadius: Platform.OS === 'ios' ? 16 : 2,
+    borderColor: 'lightgray',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    padding: 20,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 17,
+    justifyContent: 'center',
+    shadowRadius: 3,
+    shadowOpacity: 0.8,
+    shadowColor: 'rgba(0,0,0,0.24)',
+    shadowOffset: {
+      width: 0,
+      height: 3
+    }
+  },
+  noDataText: {
+    fontSize: 20,
+    paddingTop: 20,
+    paddingBottom: 20
+  }
+});
+```
+
+<!-- ### 3.8 MetricCard Component
+
+[![rn46](../assets/images/rn46-small.jpg)](../assets/images/rn46.jpg)<br>
+<span class="center bold">MetricCard Component</span>
+
+#### 3.8.1 MetricCard Component
+Next we create a new component for displaying the metrics.  This is '/components/MetricCard.js'.
+
+```jsx
+// MetricCard.js
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Text, StyleSheet, View } from 'react-native';
+import DateHeader from './DateHeader';
+import { getMetricMetaInfo } from '../utils/helpers';
+import { gray } from '../utils/colors';
+
+export default function MetricCard({ date, metrics }) {
+  return (
+    <View>
+      {date && <DateHeader date={date} />}
+      {Object.keys(metrics).map(metric => {
+        const {
+          getIcon,
+          displayName,
+          unit
+        } = getMetricMetaInfo(metric);
+
+        return (
+          <View style={styles.metric} key={metric}>
+            {getIcon()}
+            <View>{% raw %}
+              <Text style={{ fontSize: 20 }}>{displayName}</Text>
+              <Text style={{ fontSize: 16, color: gray }}>
+                {metrics[metric]} {unit}
+              </Text>{% endraw %}
+            </View>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  metric: {
+    flexDirection: 'row',
+    marginTop: 12
+  }
+});
+
+MetricCard.propTypes = {
+  date: PropTypes.string.isRequired,
+  metrics: PropTypes.object.isRequired
+};
+```
+
+#### 3.8.2 History Component
+Next we add the MetricCard component into the History component.  This is '/components/History.js'.
+
+```jsx
+// History.js
+...
+import MetricCard from './MetricCard';
+
+export class History extends Component {
+  ...
+  renderItem = ({ today, ...metrics }, formattedDate, key) => (
+    <View style={styles.item}>
+      {today ? (
+        <View>
+          <DateHeader date={formattedDate} />
+          <Text style={styles.noDataText}>{today}</Text>
+        </View>
+      ) : (
+        <TouchableOpacity onPress={() => console.log('Pressed!')}>
+          <MetricCard date={formattedDate} metrics={metrics} />
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+  ...
+}
+```
+
+#### 3.8.3 Loading Component
+Next we add the AppLoading component. This happens in '/components/History.js'.
+
+```jsx
+// History.js
+...
+import { AppLoading } from 'expo';
+
+export class History extends Component {
+  ...
+  state = {
+    ready: false
+  };
+  componentDidMount() {
+    const { dispatch } = this.props;
+
+    fetchCalendarResults()
+      .then(entries => dispatch(receiveEntries(entries)))
+      .then(entries => {
+        if (!entries[timeToString()]) {
+          dispatch(
+            addEntry({
+              [timeToString()]: getDailyReminderValue()
+            })
+          );
+        }
+      })
+      .then(() => this.setState({ ready: true }));
+  }
+  ...
+  render() {
+    const { entries } = this.props;
+    const { ready } = this.state;
+
+    if (ready === false) {
+      return <AppLoading />;
+    }
+
+    return (
+      ...
+    )
+  }
+}
+``` -->
