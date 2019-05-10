@@ -2780,3 +2780,55 @@ In the next section, we'll take a look at some common "gotchas" and best practic
 
 - [Understanding React Native flexbox layout](https://medium.com/the-react-native-log/understanding-react-native-flexbox-layout-7a528200afd4)
 - [Platform Specific Code](https://facebook.github.io/react-native/docs/platform-specific-code.html) from the React Native docs
+
+### 3.9 Stylesheet vs. Inline
+Inline is simple but it can get messy quickly.
+
+```jsx{% raw %}
+// Inline styles
+<View style={{
+  borderRadius: 4,
+  borderWidth: 0.5,
+  borderColor: '#d6d7da',
+}}>
+  <Text style={[
+    {fontSize: 19, fontWeight: 'bold'},
+    props.isActive && { color: 'red' }
+  ]}>
+    Welcome
+  </Text>
+</View>{% endraw %}
+```
+
+When we use `Stylesheet` we get the benefit of the code being easier to read and understand. It also allows us to name the styles.
+
+```jsx
+// Stylesheet API
+var styles = StyleSheet.create({
+  container: {
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+  },
+  title: {
+    fontSize: 19,
+    fontWeight: 'bold',
+  },
+  activeTitle: {
+    color: 'red',
+  },
+});
+
+<View style={styles.container}>
+  <Text style={[styles.title, props.isActive && styles.activeTitle]} />
+</View>
+```
+
+On top of quality benefits, there are also performance benefits as well. Making a stylesheet from a style object makes it possible to refer to it by ID instead of creating a new style object every render.
+
+#### 3.9.1 Media Queries
+One thing you may have noticed is that React Native (and specifically the StyleSheet API) doesn’t support media queries.
+
+The reason for this is because, for the most part, you can design responsive grids with flexbox which will bypass the need to use media queries.
+
+In the rare case where flexbox just won’t work for your specific needs, you can use the Dimensions API which we covered earlier to get similar results.
