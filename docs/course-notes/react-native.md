@@ -2515,10 +2515,61 @@ const mapStateToProps = entries => ({ entries });
 export default connect(mapStateToProps)(History);
 ```
 
-<!-- ### 3.6 Calendar Component
+### 3.6 Calendar Component
 
 [![rn43](../assets/images/rn43-small.jpg)](../assets/images/rn43.jpg)<br>
 <span class="center bold">Calendar Control</span>
 
+The fist thing to do is add the UdaciFitness Calendar Component.
+
+```bash
+npm i --save udacifitness-calendar
+```
+
+#### 3.6.1 Update History Component
+Next we add the component to History. This is located in '/components/History.js'.
+
+```jsx
+// History.js
+...
+import UdaciFitnessCalendar from 'udacifitness-calendar';
+
+export class History extends Component {
+  ...
+  renderItem = ({ today, ...metrics }, formattedDate, key) => (
+    <View>
+      {today ? (
+        <Text>{JSON.stringify(today)}</Text>
+      ) : (
+        <Text>{JSON.stringify(metrics)}</Text>
+      )}
+    </View>
+  );
+  renderEmptyDate(formattedDate) {
+    return (
+      <View>
+        <Text>No data for this day</Text>
+      </View>
+    );
+  }
+  render() {
+    const { entries } = this.props;
+    return (
+      <UdaciFitnessCalendar
+        items={entries}
+        renderItem={this.renderItem}
+        renderEmptyDate={this.renderEmptyDate}
+      />
+    );
+  }
+}
+...
+```
+
 [![rn44](../assets/images/rn44-small.jpg)](../assets/images/rn44.jpg)<br>
-<span class="center bold">Calendar Control with data</span> -->
+<span class="center bold">Calendar Control with data</span>
+
+<!-- ### 3.7 History Styling
+
+[![rn45](../assets/images/rn45-small.jpg)](../assets/images/rn45.jpg)<br>
+<span class="center bold">Styled entries</span> -->
