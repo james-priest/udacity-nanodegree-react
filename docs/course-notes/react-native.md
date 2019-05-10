@@ -2832,3 +2832,73 @@ One thing you may have noticed is that React Native (and specifically the StyleS
 The reason for this is because, for the most part, you can design responsive grids with flexbox which will bypass the need to use media queries.
 
 In the rare case where flexbox just won’t work for your specific needs, you can use the Dimensions API which we covered earlier to get similar results.
+
+### 3.10 CSS in JS Libraries
+Styling in React is going through a renaissance period right now. There are many different styling libraries popping up and each has different tradeoffs.
+
+Two of the most popular are[ Glamorous](https://github.com/robinpowered/glamorous-native) and [Styled Components](https://github.com/styled-components/styled-components).
+
+The whole idea of both of these libraries is that styling is a primary concern of the component and because of that, should be coupled with the component itself.
+
+[![rn47](../assets/images/rn47-small.jpg)](../assets/images/rn47.jpg)<br>
+<span class="center bold">Style Components</span>
+
+#### 3.10.1 Styled Components
+Styled components uses ES6 template literal backtick. We are using this to contain our styles within our component.
+
+```jsx
+import React from 'react';
+import { Text, View, TouchableOpacity } from 'react-native';
+import styled from 'styled-components/native';
+
+const CenterView = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  background: #333
+`
+const WelcomeText = styled.Text`
+  color: white;
+  font-size: 28;
+`
+const WelcomeBtn = styled.TouchableOpacity`
+  width: 100px;
+  height: 50px;
+  background: red;
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+  font-size: 16;
+  margin: 20px 0 0 0;
+`
+const WelcomeBtnText = styled.Text`
+  font-size: 16;
+  font-weight: bold;
+  color: white;
+`
+const TextCopy = styled.Text`
+  color: white
+`
+
+export default class App extends React.Component {
+  render() {
+    return ({% raw %}
+      <View style={{flex:1}}>
+        <CenterView>
+          <WelcomeText>Different!</WelcomeText>
+          <View>
+            <TextCopy>Styled components are awesome!</TextCopy>
+          </View>
+          <WelcomeBtn onPress={() => alert('pressed!')}>
+            <WelcomeBtnText>Press Me</WelcomeBtnText>
+          </WelcomeBtn>
+        </CenterView>
+        <View style={{ flex: 1 }} />
+      </View>{% endraw %}
+    );
+  }
+}
+```
+
+#### 3.10.2 Summary
+In this section we took a deeper look into the benefits of the StyleSheet API as well as the Styled Components API and how it works on React Native.
