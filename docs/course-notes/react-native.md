@@ -3080,8 +3080,7 @@ export default class App extends React.Component {
 }
 ```
 
-
-<!-- ### 4.x Tab Navigator
+### 4.4 Tab Navigator
 To introduce this new routing paradigm, let's take a look at React Navigation's tab navigator API.
 
 In React Navigation v3.0 TabNavigator is deprecated in favor of `createBottomTabNavigator`.
@@ -3151,13 +3150,13 @@ export default class App extends React.Component {
 }
 ```
 
-### 4.2 Implement Tabs
+<!-- ### 4.5 Implement Tabs
 Next We'll add the tab navigation component to our Triathlon app.
 
 [![rn49](../assets/images/rn49-small.jpg)](../assets/images/rn49.jpg)<br>
 <span class="center bold">Tab Navigation</span>
 
-#### 4.2.1 TabNavigator Component
+#### 4.5.1 TabNavigator Component
 This is created in '/navigation/TabNavigator.js'.
 
 ```jsx
@@ -3193,7 +3192,7 @@ export default createBottomTabNavigator(
 );
 ```
 
-#### 4.2.2 AppNavigator Component
+#### 4.5.2 AppNavigator Component
 This is created in '/navigator/AppNavigator.js'.
 
 ```jsx
@@ -3205,7 +3204,7 @@ import TabNavigator from './TabNavigator';
 export default createAppContainer(TabNavigator);
 ```
 
-#### 4.2.3 History Component
+#### 4.5.3 History Component
 This is located in 'components/History.js'.
 
 ```jsx
@@ -3225,7 +3224,7 @@ export class History extends Component {
 }
 ```
 
-#### 4.2.4 AddEntry Component
+#### 4.5.4 AddEntry Component
 This is located in 'components/AddEntry.js'.
 
 ```jsx
@@ -3245,7 +3244,7 @@ class AddEntry extends Component {
 }
 ```
 
-#### 4.2.5 App Component
+#### 4.5.5 App Component
 This is located in '/App.js'.
 
 ```jsx
@@ -3265,4 +3264,7 @@ export default class App extends React.Component {
     );
   }
 }
-``` -->
+```
+
+[![rn53](../assets/images/rn53-small.jpg)](../assets/images/rn53.jpg)<br>
+<span class="center bold">Tab Navigation</span> -->
