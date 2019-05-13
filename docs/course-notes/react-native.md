@@ -2904,8 +2904,9 @@ export default class App extends React.Component {
 In this section we took a deeper look into the benefits of the StyleSheet API as well as the Styled Components API and how it works on React Native.
 
 ## 4. Navigation
+### 4.1 React Navigation
 
-[![rn48](../assets/images/rn48-small.jpg)](../assets/images/rn48.jpg)<br>
+[![rn50](../assets/images/rn50-small.jpg)](../assets/images/rn50.jpg)<br>
 <span class="center bold">React Navigation</span>
 
 In this lesson we'll learn about routing.
@@ -2913,15 +2914,21 @@ There are many different solutions with different trade offs for React Native bu
 
 It was built by a team at Facebook and is the official routing solution for React Native.
 
+React Navigation has gone through a few major revisions and is up to version 3.x now.
+
+<!-- ### 4.2 Routing with Native
+[![rn48](../assets/images/rn48-small.jpg)](../assets/images/rn48.jpg)<br>
+<span class="center bold">Routing with Native</span>
+
 Routing on Native is a completely different paradigm than routing on the web. When you're routing on the web, typically what you're doing is you're mapping a URL to a specific component.
 
 On Native, instead of mapping a URL to a component, the router keeps track of a route stack. You can think of it like an array of routes.
 
 So when you navigate around your application, the router pushes and pops routes off the route stack.
 
+### 4.x Tab Navigator
 To introduce this new routing paradigm, let's take a look at React Navigation's tab navigator API.
 
-### 4.1 Tab Navigator
 In React Navigation v3.0 TabNavigator is deprecated in favor of `createBottomTabNavigator`.
 
 `createMaterialTopTabNavigator` and `createMaterialBottomTabNavigator` are also available as options for Android. Please note that `createBottomTabNavigator` does not support the `animationEnabled` and `swipeEnabled` properties.
@@ -2989,7 +2996,7 @@ export default class App extends React.Component {
 }
 ```
 
-<!-- ### 4.2 Implement Tabs
+### 4.2 Implement Tabs
 Next We'll add the tab navigation component to our Triathlon app.
 
 [![rn49](../assets/images/rn49-small.jpg)](../assets/images/rn49.jpg)<br>
