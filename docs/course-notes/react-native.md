@@ -3150,7 +3150,7 @@ export default class App extends React.Component {
 }
 ```
 
-<!-- ### 4.5 Implement Tabs
+### 4.5 Implement Tabs
 Next We'll add the tab navigation component to our Triathlon app.
 
 [![rn49](../assets/images/rn49-small.jpg)](../assets/images/rn49.jpg)<br>
@@ -3267,4 +3267,4 @@ export default class App extends React.Component {
 ```
 
 [![rn53](../assets/images/rn53-small.jpg)](../assets/images/rn53.jpg)<br>
-<span class="center bold">Tab Navigation</span> -->
+<span class="center bold">Tab Navigation</span>
