@@ -2909,8 +2909,7 @@ In this section we took a deeper look into the benefits of the StyleSheet API as
 [![rn50](../assets/images/rn50-small.jpg)](../assets/images/rn50.jpg)<br>
 <span class="center bold">React Navigation</span>
 
-In this lesson we'll learn about routing.
-There are many different solutions with different trade offs for React Native but the router that we're going to go with, is React Navigation.
+In this lesson we'll learn about routing. There are many different solutions with different trade offs for React Native but the router that we're going to go with, is [React Navigation](https://reactnavigation.org/en/).
 
 It was built by a team at Facebook and is the official routing solution for React Native.
 
@@ -2925,6 +2924,162 @@ Routing on Native is a completely different paradigm than routing on the web. Wh
 On Native, instead of mapping a URL to a component, the router keeps track of a route stack. You can think of it like an array of routes.
 
 So when you navigate around your application, the router pushes and pops routes off the route stack.
+
+### 4.3 Stack Navigator Test
+The first thing I did was go through the [Fundamentals section of the React Navigation docs](https://reactnavigation.org/docs/en/getting-started.html).
+
+[![rn51](../assets/images/rn51-small.jpg)](../assets/images/rn51.jpg)<br>
+<span class="center bold">Home & Details Screens</span>
+
+This showed me how to create a Home and Details screen with buttons that pushed and popped items off of the navigation stack.
+
+```jsx
+// HomeScreen.js
+import React from 'react';
+import { StyleSheet, Text, View, Button, Platform } from 'react-native';
+
+class HomeScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Home',
+    headerRight: (
+      <Button
+        onPress={() => alert('This is a button!')}
+        title="Info"
+        color={Platform.OS === 'ios' ? '#fff' : null}
+      />
+    )
+    headerStyle: {
+      backgroundColor: '#f4511e'
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold'
+    }
+  };
+
+  render() {
+    return (
+      <View style={[styles.container, { backgroundColor: '#ee9' }]}>
+        <Text>Home Screen</Text>
+        <Text>Count: {this.state.count}</Text>
+        <View style={styles.btnContainer}>
+          <Button
+            title="Go to Details"
+            onPress={() =>
+              /* 1. Navigate to the Details route with params */
+              this.props.navigation.navigate('Details', {
+                itemId: 86,
+                color: '#aef',
+                otherParam: 'anything you want here'
+              })
+            }
+          />
+        </View>
+      </View>
+    );
+  }
+}
+```
+
+[![rn52](../assets/images/rn52-small.jpg)](../assets/images/rn52.jpg)<br>
+<span class="center bold">Details Screen</span>
+
+```jsx
+// DetailsScreen.js
+import React from 'react';
+import { StyleSheet, Text, View, Button, Platform } from 'react-native';
+
+class DetailsScreen extends React.Component {
+  static navigationOptions = ({ navigation, navigationOptions }) => {
+    return {
+      title: navigation.getParam('otherParam', 'A Nested Details Screen'),
+      headerStyle: {
+        backgroundColor: navigationOptions.headerTintColor
+      },
+      headerTintColor: navigationOptions.headerStyle.backgroundColor
+    };
+  };
+  render() {
+    /* 2. Get the param, provide a fallback value if not available */
+    const { navigation } = this.props;
+    const itemId = navigation.getParam('itemId', 'NO-ID');
+    const color = navigation.getParam('color', '#fff');
+    const otherParam = navigation.getParam('otherParam', 'some default value');
+
+    return (
+      <View
+        style={[styles.container, styles.purple, { backgroundColor: color }]}
+      >
+        <Text>Details Screen</Text>
+        <Text>itemId: {JSON.stringify(itemId)}</Text>
+        <Text>otherParam: {JSON.stringify(otherParam)}</Text>
+        <View style={styles.btnContainer}>
+          <Button
+            title="Go to Details... again"
+            onPress={() => navigation.push('Details', { color: '#eaf' })}
+          />
+        </View>
+        <View style={styles.btnContainer}>
+          <Button
+            title="Go to Home"
+            onPress={() => navigation.navigate('Home')}
+          />
+        </View>
+        <View style={styles.btnContainer}>
+          <Button title="Go back" onPress={() => navigation.goBack()} />
+        </View>
+        <View style={styles.btnContainer}>
+          <Button
+            title="Update the title"
+            onPress={() => navigation.setParams({ otherParam: 'Updated!' })}
+          />
+        </View>
+      </View>
+    );
+  }
+}
+```
+
+The Stack Navigator is then created with the following methods.
+
+- createStackNavigator
+- createAppContainer
+
+```jsx
+import React from 'react';
+import { createStackNavigator, createAppContainer } from 'react-navigation';
+import HomeScreen from './HomeScreen.js'
+import DetailsScreen from './DetailsScreen.js'
+
+const AppNavigator = createStackNavigator(
+  {
+    Home: HomeScreen,
+    Details: DetailsScreen
+  },
+  {
+    initialRouteName: 'Home',
+    /* The header config from HomeScreen is now here */
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: '#f4511e'
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold'
+      }
+    }
+  }
+);
+
+const AppContainer = createAppContainer(AppNavigator);
+
+export default class App extends React.Component {
+  render() {
+    return <AppContainer />;
+  }
+}
+```
+
 
 <!-- ### 4.x Tab Navigator
 To introduce this new routing paradigm, let's take a look at React Navigation's tab navigator API.
