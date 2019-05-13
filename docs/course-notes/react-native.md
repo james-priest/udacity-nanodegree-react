@@ -2902,3 +2902,205 @@ export default class App extends React.Component {
 
 #### 3.10.2 Summary
 In this section we took a deeper look into the benefits of the StyleSheet API as well as the Styled Components API and how it works on React Native.
+
+## 4. Navigation
+
+[![rn48](../assets/images/rn48-small.jpg)](../assets/images/rn48.jpg)<br>
+<span class="center bold">React Navigation</span>
+
+In this lesson we'll learn about routing.
+There are many different solutions with different trade offs for React Native but the router that we're going to go with, is React Navigation.
+
+It was built by a team at Facebook and is the official routing solution for React Native.
+
+Routing on Native is a completely different paradigm than routing on the web. When you're routing on the web, typically what you're doing is you're mapping a URL to a specific component.
+
+On Native, instead of mapping a URL to a component, the router keeps track of a route stack. You can think of it like an array of routes.
+
+So when you navigate around your application, the router pushes and pops routes off the route stack.
+
+To introduce this new routing paradigm, let's take a look at React Navigation's tab navigator API.
+
+### 4.1 Tab Navigator
+In React Navigation v3.0 TabNavigator is deprecated in favor of `createBottomTabNavigator`.
+
+`createMaterialTopTabNavigator` and `createMaterialBottomTabNavigator` are also available as options for Android. Please note that `createBottomTabNavigator` does not support the `animationEnabled` and `swipeEnabled` properties.
+
+Let's see how we'd use Tab Navigator v3.
+
+Say we have two basic functional components that just render some text, Hello and Goodbye:
+
+```jsx
+const Hello = () => (
+  <View>
+    <Text>Hello!</Text>
+  </View>
+);
+
+const Goodbye = () => (
+  <View>
+    <Text>Goodbye!</Text>
+  </View>
+);
+```
+
+If we want to add two tabs for users to select (one rendering Hello, the other rendering Goodbye), first we'll need to install `react-navigation` and then import `createBottomTabNavigator`:
+
+```bash
+yarn add react-navigation
+```
+
+or
+
+```bash
+npm install --save react-navigation
+```
+
+Once this is done, we can pass an object into `createBottomTabNavigator` like so:
+
+```jsx
+import { createBottomTabNavigator } from 'react-navigation';
+
+const Tabs = createBottomTabNavigator({
+  Hello: {
+    screen: Hello
+  },
+  Goodbye: {
+    screen: Goodbye
+  },
+});
+```
+
+Inside the object, each key-and-value pair represents a single tab. The keys represent the name of the tab; this is what users will see and press. Note that a `screen` property is included as well; this is the component that is rendered when the tab is active.
+
+Then what `createBottomTabNavigator` returns is actually a component! Since we have stored this in a `Tabs` variable, we can just render this as we would with any component:
+
+```jsx
+// App.js
+
+// ...
+
+export default class App extends React.Component {
+  render() {
+    return (
+      <Tabs />
+    );
+  }
+}
+```
+
+<!-- ### 4.2 Implement Tabs
+Next We'll add the tab navigation component to our Triathlon app.
+
+[![rn49](../assets/images/rn49-small.jpg)](../assets/images/rn49.jpg)<br>
+<span class="center bold">Tab Navigation</span>
+
+#### 4.2.1 TabNavigator Component
+This is created in '/navigation/TabNavigator.js'.
+
+```jsx
+// TabNavigator.js
+import React from 'react';
+import { Platform } from 'react-native';
+import { createBottomTabNavigator } from 'react-navigation';
+import History from '../components/History';
+import AddEntry from '../components/AddEntry';
+import { purple, white } from '../utils/colors';
+
+export default createBottomTabNavigator(
+  {
+    History: History,
+    AddEntry: AddEntry
+  },
+  {
+    tabBarOptions: {
+      activeTintColor: Platform.OS === 'ios' ? purple : white,
+      style: {
+        height: 56,
+        backgroundColor: Platform.OS === 'ios' ? white : purple,
+        shadowColor: 'rgba(0,0,0, 0.24)',
+        shadowOffset: {
+          width: 0,
+          height: 3
+        },
+        shadowRadius: 6,
+        shadowOpacity: 1
+      }
+    }
+  }
+);
+```
+
+#### 4.2.2 AppNavigator Component
+This is created in '/navigator/AppNavigator.js'.
+
+```jsx
+// AppNavigator.js
+import React from 'react';
+import { createAppContainer } from 'react-navigation';
+import TabNavigator from './TabNavigator';
+
+export default createAppContainer(TabNavigator);
+```
+
+#### 4.2.3 History Component
+This is located in 'components/History.js'.
+
+```jsx
+// History.js
+...
+import { AppLoading, Icon } from 'expo';
+
+export class History extends Component {
+  ...
+  static navigationOptions = {
+    tabBarLabel: 'History',
+    tabBarIcon: ({ tintColor }) => (
+      <Icon.Ionicons name="ios-bookmarks" size={30} color={tintColor} />
+    )
+  };
+  ...
+}
+```
+
+#### 4.2.4 AddEntry Component
+This is located in 'components/AddEntry.js'.
+
+```jsx
+// AddEntry.js
+...
+import { Icon } from 'expo';
+
+class AddEntry extends Component {
+  ...
+  static navigationOptions = {
+    tabBarLabel: 'Add Entry',
+    tabBarIcon: ({ tintColor }) => (
+      <Icon.FontAwesome name="plus-square" size={30} color={tintColor} />
+    )
+  };
+  ...
+}
+```
+
+#### 4.2.5 App Component
+This is located in '/App.js'.
+
+```jsx
+// App.js
+...
+import AppNavigator from './navigation/AppNavigator';
+
+...
+export default class App extends React.Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <View style={styles.container}>
+          <AppNavigator />
+        </View>
+      </Provider>
+    );
+  }
+}
+``` -->
