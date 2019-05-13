@@ -2916,7 +2916,7 @@ It was built by a team at Facebook and is the official routing solution for Reac
 
 React Navigation has gone through a few major revisions and is up to version 3.x now.
 
-<!-- ### 4.2 Routing with Native
+### 4.2 Routing with Native
 [![rn48](../assets/images/rn48-small.jpg)](../assets/images/rn48.jpg)<br>
 <span class="center bold">Routing with Native</span>
 
@@ -2926,7 +2926,7 @@ On Native, instead of mapping a URL to a component, the router keeps track of a 
 
 So when you navigate around your application, the router pushes and pops routes off the route stack.
 
-### 4.x Tab Navigator
+<!-- ### 4.x Tab Navigator
 To introduce this new routing paradigm, let's take a look at React Navigation's tab navigator API.
 
 In React Navigation v3.0 TabNavigator is deprecated in favor of `createBottomTabNavigator`.
