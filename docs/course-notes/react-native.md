@@ -1844,7 +1844,7 @@ Let's break this down. First, the Main Axis is now running horizontally since we
 
 Up until this point, we've only had one flex container or parent element. Don't get it twisted though; if you create more nested flex containers, the exact same logic above is going to be true for those child elements (flex items) but instead of being relative to the whole view (as in our example), they'll position themselves according to the their parent component. Your entire UI will be built upon nesting flex containers.
 
-At this point, you're essentially a red belt in React Native styling TaeKwonDo. There are a few other flexbox features we need to look at, though.
+At this point, you're essentially a red belt in React Native styling Karate. There are a few other flexbox features we need to look at, though.
 
 You'll very quickly come to a realization that there are no percent-based styling in React Native. Though I agree it makes things a bit more difficult, everything you can do with percent-based styling you can do with flexbox. Remember the `flex: 1` declaration we used in all the examples above? That's the property that's going to allow us to do it. Interestingly enough there's no exact comparison for this feature in flexbox on the web, but it is similar to `flex-grow` if you know what that does.
 
@@ -2836,7 +2836,7 @@ In the rare case where flexbox just won’t work for your specific needs, you ca
 ### 3.10 CSS in JS Libraries
 Styling in React is going through a renaissance period right now. There are many different styling libraries popping up and each has different tradeoffs.
 
-Two of the most popular are[ Glamorous](https://github.com/robinpowered/glamorous-native) and [Styled Components](https://github.com/styled-components/styled-components).
+Two of the most popular are[Glamorous](https://github.com/robinpowered/glamorous-native) and [Styled Components](https://github.com/styled-components/styled-components).
 
 The whole idea of both of these libraries is that styling is a primary concern of the component and because of that, should be coupled with the component itself.
 
@@ -3281,6 +3281,7 @@ This is located at '/navigation/TabNavigator.js'.
 // TabNavigator.js
 import React from 'react';
 import { Platform } from 'react-native';
+import { Icon } from 'expo';
 import {
   createBottomTabNavigator,
   createMaterialTopTabNavigator
@@ -3289,65 +3290,140 @@ import History from '../components/History';
 import AddEntry from '../components/AddEntry';
 import { purple, white } from '../utils/colors';
 
-// export default
-const android = createMaterialTopTabNavigator(
-  {
-    History: History,
-    AddEntry: AddEntry
-  },
-  {
+const isIOS = Platform.OS === 'ios' ? true : false;
+
+const routeConfigs = {
+  History: {
+    screen: History,
     navigationOptions: {
-      header: null
-    },
-    defaultNavigationOptions: {
-      bounces: true
-    },
-    tabBarOptions: {
-      activeTintColor: Platform.OS === 'ios' ? purple : white,
-      style: {
-        height: 70,
-        backgroundColor: Platform.OS === 'ios' ? white : purple,
-        shadowColor: 'rgba(0,0,0, 0.24)',
-        shadowOffset: {
-          width: 0,
-          height: 3
-        },
-        shadowRadius: 6,
-        shadowOpacity: 1
-      },
-      tabStyle: {
-        marginTop: 5
-      },
-      showIcon: true
+      tabBarLabel: 'History',
+      tabBarIcon: ({ tintColor }) => (
+        <Icon.Ionicons
+          name={isIOS ? 'ios-bookmarks' : 'md-bookmarks'}
+          size={30}
+          color={tintColor}
+        />
+      )
+    }
+  },
+  AddEntry: {
+    screen: AddEntry,
+    navigationOptions: {
+      tabBarLabel: 'Add Entry',
+      tabBarIcon: ({ tintColor }) => (
+        <Icon.FontAwesome name="plus-square" size={30} color={tintColor} />
+      )
     }
   }
-);
+};
 
-const ios = createBottomTabNavigator(
-  {
-    History: History,
-    AddEntry: AddEntry
+const tabNavigatorConfig = {
+  navigationOptions: {
+    header: null
   },
-  {
-    navigationOptions: {
-      header: null
+  defaultNavigationOptions: {
+    bounces: true
+  },
+  tabBarOptions: {
+    activeTintColor: isIOS ? purple : white,
+    style: {
+      height: isIOS ? 56 : 70,
+      backgroundColor: isIOS ? white : purple,
+      shadowColor: 'rgba(0,0,0, 0.24)',
+      shadowOffset: {
+        width: 0,
+        height: 3
+      },
+      shadowRadius: 6,
+      shadowOpacity: 1
     },
-    tabBarOptions: {
-      activeTintColor: Platform.OS === 'ios' ? purple : white,
-      style: {
-        height: 56,
-        backgroundColor: Platform.OS === 'ios' ? white : purple,
-        shadowColor: 'rgba(0,0,0, 0.24)',
-        shadowOffset: {
-          width: 0,
-          height: 3
-        },
-        shadowRadius: 6,
-        shadowOpacity: 1
-      }
-    }
+    labelStyle: {
+      fontSize: isIOS ? 11 : 12
+    },
+    tabStyle: {
+      marginTop: isIOS ? 0 : 5
+    },
+    showIcon: true
   }
-);
+};
 
-export default (Platform.OS === 'ios' ? ios : android);
+const Tabs = isIOS
+  ? createBottomTabNavigator(routeConfigs, tabNavigatorConfig)
+  : createMaterialTopTabNavigator(routeConfigs, tabNavigatorConfig);
+
+export default Tabs;
 ```
+
+The last step was to remove the static `navigationOptions` methods from both AddEntry and History components.
+
+#### 4.5.7 Quiz Question
+What is true about the Tab Navigator?
+
+- [ ] `createBottomTabNavigator` is provided by React Native.
+- [x] The return value of `createBottomTabNavigator` is just a component that can be rendered like any other.
+- [ ] Tab Navigator renders tabs that look identical in both Android and iOS.
+- [x] Tab Navigator is fully customizable
+
+### 4.6 StatusBar
+
+[![rn55](../assets/images/rn55-small.jpg)](../assets/images/rn55.jpg)<br>
+<span class="center bold">Updated StatusBar</span>
+
+Recall that so far, our application has been using arbitrary `padding` to account for the status bar at the top of the device's screen. Let's go ahead and change that! React Native actually provides a simple `StatusBar` component to customize how the status bar appears in an application.
+
+Before we take a look at how to implement `StatusBar`, be sure to import it from `react-native`:
+
+```bash
+import { StatusBar } from 'react-native';
+```
+
+#### 4.6.1 StatusBar code
+Next we update StatusBar in '/App.js'.
+
+```jsx
+// App.js
+import React from 'react';
+import PropTypes from 'prop-types';
+import { StyleSheet, View, StatusBar } from 'react-native';
+import { Constants } from 'expo';
+import { purple } from './utils/colors';
+
+...
+{% raw %}
+function UdacityStatusBar({ backgroundColor, ...props }) {
+  return (
+    <View style={{ backgroundColor, height: Constants.statusBarHeight }}>
+      <StatusBar translucent backgroundColor={backgroundColor} {...props} />
+    </View>
+  );
+}{% endraw %}
+UdacityStatusBar.propTypes = {
+  backgroundColor: PropTypes.string.isRequired
+};
+
+export default class App extends React.Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <View style={styles.container}>
+          <UdacityStatusBar backgroundColor={purple} barStyle="light-content" />
+          <AppNavigator />
+        </View>
+      </Provider>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  }
+});
+```
+
+### 4.7 Summary
+React Navigator v1 offers a TabNavigator (and React Navigator v2 offers us createBottomTabNavigator) API that allows for navigation between different screens via individual tabs. Each tab is dedicated to rendering a specific component.
+
+This section also detailed React Native's StatusBar component. StatusBar is relatively straightforward to use and is fully customizable -- we typically just set properties to change it!
+
+In the next section, we'll take a look at React Navigator's Stack Navigator, which allows users to add and remove screens from a stack.
