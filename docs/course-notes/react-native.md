@@ -2693,7 +2693,7 @@ const styles = StyleSheet.create({
 });
 
 MetricCard.propTypes = {
-  date: PropTypes.string.isRequired,
+  date: PropTypes.string,
   metrics: PropTypes.object.isRequired
 };
 ```
@@ -3422,8 +3422,402 @@ const styles = StyleSheet.create({
 ```
 
 ### 4.7 Summary
-React Navigator v1 offers a TabNavigator (and React Navigator v2 offers us createBottomTabNavigator) API that allows for navigation between different screens via individual tabs. Each tab is dedicated to rendering a specific component.
+React Navigation offers `createBottomTabNavigator` API that allows for navigation between different screens via individual tabs. Each tab is dedicated to rendering a specific component.
 
-This section also detailed React Native's StatusBar component. StatusBar is relatively straightforward to use and is fully customizable -- we typically just set properties to change it!
+This section also detailed React Native's `StatusBar` component. `StatusBar` is relatively straightforward to use and is fully customizable -- we typically just set properties to change it!
 
 In the next section, we'll take a look at React Navigator's Stack Navigator, which allows users to add and remove screens from a stack.
+
+### 4.8 Stack Navigator
+When pressing an item in an index view, we expect to go to a new screen with details on that item. React Navigation offers a navigator to do just that!
+
+With a Stack Navigator, new screens are added and removed as a stack. This places screens on top of one another in a "last in, first out" manner, similar to Array's `push()` and `pop()` methods.
+
+The way we create a Stack Navigator is to use the `createStackNavigator` method in which we pass in an object of different screens.
+
+Here's a excerpt form the docs
+
+> Each time you call push we add a new route to the navigation stack. When you call navigate, it first tries to find an existing route with that name, and only pushes a new route if there isn't yet one on the stack.
+>
+> Let's suppose that we actually want to add another details screen. This is pretty common in cases where you pass in some unique data to each route (more on that later when we talk about `params`). To do this, we can change `navigate` to `push`. This allows us to express the intent to add another route regardless of the existing navigation history.
+
+#### 4.8.1 Stack Navigator Example
+First, we import `createStackNavigator` from `react-navigation`. Say we have two basic components, Home and Dashboard:
+
+```jsx
+import { createStackNavigator } from 'react-navigation';
+
+const Home = ({ navigation }) => (
+  <View>
+    <Text>This is the Home view</Text>
+    <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
+      <Text>Press here for the Dashboard</Text>
+    </TouchableOpacity>
+  </View>
+);
+
+const Dashboard = () => (
+  <View>
+    <Text>This is the Dashboard</Text>
+  </View>
+);
+```
+
+Note that a `navigation` prop is passed to the stateless functional Home component, which allows navigation to another route.
+
+Once this is done, we can pass an object into `createStackNavigator` similar to how we did for `createBottomTabNavigator`:
+
+```jsx
+const Stack = createStackNavigator({
+  Home: {
+    screen: Home
+  },
+  Dashboard: {
+    screen: Dashboard
+  }
+})
+```
+
+The return value of passing an object into `createStackNavigator` is a component as well, and we can render it as such!
+
+```jsx
+// App.js
+
+// ...
+
+export default class App extends React.Component {
+  render() {
+    return (
+      <Stack />
+    );
+  }
+}
+```
+
+[Stack Navigator](https://reactnavigation.org/docs/en/stack-navigator.html) and [Tab Navigator](https://reactnavigation.org/docs/en/bottom-tab-navigator.html) often go hand-in-hand. Since they each return components, you'll often see one nested within the other. Let's see this in action as we implement this into UdaciFitness!
+
+<!-- ### 4.9 Add Stack/EntryDetail
+
+[![rn57](../assets/images/rn57-small.jpg)](../assets/images/rn57.jpg)<br>
+<span class="center bold">EntryDetail Rest Button</span>
+
+Now we're going to implement a Stack Navigator at the top level and then have our Tab Navigator as one of the items on the stack
+
+#### 4.9.1 EntryDetail Component
+We start by creating '/components/EntryDetail.js'
+
+```jsx
+// EntryDetail.js
+import React, { Component } from 'react';
+import { View, Text } from 'react-native';
+import PropTypes from 'prop-types';
+
+class EntryDetail extends Component {
+  static propTypes = {
+    navigation: PropTypes.object.isRequired
+  };
+
+  render() {
+    return (
+      <View>
+        <Text>Entry Detail</Text>
+        <Text>
+          EntryId: {this.props.navigation.getParam('entryId', 'No Id')}
+        </Text>
+      </View>
+    );
+  }
+}
+
+export default EntryDetail;
+```
+
+#### 4.9.2 MainTabNavigator Navigation
+Next we update TabNavigator.js to include a Stack Navigator. In addition, updated the name to MainTabNavigator.js to better reflect the component.
+
+This is now '/navigation/MainTabNavigator.js'. The following is added.
+
+```jsx
+// MainTabNavigator.js
+import {
+  createBottomTabNavigator,
+  createMaterialTopTabNavigator,
+  createStackNavigator
+} from 'react-navigation';
+import EntryDetail from '../components/EntryDetail';
+
+const Tabs = ...
+...
+const MainNavigator = createStackNavigator({
+  Home: {
+    screen: Tabs
+  },
+  EntryDetail: {
+    screen: EntryDetail,
+    navigationOptions: {
+      headerTintColor: white,
+      headerStyle: {
+        backgroundColor: purple
+      }
+    }
+  }
+});
+
+export default MainNavigator;
+```
+
+#### 4.9.3 AppNavigator Navigation
+Then AppNavigator.js is updated to reference MainTabNavigator.js. This is in '/navigation/AppNavigator.js'.
+
+```js
+// AppNavigator.js
+import React from 'react';
+import { createAppContainer } from 'react-navigation';
+import MainTabNavigator from './MainTabNavigator';
+
+export default createAppContainer(MainTabNavigator);
+```
+
+#### 4.9.4 History Component
+Lastly, we update the History Component so we can navigate to the EntryDetail.js screen when an entry is clicked from the History screen.
+
+This is located at '/components/History.js'.
+
+```jsx
+// History.js
+
+export class History extends Component {
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired,
+    entries: PropTypes.object.isRequired,
+    navigation: PropTypes.object.isRequired
+  };
+  ...
+  renderItem = ({ today, ...metrics }, formattedDate, key) => (
+    <View style={styles.item}>
+      {today ? (
+        <View>
+          <DateHeader date={formattedDate} />
+          <Text style={styles.noDataText}>{today}</Text>
+        </View>
+      ) : (
+        <TouchableOpacity
+          onPress={() =>
+            this.props.navigation.navigate('EntryDetail', { entryId: key })
+          }
+        >
+          <MetricCard date={formattedDate} metrics={metrics} />
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+  ...
+}
+
+```
+
+#### 4.9.5 Quiz Question
+What is true about the Stack Navigator? Please select all that apply:
+
+- [ ] Stack Navigator functions like a queue, implementing a "first in, first out" approach of managing screens.
+- [ ] Stack Navigator cannot render the component returned by 'createBottomTabNavigator`; they must be used separately.
+- [x] Stack Navigator animations render differently on Android and iOS.
+- [x] Similar to the Tab Navigator, the Stack Navigator can also leverage `navigationOptions`.
+
+#### 4.9.6 GetParam into AddEntry Header
+Next we pull in the entryId into the header.
+
+```jsx
+// EntryDetail.js
+...
+class EntryDetail extends Component {
+  ...
+  static navigationOptions = ({ navigation }) => {
+    const entryId = navigation.getParam('entryId', 'No Id');
+
+    const year = entryId.slice(0, 4);
+    const month = entryId.slice(5, 7);
+    const day = entryId.slice(8);
+
+    return {
+      title: `${month}/${day}/${year}`
+    };
+  };
+  ...
+```
+
+#### 4.9.7 Show MetricCard
+Now we bring in MetricCard to the EntryDetails page.
+
+```jsx
+// EntryDetails.js
+import React, { Component } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { white } from '../utils/colors';
+import MetricCard from '../components/MetricCard';
+
+export class EntryDetail extends Component {
+  static propTypes = {
+    navigation: PropTypes.object.isRequired,
+    metrics: PropTypes.object.isRequired,
+    entryId: PropTypes.string.isRequired
+  };
+  ...
+
+  render() {
+    const { metrics, entryId } = this.props;
+
+    return (
+      <View style={styles.container}>
+        <MetricCard metrics={metrics} />
+        <Text>EntryId: {entryId}</Text>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: white,
+    padding: 15
+  }
+});
+
+const mapStateToProps = (state, { navigation }) => {
+  const entryId = navigation.getParam('entryId', 'No Id');
+
+  return {
+    entryId,
+    metrics: state[entryId]
+  };
+};
+
+export default connect(mapStateToProps)(EntryDetail);
+```
+
+[![rn56](../assets/images/rn56-small.jpg)](../assets/images/rn56.jpg)<br>
+<span class="center bold">EntryDetail screen</span>
+
+#### 4.9.8 MapDispatchToProps on EntryDetail
+Now we need to update the redux store and the database when a user clicks the RESET button.
+
+```jsx
+// EntryDetail.jsx
+import { addEntry } from '../actions/index';
+import { removeEntry } from '../utils/api';
+import { timeToString, getDailyReminderValue } from '../utils/helpers';
+import TextButton from '../components/TextButton';
+
+export class EntryDetail extends Component {
+  static propTypes = {
+    navigation: PropTypes.object.isRequired,
+    metrics: PropTypes.object,
+    entryId: PropTypes.string.isRequired,
+    remove: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired
+  };
+  ...
+  reset = () => {
+    const { remove, goBack, entryId } = this.props;
+
+    remove();
+    goBack();
+    removeEntry(entryId);
+  };
+  shouldComponentUpdate(nextProps) {
+    return nextProps.metrics !== null && !nextProps.metrics.today;
+  }
+  render() {
+    const { metrics, entryId } = this.props;
+
+    return (
+      <View style={styles.container}>
+        <MetricCard metrics={metrics} />{% raw %}
+        <TextButton onPress={this.reset} style={{ margin: 20 }}>
+          RESET
+        </TextButton>{% endraw %}
+      </View>
+    );
+  }
+}
+
+const mapDispatchToProps = (dispatch, { navigation }) => {
+  const entryId = navigation.getParam('entryId');
+
+  return {
+    remove: () =>
+      dispatch(
+        addEntry({
+          [entryId]: timeToString === entryId ? getDailyReminderValue() : null
+        })
+      ),
+    goBack: () => navigation.goBack()
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EntryDetail);
+```
+
+[![rn57](../assets/images/rn57-small.jpg)](../assets/images/rn57.jpg)<br>
+<span class="center bold">EntryDetail Rest Button</span>
+
+#### 4.4.9 AddEntry Navigation
+The last detail is to navigate back to the Home screen after adding an new entry from AddEntry.
+
+```jsx
+// AddEntry.js
+...
+import { withNavigation } from 'react-navigation';
+
+...
+class AddEntry extends Component {
+  static propTypes = {
+    alreadyLogged: PropTypes.bool,
+    addEntry: PropTypes.func.isRequired,
+    navigation: PropTypes.object
+  };
+  ...
+  submit = () => {
+    ...
+    this.ToHome();
+    ...
+  };
+  reset = () => {
+    ...
+    this.toHome();
+    ...
+  };
+  toHome = () => {
+    this.props.navigation.goBack();
+  };
+  ...
+}
+
+export default withNavigation(
+  connect(
+    mapStateToProps,
+    { addEntry }
+  )(AddEntry)
+);
+```
+
+#### 4.9.10 Add Entry and Reset Entry Screens
+
+[![rn58](../assets/images/rn58-small.jpg)](../assets/images/rn58.jpg)<br>
+<span class="center bold">Add Entry</span>
+
+[![rn59](../assets/images/rn59-small.jpg)](../assets/images/rn59.jpg)<br>
+<span class="center bold">Reset Entry</span>
+
+#### 4.9.11 Summary
+React Navigation's Stack Navigator is another customizable navigation option based on adding and removing new screens to a stack. Its API is similar to that of the Tab Navigator; it takes in an object that defines all screens, then returns a component.
+
+Since both the Stack Navigator and the Tab Navigator both return components, a common practice is to nest these navigators within one another.
+
+In the next section, we'll take a look at the Drawer Navigator, in which screens are switched from a drawer that pops out from the side of the screen! -->
