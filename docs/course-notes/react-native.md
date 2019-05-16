@@ -3496,7 +3496,7 @@ export default class App extends React.Component {
 
 [Stack Navigator](https://reactnavigation.org/docs/en/stack-navigator.html) and [Tab Navigator](https://reactnavigation.org/docs/en/bottom-tab-navigator.html) often go hand-in-hand. Since they each return components, you'll often see one nested within the other. Let's see this in action as we implement this into UdaciFitness!
 
-<!-- ### 4.9 Add Stack/EntryDetail
+### 4.9 Add Stack/EntryDetail
 
 [![rn57](../assets/images/rn57-small.jpg)](../assets/images/rn57.jpg)<br>
 <span class="center bold">EntryDetail Rest Button</span>
@@ -3820,4 +3820,4 @@ React Navigation's Stack Navigator is another customizable navigation option bas
 
 Since both the Stack Navigator and the Tab Navigator both return components, a common practice is to nest these navigators within one another.
 
-In the next section, we'll take a look at the Drawer Navigator, in which screens are switched from a drawer that pops out from the side of the screen! -->
+In the next section, we'll take a look at the Drawer Navigator, in which screens are switched from a drawer that pops out from the side of the screen!
