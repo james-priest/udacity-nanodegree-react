@@ -3984,7 +3984,7 @@ const routeConfigs = {
 ...
 ```
 
-<!-- ### 5.2 Geolocation
+### 5.2 Geolocation
 A common feature of native applications is the ability to access and receive updates about the user's current location. Like most things, Expo makes this rather straightforward by giving us a JavaScript API that will work on both iOS and Android.
 
 ```js
@@ -4009,10 +4009,10 @@ For the full documentation on how to use Expo's Location property, visit [Locati
 >
 > In an ideal world, the user would always grant you permission to whatever you'd like, but, this isn't always the case and as a UI developer, you need to plan accordingly for those moments.
 
-#### 5.2.1 Undetermined code
+#### 5.2.1 'Undetermined' Status
 
 [![rn61](../assets/images/rn61-small.jpg)](../assets/images/rn61.jpg)<br>
-<span class="center bold">Enable location services</span>
+<span class="center bold">Undetermined Status</span>
 
 Here we add code for testing if the user has given permission to use Geolocation. This happens in '/components/Live.js'.
 
@@ -4084,4 +4084,240 @@ const styles = StyleSheet.create({
   }
 });
 ```
- -->
+
+#### 5.2.2 'Denied' Status
+
+[![rn62](../assets/images/rn62-small.jpg)](../assets/images/rn62.jpg)<br>
+<span class="center bold">Denied status</span>
+
+This next bit of code we add is for 'denied' status.
+
+```jsx
+// Live.js
+export default class Live extends Component {
+  state = {
+    coords: null,
+    status: 'denied',
+    direction: ''
+  };
+
+  render() {
+    ...
+
+    if (status === 'denied') {
+      return (
+        <View style={styles.center}>
+          <Icon.Foundation name="alert" size={50} />
+          <Text>
+            You denied your location. You can fix this by visiting your settings
+            and enabling location services for this app.
+          </Text>
+          <TouchableOpacity onPress={this.askPermission} style={styles.button}>
+            <Text style={styles.buttonText}>Enable</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    ...
+  }
+}
+```
+
+#### 5.2.3 'Granted' Status
+
+[![rn63](../assets/images/rn63-small.jpg)](../assets/images/rn63.jpg)<br>
+<span class="center bold">Granted status</span>
+
+Next we add the UI for 'granted' status.
+
+```jsx
+// Live.js
+...
+export default class Live extends Component {
+  state = {
+    coords: null,
+    status: 'granted',
+    direction: ''
+  };
+  render() {
+    ...
+    return (
+      <View style={styles.container}>
+        <View style={styles.directionContainer}>
+          <Text style={styles.header}>You&apos;re heading</Text>
+          <Text style={styles.direction}>North</Text>
+        </View>
+        <View style={styles.metricContainer}>
+          <View style={styles.metric}>
+            <Text style={[styles.header, { color: white }]}>Altitude</Text>
+            <Text style={[styles.subHeader, { color: white }]}>{200} Feet</Text>
+          </View>
+          <View style={styles.metric}>
+            <Text style={[styles.header, { color: white }]}>Speed</Text>
+            <Text style={[styles.subHeader, { color: white }]}>{300} MPH</Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  ...
+  directionContainer: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  header: {
+    fontSize: 35,
+    textAlign: 'center'
+  },
+  direction: {
+    color: purple,
+    fontSize: 120,
+    textAlign: 'center'
+  },
+  metricContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: purple
+  },
+  metric: {
+    flex: 1,
+    paddingTop: 15,
+    paddingBottom: 15,
+    backgroundColor: 'rgba(255,255,255, 0.1)',
+    marginTop: 20,
+    marginBottom: 20,
+    marginLeft: 10,
+    marginRight: 10
+  },
+  subHeader: {
+    fontSize: 25,
+    textAlign: 'center',
+    marginTop: 5
+  }
+});
+```
+
+#### 5.2.4 Set Location
+
+[![rn64](../assets/images/rn64-small.jpg)](../assets/images/rn64.jpg)<br>
+<span class="center bold">Set Location</span>
+
+Next is the code that will actually show and set the location data.
+
+```jsx
+// Live.js
+...
+import { Location, Permissions } from 'expo';
+import { calculateDirection } from '../utils/helpers';
+
+export default class Live extends Component {
+  ...
+  componentDidMount() {
+    Permissions.getAsync(Permissions.LOCATION)
+      .then(({ status }) => {
+        if (status === 'granted') {
+          return this.setLocation();
+        }
+
+        this.setState({ status });
+      })
+      .catch(error => {
+        console.warn('Error getting Location permission: ', error);
+        this.setState({ status: 'undetermined' });
+      });
+  }
+  askPermission = () => {
+    alert('clicked');
+  };
+  setLocation = () => {
+    Location.watchPositionAsync(
+      {
+        enableHighAccuracy: true,
+        timeInterval: 1,
+        distanceInterval: 1
+      },
+      ({ coords }) => {
+        const newDirection = calculateDirection(coords.heading);
+        const { direction } = this.state;
+
+        this.setState(() => ({
+          coords,
+          status: 'granted',
+          direction: newDirection
+        }));
+      }
+    );
+  };
+  ...
+}
+```
+
+#### 5.2.4 Ask Permission
+
+[![rn65](../assets/images/rn65-small.jpg)](../assets/images/rn65.jpg)<br>
+<span class="center bold">Ask Permission</span>
+
+Next is the code that will actually show and set the location data.
+
+```jsx
+// Live.js
+export default class Live extends Component {
+  state = {
+    coords: null,
+    status: null,
+    direction: ''
+  };
+  ...
+  askPermission = () => {
+    Permissions.askAsync(Permissions.LOCATION)
+      .then(({ status }) => {
+        if (status === 'granted') {
+          return this.setLocation();
+        }
+
+        this.setState({ status });
+      })
+      .catch(error => console.warn('Error asking Location permission:', error));
+  };
+  ...
+  render() {
+    ...
+    return (
+      <View style={styles.container}>
+        <View style={styles.directionContainer}>
+          <Text style={styles.header}>You&apos;re heading</Text>
+          <Text style={styles.direction}>{direction}</Text>
+        </View>
+        <View style={styles.metricContainer}>
+          <View style={styles.metric}>
+            <Text style={[styles.header, { color: white }]}>Altitude</Text>
+            <Text style={[styles.subHeader, { color: white }]}>
+              {Math.round(coords.altitude * 3.2888)} Feet
+            </Text>
+          </View>
+          <View style={styles.metric}>
+            <Text style={[styles.header, { color: white }]}>Speed</Text>
+            <Text style={[styles.subHeader, { color: white }]}>
+              {(coords.speed * 2.2369).toFixed(1)} MPH
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+```
+
+#### 5.2.5 Quiz Question
+Which of the following methods would you use to subscribe to the user's location using Expo? Select all that apply.
+
+- [x] watchPositionAsync
+- [ ] subscribePositionAsync
+- [ ] watchPosition
+- [ ] listenForPositionChangeAsync
+
+#### 5.2.6 Summary
+In this concept, we saw how to use Expo's Location property to watch the user's current location using watchPositionAsync. For further reading, feel free to check out the [official documentation](https://docs.expo.io/versions/v32.0.0/sdk/location/).
