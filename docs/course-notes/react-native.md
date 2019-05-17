@@ -3902,3 +3902,186 @@ React Navigation's Drawer Navigator is used to easily set up a screen with drawe
 Many of the same practices we use to set up the Stack Navigator and the Tab Navigator apply to the Drawer Navigator as well. Simply pass in an object containing the different screens, and the return value is a component ready to be rendered.
 
 As a result, this makes Drawer Navigator components easy for nesting with other navigators!
+
+## 5. Native Features
+The next thing we do is add a new tab to test Native features.
+
+### 5.1 Add Live Tab
+
+[![rn60](../assets/images/rn60-small.jpg)](../assets/images/rn60.jpg)<br>
+<span class="center bold">Live Tab</span>
+
+#### 5.1.1 Live Component
+This is located in '/components/Live.js'.
+
+```jsx
+// Live.js
+import React, { Component } from 'react';
+import { Text, View, ActivityIndicator } from 'react-native';
+
+export default class Live extends Component {
+  state = {
+    coords: null,
+    status: null,
+    direction: ''
+  };
+  render() {
+    const { coords, direction } = this.state;
+    {% raw %}
+    if (status === null) {
+      return <ActivityIndicator style={{ marginTop: 30 }} />;
+    }{% endraw %}
+
+    if (status === 'denied') {
+      return (
+        <View>
+          <Text>Denied</Text>
+        </View>
+      );
+    }
+
+    if (status === 'undetermined') {
+      return (
+        <View>
+          <Text>undetermined</Text>
+        </View>
+      );
+    }
+
+    return (
+      <View>
+        <Text>Live</Text>
+        <Text>{JSON.stringify(this.state)}</Text>
+      </View>
+    );
+  }
+}
+```
+
+#### 5.1.2 Update MainTabNavigator
+This is located at '/navigation/MainTabNavigator.js'.
+
+```jsx
+import Live from '../components/Live';
+
+const routeConfigs = {
+  ...
+  Live: {
+    screen: Live,
+    navigationOptions: {
+      tabBarLabel: 'Live',
+      tabBarIcon: ({ tintColor }) => (
+        <Icon.Ionicons
+          name={isIOS ? 'ios-speedometer' : 'md-speedometer'}
+          size={30}
+          color={tintColor}
+        />
+      )
+    }
+  }
+};
+
+...
+```
+
+<!-- ### 5.2 Geolocation
+A common feature of native applications is the ability to access and receive updates about the user's current location. Like most things, Expo makes this rather straightforward by giving us a JavaScript API that will work on both iOS and Android.
+
+```js
+import { Location } from 'expo';
+```
+
+Typically when dealing with location services, there are one of two features you'll need: getting the user's current location, or getting and watching the user's current location for updates.
+
+Expo's `Location` property gives us both of these options with `getCurrentPositionAsync` and `watchPositionAsync`.
+
+- `getCurrentPositionAsync` gets the current location of the device, without watching for future updates.
+- `watchPositionAsync` will also get the current location of the device, but it will also subscribe to location updates.
+
+For the full documentation on how to use Expo's Location property, visit [Location](https://docs.expo.io/versions/v32.0.0/sdk/location/)
+
+> ##### 💡 Geolocation Tips 💡
+> Whenever you're dealing with a feature that requires the user's permission to work properly, it's important that you account for all the different UI options that could be shown. For example, when dealing with a user's location, there are three scenarios to manage:
+>
+> 1. The user gives you permission to view their location (best-case scenario).
+> 2. The user decides to neither deny nor grant you permission to their location.
+> 3. The user denies giving you access to their location.
+>
+> In an ideal world, the user would always grant you permission to whatever you'd like, but, this isn't always the case and as a UI developer, you need to plan accordingly for those moments.
+
+#### 5.2.1 Undetermined code
+
+[![rn61](../assets/images/rn61-small.jpg)](../assets/images/rn61.jpg)<br>
+<span class="center bold">Enable location services</span>
+
+Here we add code for testing if the user has given permission to use Geolocation. This happens in '/components/Live.js'.
+
+```jsx
+// Live.js
+import React, { Component } from 'react';
+import {
+  Text,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+  StyleSheet
+} from 'react-native';
+import { Icon } from 'expo';
+import { purple, white } from '../utils/colors';
+
+export default class Live extends Component {
+  state = {
+    coords: null,
+    status: 'undetermined',
+    direction: ''
+  };
+  askPermission = () => {
+    alert('clicked');
+  };
+  render() {
+    const { status, coords, direction } = this.state;
+
+    ...
+
+    if (status === 'undetermined') {
+      return (
+        <View style={styles.center}>
+          <Icon.Foundation name="alert" size={50} />
+          <Text>You need to enable location services for this app.</Text>
+          <TouchableOpacity onPress={this.askPermission} style={styles.button}>
+            <Text style={styles.buttonText}>Enable</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    ...
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-between'
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 30,
+    marginRight: 30
+  },
+  button: {
+    padding: 10,
+    backgroundColor: purple,
+    alignSelf: 'center',
+    borderRadius: 5,
+    margin: 20
+  },
+  buttonText: {
+    color: white,
+    fontSize: 20
+  }
+});
+```
+ -->
