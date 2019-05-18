@@ -2,7 +2,7 @@
 title: Udacity React Native
 description: Notes by James Priest
 ---
-<!-- markdownlint-disable MD022 MD024 MD025 MD032 MD033 -->
+<!-- markdownlint-disable MD001 MD022 MD024 MD025 MD032 MD033 -->
 # React Native
 
 [<-- back to React Nanodegree homepage](../index.html)
@@ -4437,3 +4437,147 @@ Animated comes with three built in animation configurations. Please select all t
 - [ ] Animated.ease
 - [x] Animated.spring
 - [x] Animated.decay
+
+### 5.4 Notifications
+
+[![rn69](../assets/images/rn69-small.jpg)](../assets/images/rn69.jpg)<br>
+<span class="center bold">Android Notifications</span>
+
+When dealing with notifications, it's important to understand that there are two different types: **push notifications**, and **local notifications**.
+
+Local notifications do not use or require any external infrastructure; they happen entirely on the device itself. That means that the only requirement for the device to display the notification is that the device is on.
+
+On the other hand, push notifications require you to have a server which handles pushing the notification to your user's devices when a certain event occurs.
+
+Since we're not incorporating an external server, and all the logic about when we should show the notification can be done on the phone itself -- local notifications will be the most ideal for our application.
+
+We'll be using `scheduleLocalNotificationAsync()`.
+
+> ##### ⚠️ Notifications on iOS ⚠️
+> Before we jump in, note that with iOS, notifications (both push notifications and local notifications) do not appear at the top of the screen automatically if the application is in the foreground. Moreover, push notifications do not function in the iOS simulator (whether or not Expo is used).
+>
+> For more information, check out [this post](https://forums.expo.io/t/psa-reminder-notifications-in-ios-foregrounded-apps/641) in the Expo forums. This issue does not appear when working with notifications on Android.
+
+[Expo Notifications API Reference](https://docs.expo.io/versions/v32.0.0/sdk/notifications/#notificationsschedulelocalnotificationasynclocalnotification-schedulingoptions)
+
+#### 5.4.1 Notification code
+Next we update our helpers file located at '/utils/helpers.js'.
+
+```jsx
+// helpers.js
+import { View, StyleSheet, AsyncStorage } from 'react-native';
+import { Notifications, Permissions } from 'expo';
+
+const NOTIFICATION_KEY = 'UdaciFitness:notifications';
+const CHANNEL_ID = 'udaci1';
+
+...
+
+export function clearLocalNotification() {
+  return AsyncStorage.removeItem(NOTIFICATION_KEY).then(
+    Notifications.cancelAllScheduledNotificationsAsync
+  );
+}
+
+function createNotification() {
+  return {
+    title: 'Log your stats!',
+    body: "👋 Don't forget to log your stats for today!",
+    ios: {
+      sound: true
+    },
+    android: {
+      channelId: CHANNEL_ID,
+      sticky: false,
+      color: 'red'
+    }
+  };
+}
+
+function createChannel() {
+  return {
+    name: 'Daily Reminder',
+    description: 'Description of what this notification channel is...',
+    sound: true,
+    priority: 'high'
+  };
+}
+
+export function setLocalNotification() {
+  AsyncStorage.getItem(NOTIFICATION_KEY)
+    .then(JSON.parse)
+    .then(data => {
+      if (data === null) {
+        Permissions.askAsync(Permissions.NOTIFICATIONS).then(({ status }) => {
+          if (status === 'granted') {
+            Notifications.createChannelAndroidAsync(CHANNEL_ID, createChannel())
+              .then(() => {
+                Notifications.cancelAllScheduledNotificationsAsync();
+
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(20);
+                tomorrow.setMinutes(0);
+
+                Notifications.scheduleLocalNotificationAsync(
+                  createNotification(),
+                  {
+                    time: tomorrow,
+                    repeat: 'day'
+                  }
+                );
+
+                AsyncStorage.setItem(NOTIFICATION_KEY, JSON.stringify(true));
+              });
+          }
+        });
+      }
+    });
+}
+```
+
+#### 5.4.2 Notification in App.js
+This is located at '/App.js'.
+
+```jsx
+// App.js
+import { setLocalNotification } from './utils/helpers';
+
+export default class App extends React.Component {
+  componentDidMount() {
+    setLocalNotification();
+  }
+  ...
+}
+```
+
+#### 5.4.3 Notification in AddEntry.js
+This is located at '/components/AddEntry.js'.
+
+```jsx
+// AddEntry.js
+import {
+  getMetricMetaInfo,
+  timeToString,
+  getDailyReminderValue,
+  clearLocalNotification,
+  setLocalNotification
+} from '../utils/helpers';
+
+class AddEntry extends Component {
+  ...
+  submit = () => {
+    ...
+
+    clearLocalNotification().then(setLocalNotification);
+  }
+}
+```
+
+[![rn68](../assets/images/rn68-small.jpg)](../assets/images/rn68.jpg)<br>
+<span class="center bold">App Notifications</span>
+
+The next screen shows the Daily Reminder channel that was created under the UdaciFitness app.
+
+[![rn70](../assets/images/rn70-small.jpg)](../assets/images/rn70.jpg)<br>
+<span class="center bold">Android Notifications</span>
