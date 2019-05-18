@@ -4137,7 +4137,8 @@ export default class Live extends Component {
   state = {
     coords: null,
     status: 'granted',
-    direction: ''
+    direction: '',
+    heading
   };
   render() {
     ...
@@ -4214,7 +4215,12 @@ import { Location, Permissions } from 'expo';
 import { calculateDirection } from '../utils/helpers';
 
 export default class Live extends Component {
-  ...
+  state = {
+    coords: null,
+    status: null,
+    direction: '',
+    heading: null
+  };
   componentDidMount() {
     Permissions.getAsync(Permissions.LOCATION)
       .then(({ status }) => {
@@ -4233,20 +4239,25 @@ export default class Live extends Component {
     alert('clicked');
   };
   setLocation = () => {
+    Location.watchHeadingAsync(heading => {
+      const newDirection = calculateDirection(heading.magHeading);
+
+      this.setState({
+        heading,
+        direction: newDirection
+      });
+    });
     Location.watchPositionAsync(
       {
-        enableHighAccuracy: true,
-        timeInterval: 1,
+        accuracy: Location.Accuracy.Highest,
+        timeInterval: 1000,
         distanceInterval: 1
       },
       ({ coords }) => {
-        const newDirection = calculateDirection(coords.heading);
-        const { direction } = this.state;
 
         this.setState(() => ({
           coords,
-          status: 'granted',
-          direction: newDirection
+          status: 'granted'
         }));
       }
     );
@@ -4321,3 +4332,108 @@ Which of the following methods would you use to subscribe to the user's location
 
 #### 5.2.6 Summary
 In this concept, we saw how to use Expo's Location property to watch the user's current location using watchPositionAsync. For further reading, feel free to check out the [official documentation](https://docs.expo.io/versions/v32.0.0/sdk/location/).
+
+### 5.3 Animations
+Animations are a fundamental aspect of any native application. Because of this, React Native comes built in with an animations library called `Animated`.
+
+The whole idea of Animated is that it...
+
+> "focuses on declarative relationships between inputs and outputs, with configurable transforms in between, and simple start/stop methods to control time-based animation execution."
+
+In other words, Animated allows you to establish different types of transformations on specific values.
+
+For example, you could easily animate an image's opacity property from 0 to 1, giving the effect that the image is slowly appearing.
+
+There are three types of animation configurations that you have access to out of the box with Animated.
+
+- decay - will start with an initial velocity and gradually slow to a stop
+- spring - provides a normal spring type of animation
+- timing - animates a value of a specified time
+
+All three of these allow you to transform a specific value, but each differ in how that value is transformed.
+
+#### 5.3.1 Add Animations to Live
+
+[![rn66](../assets/images/rn66-small.jpg)](../assets/images/rn66.jpg)<br>
+<span class="center bold">Animation to direction heading</span>
+
+Here we add animations to the compass heading.
+
+```jsx
+// Live.js
+import {
+  Text,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+  StyleSheet,
+  Animated
+} from 'react-native';
+
+export default class Live extends Component {
+  state = {
+    coords: null,
+    status: null,
+    direction: 'North',
+    heading: null,
+    bounceValue: new Animated.Value(1)
+  };
+  setLocation = () => {
+    Location.watchHeadingAsync(heading => {
+      // console.log('heading', heading);
+
+      const newDirection = calculateDirection(heading.magHeading);
+      const { direction, bounceValue } = this.state;
+
+      if (newDirection !== direction) {
+        Animated.sequence([
+          Animated.timing(bounceValue, { duration: 200, toValue: 1.04 }),
+          Animated.spring(bounceValue, { toValue: 1, friction: 4 })
+        ]).start();
+      }
+
+      this.setState({
+        heading,
+        direction: newDirection
+      });
+    });
+    ...
+  }
+  render() {
+    const { status, coords, direction, heading, bounceValue } = this.state;
+    ...
+    return (
+      <View style={styles.container}>
+        <View style={styles.directionContainer}>
+          <Text style={styles.header}>You&apos;re heading</Text>
+          <Animated.Text
+            style={[styles.direction, { transform: [{ scale: bounceValue }] }]}
+          >
+            {direction}
+          </Animated.Text>
+        </View>
+        <View>
+          <Text>Coords: {JSON.stringify(coords)}</Text>
+        </View>
+        <View>
+          <Text>Heading: {JSON.stringify(heading)}</Text>
+        </View>
+        ...
+      </View>
+    );
+  }
+}
+```
+
+> ##### ⚠️ Cautions: Animations ⚠️
+> Once you fully grasp the Animated API, a whole new world will open up to you. It sounds great, but this can be a double-edged sword. It's a great thing because you now have the ability to enhance the feel of your application with animations. However, with great power comes great responsibility.
+>
+> The goal of having animations is to add to the user's experience, not distract from it. By keeping this in mind whenever you're adding animations to your app, not only will your app perform better -- you'll also minimize the risk of ruining your user's experience with unnecessary animations.
+
+#### 5.3.2 Quiz Question
+Animated comes with three built in animation configurations. Please select all that apply:
+
+- [x] Animated.timing
+- [ ] Animated.ease
+- [x] Animated.spring
+- [x] Animated.decay
