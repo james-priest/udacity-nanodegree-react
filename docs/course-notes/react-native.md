@@ -4599,7 +4599,7 @@ What's the method for launching the UI for the device's image gallery?
 - [ ] Image.launchImageGalleryAsync
 - [x] ImagePicker.launchImageLibraryAsync
 
-<!-- ### 5.6 App Store Preparation
+### 5.6 App Store Preparation
 When you submit an app to either app store, there is more information you need to submit than just the app itself. For example, you need details such as
 
 - app name
@@ -4692,4 +4692,13 @@ In addition, the app can be opened on a device by installing the Expo Client and
 The Android .apk file URL is also provided in the build. It can be downloaded and provided to Android Play Store when required.
 
 [![rn75](../assets/images/rn75-small.jpg)](../assets/images/rn75.jpg)<br>
-<span class="center bold">Build URLs</span> -->
+<span class="center bold">Build URLs</span>
+
+> #### 5.6.2 ⚠️ The Rest of the Way ⚠️
+> The hardest part about uploading your application to either app store is generating a .ipa or .apk file. Because we covered that in the previous section, we're not going to cover the entire process of actually uploading your app. The following documents should help you: for iOS, [Uploading a Build for an App](https://developer.apple.com/library/content/documentation/LanguagesUtilities/Conceptual/iTunesConnect_Guide/Chapters/UploadingBinariesforanApp.html#//apple_ref/doc/uid/TP40011225-CH38-SW1) and for Android, [Upload an App](https://support.google.com/googleplay/android-developer/answer/113469?hl=en).
+
+#### 5.6.3 Summary
+In this section we learned about preparing your application for the app store and generating .apk and .ipa files. For further reading, feel free tp check out the following.
+
+- [Building Standalone Apps with Expo](https://docs.expo.io/versions/v32.0.0/distribution/building-standalone-apps/)
+- [Deploying to App Stores](https://docs.expo.io/versions/v32.0.0/distribution/app-stores/)
