@@ -4581,3 +4581,115 @@ The next screen shows the Daily Reminder channel that was created under the Udac
 
 [![rn70](../assets/images/rn70-small.jpg)](../assets/images/rn70.jpg)<br>
 <span class="center bold">Android Notifications</span>
+
+### 5.5 Handling Photos
+t this point it shouldn't be a surprise that Expo provides a nice JavaScript abstraction over the native iOS and Android approaches to accessing photos from the device's photo gallery.
+
+The name of this property is `ImagePicker` and it does exactly what you would expect: "Provides access to the system's UI for selecting images from the phone's photo library or taking a photo with the camera."
+
+We won't be adding any of this functionality to the UdaciFitness app we're building, but in the next video we will walk through how to use ImagePicker just in case you'll need it for a future project.
+
+- [Expo - ImagePicker API](https://docs.expo.io/versions/v32.0.0/sdk/imagepicker/)
+
+#### 5.5.1 Quiz Question
+What's the method for launching the UI for the device's image gallery?
+
+- [ ] Image.launchImageLibraryAsync
+- [ ] ImagePicker.launchImageGalleryAsync
+- [ ] Image.launchImageGalleryAsync
+- [x] ImagePicker.launchImageLibraryAsync
+
+<!-- ### 5.6 App Store Preparation
+When you submit an app to either app store, there is more information you need to submit than just the app itself. For example, you need details such as
+
+- app name
+- description
+- icon
+- etc.
+
+Luckily for us, Expo make it easy to specify these sorts of things just by editing the `app.json` file at the root of our app folder.
+
+Here's an example of configurations we'll be adding in our UdaciFitness app:
+
+```json
+{
+  "expo": {
+    "name": "UdaciFitness",
+    "description": "This is a hands-on project for Udacity's React Nanodegr.",
+    "slug": "reactnd-udacifitness",
+    "privacy": "public",
+    "sdkVersion": "32.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "https://tylermcginnis.com/udacifitness-512.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "notification": {
+      "icon": "https://tylermcginnis.com/udacifitness-45.png"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "org.udacifitness.exp"
+    },
+    "android": {
+      "package": "org.udacifitness.exp"
+    }
+  }
+}
+```
+
+#### 5.6.1 What are .apk and .ipa Files
+Before you submit your application to either app store, you need to "package" it appropriately.
+
+The iOS App Store will ask you for a .ipa ("iOS App Store Package") file and the Android Google Play store will ask you for a .apk ("Android Application Package") file.
+
+When you create either an ipa or a apk file, you're essentially creating a bundle of all of the necessary information that either App store needs in order to process and run your application.
+
+The easiest way to generate both the .apk and the .ipa files is to use Expo's `exp` CLI.
+
+1. Configure your `app.json` file
+  - [Expo Docs - Configuration with app.json](https://docs.expo.io/versions/v32.0.0/workflow/configuration/)
+2. run `expo build:ios` to build your .ipa file
+3. run `expo build:android` to build your .apk file
+
+Note that these will take anywhere from 10-20 minutes to build, so you'll need to be patient.
+
+To check the status of the build you can run `expo build:status`.
+
+Eventually that command will give you a URL where you can go to download either your .ipa or .apk files.
+
+[![rn73](../assets/images/rn73-small.jpg)](../assets/images/rn73.jpg)<br>
+<span class="center bold">Android & iOS Build Process</span>
+
+Once the build is done, the app can be accessed through the following URL:
+
+- [https://expo.io/@james-priest/reactnd-udacifitness](https://expo.io/@james-priest/reactnd-udacifitness)
+
+[![rn71](../assets/images/rn71-small.jpg)](../assets/images/rn71.jpg)<br>
+<span class="center bold">UdaciFitness App on Expo site</span>
+
+In addition, the app can be opened on a device by installing the Expo Client and scanning the QR code.
+
+[![rn74](../assets/images/rn74-small.jpg)](../assets/images/rn74.jpg)<br>
+<span class="center bold">Expo Client Install</span>
+
+[![rn72](../assets/images/rn72-small.jpg)](../assets/images/rn72.jpg)<br>
+<span class="center bold">QR Code for UdaciFitness App</span>
+
+The Android .apk file URL is also provided in the build. It can be downloaded and provided to Android Play Store when required.
+
+[![rn75](../assets/images/rn75-small.jpg)](../assets/images/rn75.jpg)<br>
+<span class="center bold">Build URLs</span> -->
