@@ -16,6 +16,14 @@ description: Notes by James Priest
 - [Slider sample](../exercises/wf4-9/index.html) - Uses both mouse and touch events
 -->
 
+This site contains code notes for building the Triathlon Fitness Tracker App which is part of  [Udacity React Nanodegree Program]((https://www.udacity.com/course/react-nanodegree--nd019)).
+
+[![mfc2](../assets/images/rn_screenshot-small.jpg)](../assets/images/rn_screenshot.jpg)<br>
+<span class="center bold">App Screenshots</span>
+
+- [Live Demo](https://expo.io/@james-priest/reactnd-udacifitness)
+
+
 ---
 
 ## 1. React Native
