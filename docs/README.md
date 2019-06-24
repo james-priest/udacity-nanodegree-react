@@ -25,15 +25,16 @@ The program is divided into three parts, each taking approximately 5 weeks to co
 ### 1. React Fundamentals Project
 - GitHub Repo: [MyReads: A Book Tracking App](https://github.com/james-priest/reactnd-project-myreads)
 - Documentation: [Code Notes & Walkthrough](https://james-priest.github.io/reactnd-project-myreads/)
-- Demo: [MyReads on Netlify](https://reactnd-myreads.netlify.com/)
+- Live Demo: [MyReads on Netlify](https://reactnd-myreads.netlify.com/)
 - Code Editor: [MyReads on CodeSandbox](https://codesandbox.io/s/github/james-priest/reactnd-project-myreads)
 
 ### 2. React & Redux Project
 - GitHub Repo: [Would You Rather](https://github.com/james-priest/reactnd-project-would-you-rather)
 - Documentation: [Code Notes & Walkthrough](https://james-priest.github.io/reactnd-project-would-you-rather/)
-- Demo: [Would You Rather on Netlify](https://reactnd-would-you-rather.netlify.com/)
+- Live Demo: [Would You Rather on Netlify](https://reactnd-would-you-rather.netlify.com/)
 - Code Editor: [Would You Rather on CodeSandbox](https://codesandbox.io/s/github/james-priest/reactnd-project-would-you-rather)
 
 ### 3. React Native Project
-- GitHub Repo: Mobile Flashcards
-- Documentation: Code Notes & Walkthrough
+- GitHub Repo: [Mobile Flashcards](https://github.com/james-priest/mobile-flashcards)
+- Documentation: [Code Notes & Walkthrough](https://james-priest.github.io/mobile-flashcards/)
+- Live Demo - [Mobile Flashcards App on Expo](https://expo.io/@james-priest/mobile-flashcards)

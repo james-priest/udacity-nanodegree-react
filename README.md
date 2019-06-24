@@ -16,34 +16,14 @@ Lesson transcripts along with screenshots, sample code, & links.
 ### 1. React Fundamentals Project
 - GitHub Repo: [MyReads: A Book Tracking App](https://github.com/james-priest/reactnd-project-myreads)
 - Documentation: [Code Notes & Walkthrough](https://james-priest.github.io/reactnd-project-myreads/)
-- Demo: [MyReads on CodeSandbox](https://codesandbox.io/s/github/james-priest/reactnd-project-myreads)
+- Live Demo: [MyReads on CodeSandbox](https://codesandbox.io/s/github/james-priest/reactnd-project-myreads)
 
 ### 2. React & Redux Project
-- GitHub Repo: Would You Rather...?
-- Documentation: Code Notes & Walkthrough
+- GitHub Repo: [Would You Rather Game](https://github.com/james-priest/reactnd-project-would-you-rather)
+- Documentation: [Code Notes & Walkthrough](https://james-priest.github.io/reactnd-project-would-you-rather/)
+- Live Demo - [Would You Rather on Netlfiy](https://reactnd-would-you-rather.netlify.com/)
 
 ### 3. React Native Project
-- GitHub Repo: Mobile Flashcards
-- Documentation: Code Notes & Walkthrough
-
-<!-- 
-### Optional Courses
-- [JavaScript Promises](docs/course-notes/javascript-promises.md) by Google (Lessons 1 & 2)
-
-## Projects
-### Restaurant App Stage 1
-- GitHub Repo: [Restaurant Reviews App - Stage 1](https://github.com/james-priest/mws-restaurant-stage-1/tree/stage-1)
-- Documentation: [Code Notes & Walkthrough - Stage 1](https://james-priest.github.io/mws-restaurant-stage-1/stage1.html)
-
-### Restaurant App Stage 2
-- GitHub Repo: [Restaurant Reviews App - Stage 2](https://github.com/james-priest/mws-restaurant-stage-1/tree/stage-2)
-- Documentation: [Code Notes & Walkthrough - Stage 2](https://james-priest.github.io/mws-restaurant-stage-1/stage2.html)
-
-### Restaurant App Stage 3
-- GitHub Repo: [Restaurant Reviews App - Stage 3](https://github.com/james-priest/mws-restaurant-stage-1/tree/stage-3)
-- Documentation: [Code Notes & Walkthrough - Stage 3](https://james-priest.github.io/mws-restaurant-stage-1/stage3.html)
-
-## My Project Website
-[![Code Notes Homepage](docs/assets/images/fixed/MWS-Notes-homepage.jpg)](https://james-priest.github.io/udacity-nanodegree-mws/)
-
-Website: [https://james-priest.github.io/udacity-nanodegree-mws/](https://james-priest.github.io/udacity-nanodegree-mws/) -->
+- GitHub Repo: [Mobile Flashcards App](https://github.com/james-priest/mobile-flashcards)
+- Documentation: [Code Notes & Walkthrough](https://james-priest.github.io/mobile-flashcards/)
+- Live Demo - [Mobile Flashcards App on Expo](https://expo.io/@james-priest/mobile-flashcards)
