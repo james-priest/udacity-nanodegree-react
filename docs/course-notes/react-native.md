@@ -7,8 +7,6 @@ description: Notes by James Priest
 
 [<-- back to React Nanodegree homepage](../index.html)
 
-| | |
-| --- | --- |
 | [Live Demo](https://expo.io/@james-priest/reactnd-udacifitness) | [GitHub Repo](https://github.com/james-priest/reactnd-udacifitness) |
 
 [![mfc2](../assets/images/rn_screenshot-small.jpg)](../assets/images/rn_screenshot.jpg)<br>
