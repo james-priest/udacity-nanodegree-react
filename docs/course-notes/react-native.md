@@ -7,6 +7,13 @@ description: Notes by James Priest
 
 [<-- back to React Nanodegree homepage](../index.html)
 
+| | |
+| --- | --- |
+| [Live Demo](https://expo.io/@james-priest/reactnd-udacifitness) | [GitHub Repo](https://github.com/james-priest/reactnd-udacifitness) |
+
+[![mfc2](../assets/images/rn_screenshot-small.jpg)](../assets/images/rn_screenshot.jpg)<br>
+<span class="center bold">App Screenshots</span>
+
 <!-- 
 ### Links
 #### Resources
@@ -17,12 +24,6 @@ description: Notes by James Priest
 -->
 
 This site contains code notes for building the Triathlon Fitness Tracker App which is part of  [Udacity React Nanodegree Program]((https://www.udacity.com/course/react-nanodegree--nd019)).
-
-[![mfc2](../assets/images/rn_screenshot-small.jpg)](../assets/images/rn_screenshot.jpg)<br>
-<span class="center bold">App Screenshots</span>
-
-- [Live Demo](https://expo.io/@james-priest/reactnd-udacifitness)
-
 
 ---
 
